@@ -1,0 +1,14 @@
+services:
+  db:
+    build: .
+    container_name: postgres-pgvector-postgis
+    ports:
+      - "7432:5432"
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: embedding_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+volumes:
+  postgres_data:
