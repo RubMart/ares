@@ -42,14 +42,18 @@ export function getApiBaseUrl(): string {
 
 const DEFAULT_TIMEOUT_MS = 12_000
 
-export type ApiGetOptions = {
+export type ApiRequestOptions = {
   signal?: AbortSignal
   timeoutMs?: number
 }
 
-export async function apiGet<T>(
+/** @deprecated Prefer ApiRequestOptions */
+export type ApiGetOptions = ApiRequestOptions
+
+async function apiFetch<T>(
   path: string,
-  options: ApiGetOptions = {},
+  init: RequestInit,
+  options: ApiRequestOptions = {},
 ): Promise<T> {
   const url = `${getApiBaseUrl()}${path.startsWith('/') ? path : `/${path}`}`
   const timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS
@@ -61,9 +65,12 @@ export async function apiGet<T>(
   let response: Response
 
   try {
-    response = await fetch(url, { signal: controller.signal })
+    response = await fetch(url, { ...init, signal: controller.signal })
   } catch (error) {
-    if (controller.signal.aborted && !options.signal?.aborted) {
+    if (options.signal?.aborted) {
+      throw error instanceof Error ? error : new DOMException('Aborted', 'AbortError')
+    }
+    if (controller.signal.aborted) {
       throw new ApiError(0, {
         detail: `La API no respondió a tiempo (${timeoutMs / 1000}s). ¿Está uvicorn en marcha?`,
       })
@@ -90,4 +97,27 @@ export async function apiGet<T>(
   }
 
   return payload as T
+}
+
+export async function apiGet<T>(
+  path: string,
+  options: ApiRequestOptions = {},
+): Promise<T> {
+  return apiFetch<T>(path, {}, options)
+}
+
+export async function apiPost<T>(
+  path: string,
+  body: unknown,
+  options: ApiRequestOptions = {},
+): Promise<T> {
+  return apiFetch<T>(
+    path,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify(body),
+    },
+    options,
+  )
 }

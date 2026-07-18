@@ -165,36 +165,6 @@
   }
 }
 
-/* Range slider */
-.ares-slider {
-  -webkit-appearance: none;
-  appearance: none;
-  height: 6px;
-  border-radius: 9999px;
-  background: var(--input);
-  outline: none;
-}
-.ares-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 18px;
-  height: 18px;
-  border-radius: 9999px;
-  background: var(--primary);
-  border: 2px solid var(--card);
-  box-shadow: 0 1px 3px rgb(0 0 0 / 0.25);
-  cursor: pointer;
-}
-.ares-slider::-moz-range-thumb {
-  width: 18px;
-  height: 18px;
-  border-radius: 9999px;
-  background: var(--primary);
-  border: 2px solid var(--card);
-  box-shadow: 0 1px 3px rgb(0 0 0 / 0.25);
-  cursor: pointer;
-}
-
 /* Leaflet tooltip theming */
 .leaflet-tooltip {
   border-radius: 6px !important;

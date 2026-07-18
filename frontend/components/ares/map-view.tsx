@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { X } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import OlMap from 'ol/Map'
 import View from 'ol/View'
 import TileLayer from 'ol/layer/Tile'
@@ -11,8 +13,7 @@ import VectorSource from 'ol/source/Vector'
 import GeoTIFF from 'ol/source/GeoTIFF'
 import GeoJSON from 'ol/format/GeoJSON'
 import Feature from 'ol/Feature'
-import Point from 'ol/geom/Point'
-import { fromLonLat, transform, transformExtent } from 'ol/proj'
+import { transform, transformExtent } from 'ol/proj'
 import type { Coordinate } from 'ol/coordinate'
 import type { ProjectionLike } from 'ol/proj'
 import { Fill, Stroke, Style, Circle as CircleStyle } from 'ol/style'
@@ -22,9 +23,15 @@ import type { Extent } from 'ol/extent'
 import 'ol/ol.css'
 
 import { isHttpCogUrl, preferIpv4Localhost } from '@/lib/api/catalog'
-import type { CatalogLayer } from '@/lib/api/types'
+import type {
+  CatalogLayer,
+  ReferenceFeatureCollection,
+  SearchResult,
+} from '@/lib/api/types'
+import { confidenceColor, hexToRgba } from '@/lib/map/confidence'
+import { olGeometryFromGeoJson } from '@/lib/map/geojson-geometry'
 import { ensureProjections } from '@/lib/map/projections'
-import type { SearchResult } from '@/lib/search'
+import { cn } from '@/lib/utils'
 
 type Basemap = 'streets' | 'satellite'
 
@@ -42,15 +49,25 @@ type FitCatalogRequest = {
   token: number
 }
 
+type FitSelectionRequest = {
+  id: string
+  token: number
+}
+
 type MapViewProps = {
   results: SearchResult[]
   selectedId: string | null
-  onSelect: (id: string) => void
+  onSelect: (id: string | null) => void
+  /** Show the detection metadata card (map click only). */
+  showDetectionDetails?: boolean
   basemap: Basemap
   catalogLayers: CatalogLayer[]
   visibleCatalogIds: Set<number>
   /** When token changes, zoom the map to that catalog layer extent. */
   fitCatalogRequest?: FitCatalogRequest | null
+  /** When token changes, zoom to the selected detection (table click or top search hit). */
+  fitSelectionRequest?: FitSelectionRequest | null
+  referenceFeatures?: ReferenceFeatureCollection | null
 }
 
 type GeoTiffViewOptions = {
@@ -68,10 +85,23 @@ const geoJson3857 = new GeoJSON({
   featureProjection: 'EPSG:3857',
 })
 
-function scoreColor(score: number) {
-  if (score >= 0.85) return '#0e7490'
-  if (score >= 0.7) return '#d97706'
-  return '#64748b'
+function boxStyle(score: number, selected: boolean) {
+  const color = confidenceColor(score)
+  return new Style({
+    fill: new Fill({ color: hexToRgba(color, selected ? 0.45 : 0.32) }),
+    stroke: new Stroke({
+      color: selected ? '#111111' : color,
+      width: selected ? 3.5 : 2.5,
+    }),
+    image: new CircleStyle({
+      radius: selected ? 8 : 5,
+      fill: new Fill({ color: hexToRgba(color, 0.55) }),
+      stroke: new Stroke({
+        color: selected ? '#111111' : color,
+        width: selected ? 2 : 1.5,
+      }),
+    }),
+  })
 }
 
 function projectionCode(projection: ProjectionLike | undefined): string | null {
@@ -125,19 +155,15 @@ function fitViewToExtent(map: OlMap, extent: Extent) {
   })
 }
 
-function markerStyle(score: number, selected: boolean) {
-  const color = scoreColor(score)
-  return new Style({
-    image: new CircleStyle({
-      radius: selected ? 10 : 6,
-      fill: new Fill({ color }),
-      stroke: new Stroke({
-        color: selected ? '#111111' : color,
-        width: selected ? 2 : 1,
-      }),
-    }),
-  })
-}
+const referenceStyle = new Style({
+  fill: new Fill({ color: 'rgba(14, 116, 144, 0.15)' }),
+  stroke: new Stroke({ color: '#0e7490', width: 2, lineDash: [6, 4] }),
+  image: new CircleStyle({
+    radius: 7,
+    fill: new Fill({ color: 'rgba(14, 116, 144, 0.3)' }),
+    stroke: new Stroke({ color: '#0e7490', width: 2, lineDash: [4, 3] }),
+  }),
+})
 
 function formatDisplayCoordinate(coord: Coordinate | null, crs: DisplayCrs): string {
   if (!coord) return '—'
@@ -159,6 +185,7 @@ type MapHandles = {
   streetsLayer: TileLayer<XYZ>
   satelliteLayer: TileLayer<XYZ>
   resultsSource: VectorSource
+  referenceSource: VectorSource
   cogLayers: Map<number, WebGLTileLayer>
   fittedCatalogKey: string | null
 }
@@ -167,20 +194,25 @@ export default function MapView({
   results,
   selectedId,
   onSelect,
+  showDetectionDetails = false,
   basemap,
   catalogLayers,
   visibleCatalogIds,
   fitCatalogRequest = null,
+  fitSelectionRequest = null,
+  referenceFeatures = null,
 }: MapViewProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const handlesRef = useRef<MapHandles | null>(null)
   const onSelectRef = useRef(onSelect)
+  const selectedIdRef = useRef(selectedId)
   const displayCrsRef = useRef<DisplayCrs>('EPSG:4326')
   const pointerCoordRef = useRef<Coordinate | null>(null)
   const coordTextRef = useRef<HTMLSpanElement>(null)
   const [mapReady, setMapReady] = useState(false)
   const [displayCrs, setDisplayCrs] = useState<DisplayCrs>('EPSG:4326')
   onSelectRef.current = onSelect
+  selectedIdRef.current = selectedId
   displayCrsRef.current = displayCrs
 
   function paintCoordinateText() {
@@ -218,17 +250,24 @@ export default function MapView({
     const resultsSource = new VectorSource()
     const resultsLayer = new VectorLayer({
       source: resultsSource,
-      zIndex: 20,
+      zIndex: 100,
       style: (feature) => {
         const score = Number(feature.get('score') ?? 0)
         const selected = Boolean(feature.get('selected'))
-        return markerStyle(score, selected)
+        return boxStyle(score, selected)
       },
+    })
+
+    const referenceSource = new VectorSource()
+    const referenceLayer = new VectorLayer({
+      source: referenceSource,
+      zIndex: 15,
+      style: referenceStyle,
     })
 
     const map = new OlMap({
       target: containerRef.current,
-      layers: [streetsLayer, satelliteLayer, resultsLayer],
+      layers: [streetsLayer, satelliteLayer, referenceLayer, resultsLayer],
       controls: defaultControls({ zoom: false, rotate: false, attribution: true }),
       view: new View({
         center: [0, 0],
@@ -247,6 +286,8 @@ export default function MapView({
       if (feature) {
         const id = feature.get('resultId')
         if (typeof id === 'string') onSelectRef.current(id)
+      } else {
+        onSelectRef.current(null)
       }
     })
 
@@ -267,6 +308,7 @@ export default function MapView({
       streetsLayer,
       satelliteLayer,
       resultsSource,
+      referenceSource,
       cogLayers: new Map(),
       fittedCatalogKey: null,
     }
@@ -414,46 +456,78 @@ export default function MapView({
     }
   }, [fitCatalogRequest, catalogLayers, mapReady])
 
-  // Search result markers (mock data still in lon/lat)
+  // Search result boxes — update geometries only (no camera move on filter changes)
   useEffect(() => {
     const h = handlesRef.current
     if (!h || !mapReady) return
 
     h.resultsSource.clear()
-    const features = results.map((r) => {
+    const features: Feature[] = []
+    for (const r of results) {
+      const geometry = olGeometryFromGeoJson(r.geometry)
+      if (!geometry) continue
       const feature = new Feature({
-        geometry: new Point(fromLonLat([r.lng, r.lat])),
         resultId: r.id,
-        score: r.score,
-        selected: r.id === selectedId,
-        title: r.title,
+        score: r.confianza,
+        selected: r.id === selectedIdRef.current,
+        title: r.claseYolo,
       })
-      return feature
-    })
-    h.resultsSource.addFeatures(features)
-
-    if (results.length > 0) {
-      const extent = createEmpty()
-      for (const f of features) {
-        const g = f.getGeometry()
-        if (g) extend(extent, g.getExtent())
-      }
-      if (!isEmpty(extent)) {
-        const pad = 500
-        extent[0] -= pad
-        extent[1] -= pad
-        extent[2] += pad
-        extent[3] += pad
-        h.map.getView().fit(extent, {
-          padding: [60, 60, 60, 60],
-          maxZoom: 6,
-          duration: 350,
-        })
-      }
+      feature.setGeometry(geometry)
+      features.push(feature)
     }
+    h.resultsSource.addFeatures(features)
   }, [results, mapReady])
 
-  // Selection highlight + fly
+  // Zoom to a detection (table click or top hit after search).
+  // Depends on `results` so it runs after geometries are loaded into the source.
+  useEffect(() => {
+    const h = handlesRef.current
+    if (!h || !mapReady || !fitSelectionRequest) return
+
+    const feature = h.resultsSource
+      .getFeatures()
+      .find((f) => f.get('resultId') === fitSelectionRequest.id)
+    const geometry = feature?.getGeometry()
+    if (geometry) {
+      h.map.getView().fit(geometry.getExtent(), {
+        padding: [80, 80, 80, 80],
+        maxZoom: 19,
+        duration: 800,
+      })
+      return
+    }
+
+    const target = results.find((r) => r.id === fitSelectionRequest.id)
+    if (!target) return
+    const view = h.map.getView()
+    view.animate({
+      center: [target.x, target.y],
+      zoom: Math.max(view.getZoom() ?? 2, 17),
+      duration: 800,
+    })
+  }, [fitSelectionRequest, mapReady, results])
+
+  // Spatial reference geometries
+  useEffect(() => {
+    const h = handlesRef.current
+    if (!h || !mapReady) return
+
+    h.referenceSource.clear()
+    const refs = referenceFeatures?.features
+    if (!refs?.length) return
+
+    try {
+      const features = geoJson3857.readFeatures({
+        type: 'FeatureCollection',
+        features: refs,
+      })
+      h.referenceSource.addFeatures(features)
+    } catch {
+      // Ignore malformed reference geometries
+    }
+  }, [referenceFeatures, mapReady])
+
+  // Selection highlight only — no camera move on map click
   useEffect(() => {
     const h = handlesRef.current
     if (!h || !mapReady) return
@@ -462,21 +536,23 @@ export default function MapView({
       feature.set('selected', feature.get('resultId') === selectedId)
     })
     h.resultsSource.changed()
+  }, [selectedId, mapReady])
 
-    if (!selectedId) return
-    const target = results.find((r) => r.id === selectedId)
-    if (!target) return
-    const view = h.map.getView()
-    view.animate({
-      center: fromLonLat([target.lng, target.lat]),
-      zoom: Math.max(view.getZoom() ?? 2, 7),
-      duration: 800,
-    })
-  }, [selectedId, results, mapReady])
+  const selectedResult =
+    showDetectionDetails && selectedId
+      ? (results.find((r) => r.id === selectedId) ?? null)
+      : null
 
   return (
     <div className="relative h-full w-full">
       <div ref={containerRef} className="h-full w-full bg-muted" />
+
+      {selectedResult && (
+        <DetectionDetailsCard
+          result={selectedResult}
+          onClose={() => onSelect(null)}
+        />
+      )}
 
       <div
         className="pointer-events-auto absolute bottom-4 left-4 z-[1000] flex items-center gap-2 rounded-lg border border-border bg-card px-2.5 py-1.5 text-xs shadow-md"
@@ -506,5 +582,81 @@ export default function MapView({
         </span>
       </div>
     </div>
+  )
+}
+
+function DetectionDetailsCard({
+  result,
+  onClose,
+}: {
+  result: SearchResult
+  onClose: () => void
+}) {
+  const { t } = useTranslation()
+  const shortId = result.id.includes('/') ? result.id.split('/').pop()! : result.id
+  const color = confidenceColor(result.confianza)
+
+  return (
+    <div
+      className="pointer-events-auto absolute right-4 bottom-20 z-[1000] w-72 rounded-lg border border-border bg-card p-3 shadow-lg"
+      role="dialog"
+      aria-label={t('detection.title')}
+    >
+      <div className="mb-2 flex items-start justify-between gap-2">
+        <div className="min-w-0">
+          <div className="flex items-center gap-2">
+            <span
+              className="size-2.5 shrink-0 rounded-full"
+              style={{ backgroundColor: color }}
+              aria-hidden
+            />
+            <h3 className="truncate text-sm font-semibold text-foreground">
+              {result.claseYolo}
+            </h3>
+          </div>
+          <p className="mt-0.5 font-mono text-[0.65rem] text-muted-foreground">{shortId}</p>
+        </div>
+        <button
+          type="button"
+          onClick={onClose}
+          className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+          aria-label={t('detection.close')}
+        >
+          <X className="size-3.5" />
+        </button>
+      </div>
+
+      <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5 text-xs">
+        <DetailRow label={t('detection.confidence')}>
+          <span className="font-semibold tabular-nums" style={{ color }}>
+            {(result.confianza * 100).toFixed(1)}%
+          </span>
+        </DetailRow>
+        <DetailRow label={t('detection.similarity')}>
+          <span className="tabular-nums">{result.similarity.toFixed(4)}</span>
+        </DetailRow>
+        <DetailRow label={t('detection.layer')}>
+          <span className="truncate" title={result.layer}>
+            {result.layer}
+          </span>
+        </DetailRow>
+        {result.distanceToReferenceM != null && (
+          <DetailRow label={t('detection.distance')}>
+            <span className="tabular-nums">
+              {t('detection.meters', { value: result.distanceToReferenceM.toFixed(1) })}
+            </span>
+          </DetailRow>
+        )}
+      </dl>
+    </div>
+  )
+}
+
+function DetailRow({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <>
+      <dt className="text-muted-foreground">{label}</dt>
+      <dd className={cn('min-w-0 text-right font-medium text-foreground')}>{children}</dd>
+    </>
   )
 }
