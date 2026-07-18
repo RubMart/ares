@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pytest
 
 from infrastructure.ai.attribute_catalog import (
@@ -227,3 +229,84 @@ def test_geojson_serializer() -> None:
     assert payload["type"] == "FeatureCollection"
     assert len(payload["features"]) == 1
     assert payload["metadata"]["detected_language"] == "es"
+
+
+def test_resolve_clip_model_name_uses_local_dir(
+    tmp_path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from config import settings
+    from infrastructure.ai.clip_text_embedder import resolve_clip_model_name
+
+    model_dir = tmp_path / "clip-vit-base-patch32"
+    model_dir.mkdir()
+    (model_dir / "config.json").write_text("{}", encoding="utf-8")
+    monkeypatch.setattr(settings, "clip_model_name", "clip-ViT-B-32")
+    monkeypatch.setattr(settings, "clip_local_dir", str(model_dir))
+
+    assert resolve_clip_model_name() == str(model_dir.resolve())
+
+
+def test_resolve_clip_model_name_uses_hf_hub_cache(
+    tmp_path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from config import settings
+    from infrastructure.ai import clip_text_embedder as clip_mod
+
+    missing_local = tmp_path / "missing-local"
+    hub = tmp_path / "hub"
+    snap = (
+        hub
+        / "models--openai--clip-vit-base-patch32"
+        / "snapshots"
+        / "abc123"
+    )
+    snap.mkdir(parents=True)
+    (snap / "config.json").write_text("{}", encoding="utf-8")
+    refs = hub / "models--openai--clip-vit-base-patch32" / "refs"
+    refs.mkdir(parents=True)
+    (refs / "main").write_text("abc123", encoding="utf-8")
+
+    monkeypatch.setattr(settings, "clip_model_name", "clip-ViT-B-32")
+    monkeypatch.setattr(settings, "clip_local_dir", str(missing_local))
+    monkeypatch.setenv("HF_HUB_CACHE", str(hub))
+
+    assert clip_mod.resolve_clip_model_name() == str(snap.resolve())
+
+
+def test_resolve_clip_model_name_downloads_when_missing(
+    tmp_path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from config import settings
+    from infrastructure.ai import clip_text_embedder as clip_mod
+
+    model_dir = tmp_path / "clip-vit-base-patch32"
+    empty_hub = tmp_path / "empty-hub"
+    empty_hub.mkdir()
+    monkeypatch.setattr(settings, "clip_model_name", "clip-ViT-B-32")
+    monkeypatch.setattr(settings, "clip_local_dir", str(model_dir))
+    monkeypatch.setenv("HF_HUB_CACHE", str(empty_hub))
+
+    def fake_download(*, repo_id: str, local_dir: str, token=None) -> str:
+        assert repo_id == clip_mod.HUGGINGFACE_CLIP_MODEL
+        assert token is False
+        dest = Path(local_dir)
+        dest.mkdir(parents=True, exist_ok=True)
+        (dest / "config.json").write_text("{}", encoding="utf-8")
+        return local_dir
+
+    import huggingface_hub
+
+    monkeypatch.setattr(huggingface_hub, "snapshot_download", fake_download)
+
+    assert clip_mod.resolve_clip_model_name() == str(model_dir.resolve())
+    assert (model_dir / "config.json").is_file()
+
+
+def test_resolve_clip_model_name_custom_passthrough(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from config import settings
+    from infrastructure.ai.clip_text_embedder import resolve_clip_model_name
+
+    monkeypatch.setattr(settings, "clip_model_name", "org/other-clip")
+    assert resolve_clip_model_name() == "org/other-clip"

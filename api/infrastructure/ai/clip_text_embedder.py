@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 import math
+from pathlib import Path
 
 import torch
 from transformers import CLIPModel, CLIPProcessor
@@ -16,12 +17,92 @@ logger = logging.getLogger(__name__)
 # Mismo modelo que embed.py (DEFAULT_MODEL).
 HUGGINGFACE_CLIP_MODEL = "openai/clip-vit-base-patch32"
 # Equivalente en sentence-transformers: clip-ViT-B-32
+CLIP_MODEL_ALIASES = frozenset({"clip-ViT-B-32", "openai/clip-vit-base-patch32"})
+
+_API_ROOT = Path(__file__).resolve().parents[2]
+
+
+def resolve_clip_local_dir() -> Path:
+    path = Path(settings.clip_local_dir)
+    if not path.is_absolute():
+        path = (_API_ROOT / path).resolve()
+    return path
+
+
+def _is_clip_dir_ready(path: Path) -> bool:
+    return path.is_dir() and (path / "config.json").is_file()
+
+
+def _hf_hub_cache_root() -> Path:
+    import os
+
+    if os.environ.get("HF_HUB_CACHE"):
+        return Path(os.environ["HF_HUB_CACHE"])
+    if os.environ.get("HUGGINGFACE_HUB_CACHE"):
+        return Path(os.environ["HUGGINGFACE_HUB_CACHE"])
+    hf_home = Path(os.environ.get("HF_HOME", Path.home() / ".cache" / "huggingface"))
+    return hf_home / "hub"
+
+
+def find_hf_hub_snapshot(repo_id: str) -> Path | None:
+    """Busca un snapshot usable en la caché global de Hugging Face Hub."""
+    cache_root = _hf_hub_cache_root()
+    repo_dir = cache_root / f"models--{repo_id.replace('/', '--')}"
+    if not repo_dir.is_dir():
+        return None
+
+    refs_main = repo_dir / "refs" / "main"
+    if refs_main.is_file():
+        revision = refs_main.read_text(encoding="utf-8").strip()
+        candidate = repo_dir / "snapshots" / revision
+        if _is_clip_dir_ready(candidate):
+            return candidate.resolve()
+
+    snapshots = repo_dir / "snapshots"
+    if not snapshots.is_dir():
+        return None
+    for snapshot in sorted(snapshots.iterdir(), reverse=True):
+        if _is_clip_dir_ready(snapshot):
+            return snapshot.resolve()
+    return None
 
 
 def resolve_clip_model_name() -> str:
-    if settings.clip_model_name in {"clip-ViT-B-32", "openai/clip-vit-base-patch32"}:
-        return HUGGINGFACE_CLIP_MODEL
-    return settings.clip_model_name
+    """Resuelve ruta local o id HF; descarga a clip_local_dir si falta el alias canónico."""
+    name = settings.clip_model_name.strip()
+    as_path = Path(name)
+    if _is_clip_dir_ready(as_path):
+        return str(as_path.resolve())
+
+    if name not in CLIP_MODEL_ALIASES:
+        return name
+
+    local_dir = resolve_clip_local_dir()
+    if _is_clip_dir_ready(local_dir):
+        logger.info("CLIP cargado desde %s", local_dir)
+        return str(local_dir)
+
+    cached = find_hf_hub_snapshot(HUGGINGFACE_CLIP_MODEL)
+    if cached is not None:
+        logger.info("CLIP encontrado en caché HF: %s", cached)
+        return str(cached)
+
+    logger.info(
+        "CLIP no encontrado en %s ni en caché HF; descargando %s...",
+        local_dir,
+        HUGGINGFACE_CLIP_MODEL,
+    )
+    local_dir.parent.mkdir(parents=True, exist_ok=True)
+    from huggingface_hub import snapshot_download
+
+    # token=False: repos públicos no deben usar un token local inválido/caducado
+    # (HF responde a veces "Repository Not Found" + OAuth signature failed).
+    snapshot_download(
+        repo_id=HUGGINGFACE_CLIP_MODEL,
+        local_dir=str(local_dir),
+        token=False,
+    )
+    return str(local_dir)
 
 
 class ClipOnnxTextEmbedder(TextEmbedder):

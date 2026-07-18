@@ -13,6 +13,8 @@ class Settings(BaseSettings):
     ollama_temperature: float = 0.0
 
     clip_model_name: str = "clip-ViT-B-32"
+    # Relativo a api/ → <repo>/models/clip-vit-base-patch32 (fuera de git).
+    clip_local_dir: str = "../models/clip-vit-base-patch32"
     clip_onnx_backend: bool = False
     embedding_dim: int = 512
 

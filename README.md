@@ -30,7 +30,7 @@ copy .env.example .env
 uvicorn main:app --reload --app-dir .
 ```
 
-Defaults: PostgreSQL `detecciones`, Ollama `llama3.2:3b`, CLIP `clip-ViT-B-32` (dim 512). Detalle en [`AGENTS.md`](AGENTS.md).
+Defaults: PostgreSQL `detecciones`, Ollama `llama3.2:3b`, CLIP `clip-ViT-B-32` (dim 512). Guía completa: [`api/README.md`](api/README.md). Contexto agentes: [`AGENTS.md`](AGENTS.md).
 
 ### Visor
 
