@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Web Viewer — Búsqueda semántica</title>
+  <!--
+    Uso:
+      Terminal 1 (API):  cd api && .venv\Scripts\activate && uvicorn main:app --reload --port 8000
+      Terminal 2 (COG):  servir ortofotos COG con HTTP Range en el puerto 4040 (p. ej. http://localhost:4040/orthos/madrid_detections_example.tif)
+      Terminal 3 (viewer): cd api_webviewer && python -m http.server 8080
+      Abrir: http://localhost:8080
+  -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@9.2.4/ol.css">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="top-bar">
+    <div class="top-bar__brand">
+      <h1>API Web Viewer</h1>
+      <p class="subtitle">Búsqueda semántica de detecciones</p>
+    </div>
+    <div class="top-bar__api">
+      <label for="api-url">URL base API</label>
+      <div class="api-url-row">
+        <input type="url" id="api-url" value="http://localhost:8000" placeholder="http://localhost:8000">
+        <button type="button" id="btn-health" class="btn btn-secondary">Comprobar conexión</button>
+      </div>
+    </div>
+    <div class="top-bar__status">
+      <span id="health-badge" class="health-badge health-badge--unknown" title="Estado desconocido">—</span>
+      <span id="health-detail" class="health-detail"></span>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="sidebar">
+      <section class="panel">
+        <h2>Búsqueda</h2>
+        <form id="search-form">
+          <div class="field">
+            <label for="query">Consulta</label>
+            <input type="text" id="query" name="query" required placeholder="piscinas, cars, edificios…" autocomplete="off">
+          </div>
+
+          <div class="quick-examples">
+            <span class="quick-examples__label">Ejemplos:</span>
+            <button type="button" class="chip" data-query="piscinas">piscinas</button>
+            <button type="button" class="chip" data-query="coches">coches</button>
+            <button type="button" class="chip" data-query="buildings">buildings</button>
+          </div>
+
+          <details class="advanced-options">
+            <summary>Opciones avanzadas</summary>
+            <div class="field">
+              <label for="top-k">top_k</label>
+              <input type="number" id="top-k" name="top_k" min="1" max="500" value="50">
+            </div>
+            <div class="field">
+              <label for="per-layer-limit">per_layer_limit</label>
+              <input type="number" id="per-layer-limit" name="per_layer_limit" min="1" max="2000" value="100">
+            </div>
+            <div class="field">
+              <label for="min-confidence">min_confidence</label>
+              <input type="number" id="min-confidence" name="min_confidence" min="0" max="1" step="0.01" value="0">
+            </div>
+          </details>
+
+          <button type="submit" id="btn-search" class="btn btn-primary">
+            <span class="btn-label">Buscar</span>
+            <span class="spinner hidden" aria-hidden="true"></span>
+          </button>
+        </form>
+      </section>
+
+      <section class="panel panel--catalog">
+        <div class="panel__header-row">
+          <h2>Catálogo</h2>
+          <button type="button" id="btn-refresh-catalog" class="btn btn-small btn-secondary">Actualizar</button>
+        </div>
+        <div id="catalog-list" class="catalog-list">
+          <p class="muted">Cargando catálogo…</p>
+        </div>
+      </section>
+    </aside>
+
+    <section class="content">
+      <div id="error-banner" class="banner banner--error hidden" role="alert"></div>
+      <div id="info-banner" class="banner banner--info hidden" role="status"></div>
+
+      <div id="results-section" class="results-section hidden">
+        <div id="metadata-panel" class="metadata-panel"></div>
+
+        <div id="filters-panel" class="filters-panel">
+          <div class="filters-panel__header">
+            <div class="filters-panel__title">
+              <h3>Filtros</h3>
+              <span id="filter-count" class="filter-count"></span>
+            </div>
+            <button type="button" id="btn-reset-filters" class="btn btn-small btn-secondary">Restablecer</button>
+          </div>
+
+          <div class="filters-panel__body">
+            <div class="filter-group filter-group--classes">
+              <div class="filter-group__header">
+                <label class="filter-group__label">Clases YOLO</label>
+                <div class="filter-group__actions">
+                  <button type="button" id="btn-classes-all" class="link-btn">Todas</button>
+                  <span class="filter-group__sep">·</span>
+                  <button type="button" id="btn-classes-none" class="link-btn">Ninguna</button>
+                </div>
+              </div>
+              <div id="class-toggles" class="class-toggles"></div>
+            </div>
+
+            <div class="filter-group filter-group--ranges">
+              <div class="range-filter">
+                <div class="range-filter__header">
+                  <label for="confidence-min">Confianza</label>
+                  <span id="confidence-values" class="range-filter__values">—</span>
+                </div>
+                <div id="confidence-range" class="dual-range"></div>
+              </div>
+
+              <div class="range-filter">
+                <div class="range-filter__header">
+                  <label for="similarity-min">Similarity</label>
+                  <span id="similarity-values" class="range-filter__values">—</span>
+                </div>
+                <div id="similarity-range" class="dual-range"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="split-view" class="split-view">
+          <div id="pane-map" class="split-pane split-pane--map">
+            <div id="map" class="map"></div>
+            <div id="map-popup" class="map-popup hidden"></div>
+          </div>
+
+          <div
+            id="split-resizer"
+            class="split-resizer"
+            role="separator"
+            aria-orientation="vertical"
+            aria-label="Redimensionar mapa y tabla"
+            tabindex="0"
+          ></div>
+
+          <div id="pane-table" class="split-pane split-pane--table">
+            <div class="table-wrap">
+              <table id="results-table">
+                <thead>
+                  <tr>
+                    <th data-sort="index">#</th>
+                    <th data-sort="clase_yolo">clase_yolo</th>
+                    <th data-sort="similarity">similarity</th>
+                    <th data-sort="confianza" class="sorted-desc">confianza</th>
+                    <th data-sort="layer">layer</th>
+                    <th data-sort="tile_id">tile_id</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <details class="json-panel">
+          <summary>JSON de respuesta</summary>
+          <div class="json-toolbar">
+            <button type="button" id="btn-copy-json" class="btn btn-small btn-secondary">Copiar</button>
+          </div>
+          <pre id="json-output" class="json-output"></pre>
+        </details>
+      </div>
+
+      <div id="empty-state" class="empty-state">
+        <p>Introduce una consulta y pulsa <strong>Buscar</strong> para ver resultados en mapa y tabla a la vez.</p>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/proj4@2.11.0/dist/proj4.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/geotiff@2.1.3/dist-browser/geotiff.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/ol@9.2.4/dist/ol.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

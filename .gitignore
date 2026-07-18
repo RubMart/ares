@@ -1,0 +1,58 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+dist/
+build/
+
+# Entorno y secretos
+.env
+.env.*
+!.env.example
+
+# Datos, pesos y artefactos de pipeline (fuera del repo)
+data/
+models/
+runs/
+pruebas/
+sql_test/
+*.pt
+*.onnx
+*.pth
+*.weights
+
+# Imágenes / geo (datasets locales)
+*.jpg
+*.jpeg
+*.png
+*.tif
+*.tiff
+*.geojson
+*.gpkg
+*.shp
+*.dbf
+*.shx
+*.prj
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+Desktop.ini
+.idea/
+*.swp
+*.swo
+
+# Logs y temporales
+*.log
+tmp/
+temp/
+.cache/
