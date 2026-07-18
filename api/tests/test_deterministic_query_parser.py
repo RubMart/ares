@@ -45,6 +45,16 @@ def test_try_deterministic_parse_spatial() -> None:
     assert "roundabout" not in structured.clase_yolo_candidates
 
 
+def test_try_deterministic_parse_personas_cerca_de_piscina() -> None:
+    structured = try_deterministic_parse("personas cerca de una piscina")
+    assert structured is not None
+    assert structured.intent == "search_spatial"
+    assert structured.relation == "near"
+    assert structured.target_canonical_label == "pedestrian"
+    assert structured.reference_canonical_label == "swimming pool"
+    assert "pedestrian" in structured.clase_yolo_candidates
+
+
 def test_try_deterministic_parse_spatial_incomplete() -> None:
     assert try_deterministic_parse("coches cerca de algo") is None
 

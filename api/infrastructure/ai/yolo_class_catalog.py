@@ -169,8 +169,21 @@ YOLO_CLASS_CATALOG: list[YoloClassEntry] = [
     YoloClassEntry(
         canonical_label="pedestrian",
         clase_yolo=["pedestrian"],
-        synonyms_es=["peaton", "peatón", "peatones"],
-        synonyms_en=["pedestrian", "pedestrians"],
+        synonyms_es=[
+            "peaton",
+            "peatón",
+            "peatones",
+            "persona",
+            "personas",
+            "gente",
+        ],
+        synonyms_en=[
+            "pedestrian",
+            "pedestrians",
+            "person",
+            "people",
+            "persons",
+        ],
     ),
     YoloClassEntry(
         canonical_label="roundabout",
