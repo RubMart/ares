@@ -1,6 +1,7 @@
 'use client'
 
 import { MapPin } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import type { SearchResult } from '@/lib/search'
 import { cn } from '@/lib/utils'
 
@@ -18,12 +19,16 @@ function scoreClasses(score: number) {
 }
 
 export function ResultsTable({ results, selectedId, onSelect, query }: ResultsTableProps) {
+  const { t } = useTranslation()
+
   return (
-    <section className="mt-6" aria-label="Search results">
+    <section className="mt-6" aria-label={t('results.ariaLabel')}>
       <div className="mb-3 flex items-center justify-between">
-        <h2 className="text-sm font-semibold text-foreground">Results</h2>
+        <h2 className="text-sm font-semibold text-foreground">{t('results.title')}</h2>
         <span className="text-xs text-muted-foreground">
-          {results.length} matches{query ? ` for “${query}”` : ''}
+          {query
+            ? t('results.matchesFor', { count: results.length, query })
+            : t('results.matches', { count: results.length })}
         </span>
       </div>
 
@@ -33,13 +38,13 @@ export function ResultsTable({ results, selectedId, onSelect, query }: ResultsTa
             <thead className="sticky top-0 z-10 bg-secondary text-xs uppercase tracking-wide text-muted-foreground">
               <tr>
                 <th scope="col" className="px-3 py-2 font-medium">
-                  Feature
+                  {t('results.feature')}
                 </th>
                 <th scope="col" className="px-3 py-2 font-medium">
-                  Score
+                  {t('results.score')}
                 </th>
                 <th scope="col" className="px-3 py-2 text-right font-medium">
-                  Coordinates
+                  {t('results.coordinates')}
                 </th>
               </tr>
             </thead>

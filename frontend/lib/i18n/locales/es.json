@@ -1,0 +1,64 @@
+{
+  "language": {
+    "switch": "Idioma"
+  },
+  "brand": {
+    "tagline": "AI Retrieval of Entities in Space",
+    "subtitle": "Búsqueda semántica sobre detecciones aéreas"
+  },
+  "api": {
+    "status": {
+      "checking": "Comprobando…",
+      "online": "API activa",
+      "degraded": "API degradada",
+      "offline": "API inactiva"
+    },
+    "recheckHint": "Clic para volver a comprobar"
+  },
+  "search": {
+    "queryLabel": "Consulta",
+    "queryPlaceholder": "piscinas, coches, edificios…",
+    "examplesLabel": "Ejemplos:",
+    "examples": [
+      "piscinas",
+      "coches",
+      "edificios",
+      "coches cerca de rotonda",
+      "paneles solares"
+    ],
+    "resultCount": "Número de resultados",
+    "enableClustering": "Activar clustering",
+    "filterLowConfidence": "Filtrar resultados de baja confianza",
+    "search": "Buscar",
+    "searching": "Buscando…",
+    "noResults": "Ningún resultado coincide con tu consulta.",
+    "runSearch": "Ejecuta una búsqueda para ver resultados ordenados aquí."
+  },
+  "results": {
+    "ariaLabel": "Resultados de búsqueda",
+    "title": "Resultados",
+    "matches": "{{count}} coincidencias",
+    "matchesFor": "{{count}} coincidencias para “{{query}}”",
+    "feature": "Entidad",
+    "score": "Puntuación",
+    "coordinates": "Coordenadas"
+  },
+  "map": {
+    "loading": "Cargando mapa…",
+    "streets": "Calles",
+    "satellite": "Satélite",
+    "catalog": "Catálogo",
+    "catalogLoading": "Cargando capas…",
+    "catalogEmpty": "No hay capas en el catálogo.",
+    "catalogRefresh": "Actualizar catálogo",
+    "catalogNoHttp": "COG sin URL HTTP (no se puede mostrar)",
+    "catalogShow": "Mostrar capa",
+    "catalogHide": "Ocultar capa",
+    "catalogZoomHint": "Doble clic para ir a la extensión",
+    "featuresPlotted": "entidades en el mapa",
+    "confidence": "Confianza",
+    "confidenceHigh": "Alta (85%+)",
+    "confidenceMedium": "Media (70–85%)",
+    "confidenceLow": "Baja (menos de 70%)"
+  }
+}

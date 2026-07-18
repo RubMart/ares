@@ -1,0 +1,64 @@
+{
+  "language": {
+    "switch": "Language"
+  },
+  "brand": {
+    "tagline": "AI Retrieval of Entities in Space",
+    "subtitle": "Semantic search over aerial detections"
+  },
+  "api": {
+    "status": {
+      "checking": "Checking…",
+      "online": "API online",
+      "degraded": "API degraded",
+      "offline": "API offline"
+    },
+    "recheckHint": "Click to recheck"
+  },
+  "search": {
+    "queryLabel": "Query",
+    "queryPlaceholder": "pools, cars, buildings…",
+    "examplesLabel": "Examples:",
+    "examples": [
+      "pools",
+      "cars",
+      "buildings",
+      "cars near roundabout",
+      "solar panels"
+    ],
+    "resultCount": "Number of results",
+    "enableClustering": "Enable clustering",
+    "filterLowConfidence": "Filter low-confidence results",
+    "search": "Search",
+    "searching": "Searching…",
+    "noResults": "No results matched your query.",
+    "runSearch": "Run a search to see ranked results here."
+  },
+  "results": {
+    "ariaLabel": "Search results",
+    "title": "Results",
+    "matches": "{{count}} matches",
+    "matchesFor": "{{count}} matches for “{{query}}”",
+    "feature": "Feature",
+    "score": "Score",
+    "coordinates": "Coordinates"
+  },
+  "map": {
+    "loading": "Loading map…",
+    "streets": "Streets",
+    "satellite": "Satellite",
+    "catalog": "Catalog",
+    "catalogLoading": "Loading layers…",
+    "catalogEmpty": "No catalog layers available.",
+    "catalogRefresh": "Refresh catalog",
+    "catalogNoHttp": "COG has no HTTP URL (cannot display)",
+    "catalogShow": "Show layer",
+    "catalogHide": "Hide layer",
+    "catalogZoomHint": "Double-click to zoom to extent",
+    "featuresPlotted": "features plotted",
+    "confidence": "Confidence",
+    "confidenceHigh": "High (85%+)",
+    "confidenceMedium": "Medium (70–85%)",
+    "confidenceLow": "Low (under 70%)"
+  }
+}
