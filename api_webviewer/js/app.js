@@ -31,6 +31,8 @@
   const similarityRangeEl = document.getElementById("similarity-range");
   const confidenceValuesEl = document.getElementById("confidence-values");
   const similarityValuesEl = document.getElementById("similarity-values");
+  const searchHistoryList = document.getElementById("search-history-list");
+  const btnClearHistory = document.getElementById("btn-clear-history");
 
   const detectionMap = new DetectionMap("map", "map-popup");
 
@@ -211,13 +213,81 @@
     return div.innerHTML;
   }
 
+  function renderHistory() {
+    const history = ApiClient.loadHistory();
+    btnClearHistory.classList.toggle("hidden", history.length === 0);
+    searchHistoryList.replaceChildren();
+
+    if (history.length === 0) {
+      const empty = document.createElement("p");
+      empty.className = "muted search-history__empty";
+      empty.textContent = "Sin búsquedas recientes";
+      searchHistoryList.appendChild(empty);
+      return;
+    }
+
+    for (const query of history) {
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "chip";
+      chip.dataset.historyQuery = query;
+      chip.textContent = query;
+      searchHistoryList.appendChild(chip);
+    }
+  }
+
   function renderMetadata(response) {
     const meta = response.metadata || {};
     const sq = meta.structured_query || {};
-    const candidates = (sq.clase_yolo_candidates || []).join(", ") || "—";
+    const interpretation = meta.interpretation || {};
+    const target = interpretation.target || {};
+    const reference = interpretation.reference || {};
+    const candidates =
+      (target.clase_yolo || sq.clase_yolo_candidates || []).join(", ") || "—";
     const layers = (meta.layers_searched || []).join(", ") || "—";
+    const summary =
+      interpretation.summary_es || interpretation.summary_en || "";
+    const warnings = meta.warnings || [];
+    const timings = meta.timings || null;
+    const formatMs = (value) =>
+      value == null || Number.isNaN(Number(value))
+        ? "—"
+        : `${Number(value).toFixed(1)} ms`;
+
+    const spatialItems =
+      interpretation.intent === "search_spatial"
+        ? `
+      <div class="metadata-item">
+        <label>Target</label>
+        <span>${escapeHtml(target.label || target.canonical || "—")}</span>
+      </div>
+      <div class="metadata-item">
+        <label>Referencia</label>
+        <span>${escapeHtml(reference.label || reference.canonical || "—")}</span>
+      </div>
+      <div class="metadata-item">
+        <label>Distancia</label>
+        <span>${interpretation.distance_m != null ? `${escapeHtml(String(interpretation.distance_m))} m` : "—"}</span>
+      </div>
+      <div class="metadata-item">
+        <label>Texto CLIP</label>
+        <span>${escapeHtml(interpretation.embedding_text || "—")}</span>
+      </div>`
+        : `
+      <div class="metadata-item">
+        <label>Texto CLIP</label>
+        <span>${escapeHtml(interpretation.embedding_text || "—")}</span>
+      </div>`;
 
     metadataPanel.innerHTML = `
+      ${
+        summary
+          ? `<div class="metadata-item metadata-item--summary">
+               <label>Interpretación</label>
+               <span>${escapeHtml(summary)}</span>
+             </div>`
+          : ""
+      }
       <div class="metadata-item">
         <label>Consulta</label>
         <span>${escapeHtml(meta.query || "—")}</span>
@@ -225,6 +295,10 @@
       <div class="metadata-item">
         <label>Idioma</label>
         <span>${escapeHtml(meta.detected_language || "—")}</span>
+      </div>
+      <div class="metadata-item">
+        <label>Intent</label>
+        <span>${escapeHtml(interpretation.intent || sq.intent || "—")}</span>
       </div>
       <div class="metadata-item">
         <label>Total features</label>
@@ -238,6 +312,23 @@
         <label>Capas</label>
         <span>${escapeHtml(layers)}</span>
       </div>
+      ${spatialItems}
+      ${
+        timings
+          ? `<div class="metadata-item">
+               <label>Tiempos</label>
+               <span>LLM ${escapeHtml(formatMs(timings.llm_ms))} · CLIP ${escapeHtml(formatMs(timings.clip_ms))} · BD ${escapeHtml(formatMs(timings.database_ms))} · total ${escapeHtml(formatMs(timings.total_ms))}</span>
+             </div>`
+          : ""
+      }
+      ${
+        warnings.length
+          ? `<div class="metadata-item">
+               <label>Avisos</label>
+               <span>${escapeHtml(warnings.join(" · "))}</span>
+             </div>`
+          : ""
+      }
       ${
         sq.reasoning
           ? `<div class="metadata-reasoning">
@@ -513,6 +604,8 @@
         clase_yolo: p.clase_yolo ?? "—",
         similarity: p.similarity ?? 0,
         confianza: p.confianza ?? 0,
+        distance_to_reference_m:
+          p.distance_to_reference_m != null ? Number(p.distance_to_reference_m) : null,
         layer: p.layer ?? "—",
         tile_id: p.tile_id ?? "—",
       };
@@ -542,6 +635,10 @@
     const va = a[key];
     const vb = b[key];
 
+    if (va == null && vb == null) return 0;
+    if (va == null) return 1;
+    if (vb == null) return -1;
+
     if (typeof va === "number" && typeof vb === "number") {
       return va - vb;
     }
@@ -559,6 +656,7 @@
             <td>${escapeHtml(row.clase_yolo)}</td>
             <td>${row.similarity.toFixed(4)}</td>
             <td>${typeof row.confianza === "number" ? row.confianza.toFixed(4) : row.confianza}</td>
+            <td>${row.distance_to_reference_m != null ? row.distance_to_reference_m.toFixed(1) : "—"}</td>
             <td>${escapeHtml(row.layer)}</td>
             <td>${escapeHtml(row.tile_id)}</td>
           </tr>`
@@ -669,7 +767,18 @@
 
     const total = response.metadata?.total_features ?? response.features?.length ?? 0;
     if (total === 0) {
-      showInfo("0 detecciones encontradas para esta consulta.");
+      const interpretation = response.metadata?.interpretation || {};
+      if (interpretation.intent === "search_spatial") {
+        const target = interpretation.target?.label || interpretation.target?.canonical || "objetos";
+        const reference =
+          interpretation.reference?.label || interpretation.reference?.canonical || "referencia";
+        const distance = interpretation.distance_m != null ? interpretation.distance_m : "—";
+        showInfo(
+          `0 detecciones: no hay ${target} a menos de ${distance} m de ${reference}. Prueba aumentar la distancia.`
+        );
+      } else {
+        showInfo("0 detecciones encontradas para esta consulta.");
+      }
     } else {
       hideBanner(infoBanner);
     }
@@ -691,6 +800,18 @@
       queryInput.value = chip.dataset.query;
       queryInput.focus();
     });
+  });
+
+  searchHistoryList.addEventListener("click", (event) => {
+    const chip = event.target.closest("[data-history-query]");
+    if (!chip) return;
+    queryInput.value = chip.dataset.historyQuery;
+    searchForm.requestSubmit();
+  });
+
+  btnClearHistory.addEventListener("click", () => {
+    ApiClient.clearHistory();
+    renderHistory();
   });
 
   detectionMap.onFeatureSelect = updateTableSelection;
@@ -753,7 +874,7 @@
         sortDir = sortDir === "asc" ? "desc" : "asc";
       } else {
         sortKey = key;
-        sortDir = key === "similarity" || key === "confianza" ? "desc" : "asc";
+        sortDir = key === "similarity" || key === "confianza" || key === "distance_to_reference_m" ? "desc" : "asc";
       }
       renderTable();
     });
@@ -783,7 +904,10 @@
         top_k: document.getElementById("top-k").value,
         per_layer_limit: document.getElementById("per-layer-limit").value,
         min_confidence: document.getElementById("min-confidence").value,
+        spatial_distance_m: document.getElementById("spatial-distance-m").value,
       });
+      ApiClient.addToHistory(queryInput.value);
+      renderHistory();
       renderResults(response);
     } catch (error) {
       showError(error.message);
@@ -794,5 +918,6 @@
 
   checkHealth();
   loadCatalog();
+  renderHistory();
   initSplitResizer();
 })();

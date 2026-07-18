@@ -30,12 +30,27 @@ class DetectionMap {
 
     this.popupEl = document.getElementById(popupId);
     this.vectorSource = new ol.source.Vector();
+    this.referenceSource = new ol.source.Vector();
     this.selectedFeatureIndex = null;
     this.onFeatureSelect = null;
 
     this.vectorLayer = new ol.layer.Vector({
       source: this.vectorSource,
       style: (feature) => this.styleForFeature(feature),
+    });
+
+    this.referenceLayer = new ol.layer.Vector({
+      source: this.referenceSource,
+      style: () =>
+        new ol.style.Style({
+          fill: new ol.style.Fill({ color: "rgba(249, 115, 22, 0.18)" }),
+          stroke: new ol.style.Stroke({
+            color: "rgba(234, 88, 12, 0.9)",
+            width: 2,
+            lineDash: [6, 4],
+          }),
+        }),
+      zIndex: 5,
     });
 
     this.baseLayer = new ol.layer.Tile({ source: new ol.source.OSM() });
@@ -47,6 +62,7 @@ class DetectionMap {
       target: targetId,
       layers: [
         this.baseLayer,
+        this.referenceLayer,
         this.vectorLayer,
       ],
       view: new ol.View({
@@ -258,6 +274,7 @@ class DetectionMap {
 
   clear() {
     this.vectorSource.clear();
+    this.referenceSource.clear();
     this.selectedFeatureIndex = null;
     this.hidePopup();
   }
@@ -266,12 +283,23 @@ class DetectionMap {
     this.clear();
 
     if (!featureCollection?.features?.length) {
+      this.loadReferenceFeatures(featureCollection?.metadata?.reference_features);
       return;
     }
 
     const features = this.geoJsonFormat.readFeatures(featureCollection);
     features.forEach((feature, index) => feature.set("featureIndex", index));
     this.vectorSource.addFeatures(features);
+    this.loadReferenceFeatures(featureCollection?.metadata?.reference_features);
+  }
+
+  loadReferenceFeatures(referenceCollection) {
+    this.referenceSource.clear();
+    if (!referenceCollection?.features?.length) return;
+
+    const features = this.geoJsonFormat.readFeatures(referenceCollection);
+    features.forEach((feature) => feature.set("role", "reference"));
+    this.referenceSource.addFeatures(features);
   }
 
   setFilteredIndices(visibleIndices) {
@@ -283,15 +311,18 @@ class DetectionMap {
   }
 
   showPopup(coordinate, props) {
-    const html = [
+    const lines = [
       `<strong>${props.clase_yolo ?? "—"}</strong>`,
       `similarity: ${props.similarity ?? "—"}`,
       `confianza: ${props.confianza ?? "—"}`,
-      `layer: ${props.layer ?? "—"}`,
-      `tile_id: ${props.tile_id ?? "—"}`,
-    ].join("<br>");
+    ];
+    if (props.distance_to_reference_m != null && props.distance_to_reference_m !== "") {
+      lines.push(`distancia: ${Number(props.distance_to_reference_m).toFixed(1)} m`);
+    }
+    lines.push(`layer: ${props.layer ?? "—"}`);
+    lines.push(`tile_id: ${props.tile_id ?? "—"}`);
 
-    this.popupEl.innerHTML = html;
+    this.popupEl.innerHTML = lines.join("<br>");
 
     const pixel = this.map.getPixelFromCoordinate(coordinate);
     if (!pixel) {

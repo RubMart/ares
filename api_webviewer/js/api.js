@@ -10,9 +10,46 @@ class ApiError extends Error {
 
 class ApiClient {
   static STORAGE_KEY = "api_webviewer_base_url";
+  static HISTORY_KEY = "api_webviewer_search_history";
+  static HISTORY_MAX = 5;
 
   static normalizeBaseUrl(url) {
     return url.replace(/\/+$/, "");
+  }
+
+  static loadHistory() {
+    try {
+      const raw = localStorage.getItem(ApiClient.HISTORY_KEY);
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      if (!Array.isArray(parsed)) return [];
+      return parsed
+        .filter((item) => typeof item === "string" && item.trim())
+        .map((item) => item.trim())
+        .slice(0, ApiClient.HISTORY_MAX);
+    } catch {
+      return [];
+    }
+  }
+
+  static saveHistory(list) {
+    localStorage.setItem(
+      ApiClient.HISTORY_KEY,
+      JSON.stringify(list.slice(0, ApiClient.HISTORY_MAX))
+    );
+  }
+
+  static addToHistory(query) {
+    const text = String(query || "").trim();
+    if (!text) return ApiClient.loadHistory();
+    const next = [text, ...ApiClient.loadHistory().filter((item) => item !== text)];
+    ApiClient.saveHistory(next);
+    return next;
+  }
+
+  static clearHistory() {
+    localStorage.removeItem(ApiClient.HISTORY_KEY);
+    return [];
   }
 
   static formatDetail(payload) {
@@ -76,6 +113,18 @@ class ApiClient {
     }
     if (params.min_confidence != null && params.min_confidence !== "") {
       body.min_confidence = Number(params.min_confidence);
+    }
+    if (params.spatial_distance_m != null && params.spatial_distance_m !== "") {
+      body.spatial_distance_m = Number(params.spatial_distance_m);
+    }
+    if (params.target) {
+      body.target = String(params.target).trim();
+    }
+    if (params.reference) {
+      body.reference = String(params.reference).trim();
+    }
+    if (params.spatial_relation) {
+      body.spatial_relation = params.spatial_relation;
     }
 
     return ApiClient.request(baseUrl, "/search", {

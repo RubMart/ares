@@ -230,6 +230,35 @@ input:focus {
   border-color: var(--primary);
 }
 
+.search-history {
+  margin-bottom: 0.75rem;
+}
+
+.search-history__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+
+.search-history__label {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.search-history__list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.search-history__empty {
+  margin: 0;
+  font-size: 0.75rem;
+}
+
 .advanced-options {
   margin-bottom: 0.75rem;
   font-size: 0.85rem;
@@ -411,6 +440,14 @@ input:focus {
 
 .metadata-item span {
   font-weight: 500;
+}
+
+.metadata-item--summary {
+  grid-column: 1 / -1;
+}
+
+.metadata-item--summary span {
+  font-size: 0.9rem;
 }
 
 .metadata-reasoning {
