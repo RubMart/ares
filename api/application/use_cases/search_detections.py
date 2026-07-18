@@ -193,7 +193,11 @@ class SearchDetectionsUseCase:
                 llm_started = time.perf_counter()
                 structured_query = await self._query_analyzer.analyze(query)
                 llm_ms = _elapsed_ms(llm_started)
-                source = "llm"
+                source = (
+                    "cache"
+                    if getattr(self._query_analyzer, "last_hit", False) is True
+                    else "llm"
+                )
 
         structured_query, warnings, source = self._apply_request_overrides(
             structured_query, request, initial_source=source

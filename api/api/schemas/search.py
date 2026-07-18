@@ -58,3 +58,17 @@ class HealthResponse(BaseModel):
     llm_status: str
     clip_model: str
     embedding_dim: int
+
+
+class LlmCacheStatusResponse(BaseModel):
+    size: int
+    maxsize: int
+    enabled: bool
+    keys: list[str]
+
+
+class LlmCacheClearResponse(BaseModel):
+    cleared: bool
+    size: int
+    maxsize: int
+    enabled: bool

@@ -25,7 +25,7 @@ api/
 ├── .env.example
 ├── pytest.ini
 ├── api/                    # Capa HTTP
-│   ├── routes/             # /health, /catalog, /search
+│   ├── routes/             # /health, /catalog, /search, /cache/llm
 │   ├── schemas/
 │   └── dependencies.py
 ├── application/            # Casos de uso y DTOs
@@ -105,6 +105,8 @@ Arranque en frío: carga CLIP en el lifespan (puede tardar la primera vez).
 | `GET` | `/health` | Estado de BD, Ollama y metadatos CLIP |
 | `GET` | `/catalog` | Capas del catálogo (`detecciones_catalogo` por defecto) |
 | `POST` | `/search` | Búsqueda híbrida → FeatureCollection GeoJSON |
+| `GET` | `/cache/llm` | Metadatos y claves de la caché LRU de interpretaciones |
+| `DELETE` | `/cache/llm` | Vacía toda la caché LRU de interpretaciones |
 
 ### `POST /search`
 
@@ -136,7 +138,7 @@ Flujo de interpretación (salta Ollama cuando no hace falta):
 
 1. Overrides suficientes (`target`, o `target`+`reference`) → `interpretation.source=override`, sin LLM.
 2. Match determinista inequívoco (catálogo exacto + `spatial_query_parser`, p. ej. `"piscinas"`, `"coches rojos"`, `"coches cerca de rotonda"`) → `source=parser`, sin LLM.
-3. Si no → Ollama + fallback de catálogo → `source=llm`.
+3. Si no → caché LRU del analizador (`source=cache` en hit) o Ollama + fallback de catálogo (`source=llm`). Tamaño: `LLM_CACHE_MAXSIZE` (default `256`; `0` desactiva).
 
 Después: CLIP embebe solo el *target* (+ atributos) → `search_hybrid` (clase) o `search_spatial_near` (`ST_DWithin`) → GeoJSON con `metadata.interpretation` (y `distance_to_reference_m` / `reference_features` en espacial).
 
@@ -216,6 +218,7 @@ Requiere `DATABASE_URL` válida y datos de catálogo cargados.
 | `CATALOG_TABLE` | `detecciones_catalogo` | |
 | `OLLAMA_BASE_URL` | `http://localhost:11434` | |
 | `OLLAMA_MODEL` | `llama3.2:3b` | |
+| `LLM_CACHE_MAXSIZE` | `256` | LRU en memoria de interpretaciones; `0` = off. Inspección/limpieza: `GET`/`DELETE` `/cache/llm` |
 | `CLIP_MODEL_NAME` | `clip-ViT-B-32` | Alias o ruta local |
 | `CLIP_LOCAL_DIR` | `../models/clip-vit-base-patch32` | Relativo a `api/` |
 | `DEFAULT_TOP_K` | `50` | |

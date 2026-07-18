@@ -5,6 +5,7 @@ from application.use_cases.search_detections import SearchDetectionsUseCase
 from config import settings
 from domain.services.query_analyzer import QueryAnalyzer
 from domain.services.text_embedder import TextEmbedder
+from infrastructure.ai.caching_query_analyzer import CachingQueryAnalyzer
 from infrastructure.ai.clip_text_embedder import ClipOnnxTextEmbedder
 from infrastructure.ai.ollama_query_analyzer import OllamaQueryAnalyzer
 from infrastructure.db.postgres_catalog_repository import PostgresCatalogRepository
@@ -32,7 +33,10 @@ def init_services() -> AppServices:
     global _services
     _services = AppServices(
         text_embedder=ClipOnnxTextEmbedder(),
-        query_analyzer=OllamaQueryAnalyzer(),
+        query_analyzer=CachingQueryAnalyzer(
+            OllamaQueryAnalyzer(),
+            maxsize=settings.llm_cache_maxsize,
+        ),
     )
     return _services
 

@@ -11,6 +11,8 @@ class Settings(BaseSettings):
     ollama_base_url: str = "http://localhost:11434"
     ollama_model: str = "llama3.2:3b"
     ollama_temperature: float = 0.0
+    # 0 = desactivar caché LRU del analizador LLM.
+    llm_cache_maxsize: int = 256
 
     clip_model_name: str = "clip-ViT-B-32"
     # Relativo a api/ → <repo>/models/clip-vit-base-patch32 (fuera de git).

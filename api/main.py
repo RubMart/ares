@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from api.dependencies import init_services, shutdown_services
+from api.routes.cache import router as cache_router
 from api.routes.catalog import router as catalog_router
 from api.routes.health import router as health_router
 from api.routes.search import router as search_router
@@ -34,3 +35,4 @@ app.add_middleware(
 app.include_router(health_router)
 app.include_router(catalog_router)
 app.include_router(search_router)
+app.include_router(cache_router)
