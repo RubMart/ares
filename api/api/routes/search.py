@@ -26,6 +26,10 @@ async def search_detections(
             if body.min_confidence is not None
             else settings.default_min_confidence
         ),
+        spatial_distance_m=body.spatial_distance_m,
+        spatial_relation=body.spatial_relation,
+        target=body.target,
+        reference=body.reference,
     )
     request = SearchRequestDTO(query=body.query, filters=filters)
 

@@ -21,6 +21,8 @@ class Settings(BaseSettings):
     default_top_k: int = 50
     default_per_layer_limit: int = 100
     default_min_confidence: float = 0.0
+    default_spatial_distance_m: float = 50.0
+    max_spatial_distance_m: float = 500.0
 
     catalog_table: str = "detecciones_catalogo"
 

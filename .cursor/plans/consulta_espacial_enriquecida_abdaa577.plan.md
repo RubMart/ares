@@ -4,28 +4,28 @@ overview: Extender el pipeline de búsqueda con un modelo semántico que disting
 todos:
   - id: domain-model
     content: Extender StructuredQuery, Detection y helpers (effective_target_classes, interpretation summary)
-    status: pending
+    status: completed
   - id: spatial-parser
     content: Crear spatial_query_parser.py y corregir apply_catalog_fallback (target/reference separados)
-    status: pending
+    status: completed
   - id: ollama-prompt
     content: Actualizar SYSTEM_PROMPT y schema Ollama para search_spatial con target/reference/relation
-    status: pending
+    status: completed
   - id: postgis-repo
     content: Implementar search_spatial_near con ST_DWithin + distance_to_reference_m; config distance defaults
-    status: pending
+    status: completed
   - id: use-case-clip
     content: Bifurcar SearchDetectionsUseCase; refactorizar build_clip_embedding_text solo target+attrs
-    status: pending
+    status: completed
   - id: api-metadata
     content: Extender SearchRequest (overrides), SearchFilters/DTO y GeoJsonSerializer metadata interpretation
-    status: pending
+    status: completed
   - id: webviewer-ux
     content: Panel interpretación, chips espaciales, distancia opcional, mapa referencias y columna distancia
-    status: pending
+    status: completed
   - id: tests
     content: Tests parser, fallback, CLIP, use case spatial, metadata GeoJSON y no-regresión consultas simples
-    status: pending
+    status: completed
 isProject: false
 ---
 

@@ -87,7 +87,25 @@ def test_build_clip_embedding_text_without_attributes() -> None:
         attributes=[],
         reasoning="",
     )
-    assert build_clip_embedding_text(structured, "coches") == "coches"
+    assert build_clip_embedding_text(structured, "coches") == "vehicle"
+
+
+def test_build_clip_embedding_text_spatial_uses_target_only() -> None:
+    structured = StructuredQuery(
+        intent="search_spatial",
+        detected_language="es",
+        object_label="coches",
+        canonical_label="vehicle",
+        clase_yolo_candidates=["car"],
+        attributes=[],
+        reasoning="",
+        relation="near",
+        target_canonical_label="vehicle",
+        target_clase_yolo=["car"],
+        reference_canonical_label="roundabout",
+        reference_clase_yolo=["roundabout"],
+    )
+    assert build_clip_embedding_text(structured, "coches cerca de una rotonda") == "vehicle"
 
 
 def test_apply_catalog_fallback_replaces_llm_synonyms() -> None:
@@ -225,10 +243,64 @@ def test_geojson_serializer() -> None:
         query="piscinas",
         structured_query=structured,
         layers_searched=["madrid_detections_example"],
+        embedding_text="swimming pool",
     )
     assert payload["type"] == "FeatureCollection"
     assert len(payload["features"]) == 1
     assert payload["metadata"]["detected_language"] == "es"
+    assert payload["metadata"]["interpretation"]["embedding_text"] == "swimming pool"
+    assert "summary_es" in payload["metadata"]["interpretation"]
+
+
+def test_geojson_serializer_spatial_fields() -> None:
+    detection = Detection(
+        id=10,
+        layer="madrid_detections_example",
+        tile_id="16/1/1",
+        clase_yolo="car",
+        modelo_deteccion="yolo",
+        confianza=0.8,
+        similarity=0.7,
+        geom_geojson={"type": "Point", "coordinates": [0, 0]},
+        distance_to_reference_m=18.25,
+        reference_id=55,
+        reference_geom_geojson={"type": "Point", "coordinates": [1, 1]},
+        reference_clase_yolo="roundabout",
+    )
+    structured = StructuredQuery(
+        intent="search_spatial",
+        detected_language="es",
+        object_label="coches",
+        canonical_label="vehicle",
+        clase_yolo_candidates=["car"],
+        attributes=[],
+        reasoning="",
+        relation="near",
+        distance_m=50,
+        target_label="coches",
+        target_canonical_label="vehicle",
+        target_clase_yolo=["car"],
+        reference_label="rotonda",
+        reference_canonical_label="roundabout",
+        reference_clase_yolo=["roundabout"],
+    )
+    payload = GeoJsonSerializer.to_feature_collection(
+        detections=[detection],
+        query="coches cerca de rotonda",
+        structured_query=structured,
+        layers_searched=["madrid_detections_example"],
+        embedding_text="vehicle",
+        distance_m=50,
+        interpretation_source="parser",
+    )
+    props = payload["features"][0]["properties"]
+    assert props["distance_to_reference_m"] == 18.25
+    assert props["reference_id"] == 55
+    interpretation = payload["metadata"]["interpretation"]
+    assert interpretation["intent"] == "search_spatial"
+    assert interpretation["distance_m"] == 50
+    assert interpretation["reference"]["canonical"] == "roundabout"
+    assert payload["metadata"]["reference_features"]["features"][0]["properties"]["role"] == "reference"
 
 
 def test_resolve_clip_model_name_uses_local_dir(

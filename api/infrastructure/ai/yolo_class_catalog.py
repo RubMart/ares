@@ -8,6 +8,10 @@ from infrastructure.ai.attribute_catalog import (
     extract_attributes_from_query,
     normalize_attributes,
 )
+from infrastructure.ai.spatial_query_parser import (
+    merge_spatial_parse_into_structured,
+    parse_spatial_relation,
+)
 
 STOP_WORDS = {
     "buscar",
@@ -22,8 +26,6 @@ STOP_WORDS = {
     "search",
     "show",
     "get",
-    "near",
-    "cerca",
     "de",
     "del",
     "la",
@@ -35,7 +37,28 @@ STOP_WORDS = {
     "sin",
     "y",
     "o",
+    "una",
+    "un",
+    "unos",
+    "unas",
+    "the",
+    "a",
+    "an",
 }
+
+# Spatial relation tokens are NOT stripped during class matching of full
+# compound queries; they are handled by spatial_query_parser instead.
+SPATIAL_STOP_WORDS = {
+    "near",
+    "cerca",
+    "junto",
+    "alrededor",
+    "next",
+    "close",
+    "around",
+    "to",
+}
+
 
 @dataclass(frozen=True)
 class YoloClassEntry:
@@ -278,6 +301,7 @@ def find_catalog_entry(query_or_label: str) -> YoloClassEntry | None:
 
     return None
 
+
 def build_catalog_prompt_section() -> str:
     lines: list[str] = []
     for entry in YOLO_CLASS_CATALOG:
@@ -308,13 +332,117 @@ def all_catalog_clase_yolo() -> set[str]:
     return {cls for entry in YOLO_CLASS_CATALOG for cls in entry.clase_yolo}
 
 
-def apply_catalog_fallback(structured: StructuredQuery, query: str) -> StructuredQuery:
-    lookup_terms = [
-        query,
-        structured.object_label or "",
-        structured.canonical_label or "",
+def _resolve_entry_from_terms(terms: list[str]) -> YoloClassEntry | None:
+    for term in terms:
+        if not term:
+            continue
+        entry = find_catalog_entry(term)
+        if entry is not None:
+            return entry
+    return None
+
+
+def resolve_spatial_query(structured: StructuredQuery, query: str) -> StructuredQuery:
+    parsed = parse_spatial_relation(query)
+    current = structured
+    if parsed is not None:
+        current = merge_spatial_parse_into_structured(current, parsed)
+
+    if current.intent != "search_spatial" and current.relation is None:
+        return current
+
+    target_terms = [
+        current.target_canonical_label or "",
+        current.target_label or "",
+        current.canonical_label or "",
+        current.object_label or "",
+        parsed.target_fragment if parsed else "",
     ]
-    entry = next((find_catalog_entry(term) for term in lookup_terms if term), None)
+    reference_terms = [
+        current.reference_canonical_label or "",
+        current.reference_label or "",
+        parsed.reference_fragment if parsed else "",
+    ]
+
+    target_entry = _resolve_entry_from_terms(target_terms)
+    reference_entry = _resolve_entry_from_terms(reference_terms)
+
+    if target_entry is None or reference_entry is None:
+        # Incomplete spatial parse — leave unresolved so use case can error clearly.
+        updates: dict[str, object] = {"intent": "search_spatial"}
+        if current.relation is None and parsed is not None:
+            updates["relation"] = parsed.relation
+        if target_entry is not None:
+            updates.update(
+                {
+                    "target_canonical_label": target_entry.canonical_label,
+                    "target_clase_yolo": list(target_entry.clase_yolo),
+                    "canonical_label": target_entry.canonical_label,
+                    "clase_yolo_candidates": list(target_entry.clase_yolo),
+                    "target_label": current.target_label
+                    or current.object_label
+                    or (parsed.target_fragment if parsed else None),
+                    "object_label": current.object_label
+                    or current.target_label
+                    or (parsed.target_fragment if parsed else None),
+                }
+            )
+        if reference_entry is not None:
+            updates.update(
+                {
+                    "reference_canonical_label": reference_entry.canonical_label,
+                    "reference_clase_yolo": list(reference_entry.clase_yolo),
+                    "reference_label": current.reference_label
+                    or (parsed.reference_fragment if parsed else None),
+                }
+            )
+        return current.model_copy(update=updates)
+
+    attributes = normalize_attributes(current.attributes)
+    if not attributes:
+        attributes = extract_attributes_from_query(
+            parsed.target_fragment if parsed else (current.target_label or query)
+        )
+
+    target_label = (
+        current.target_label
+        or current.object_label
+        or (parsed.target_fragment if parsed else None)
+    )
+    reference_label = current.reference_label or (
+        parsed.reference_fragment if parsed else None
+    )
+
+    return current.model_copy(
+        update={
+            "intent": "search_spatial",
+            "relation": current.relation or (parsed.relation if parsed else "near"),
+            "target_label": target_label,
+            "target_canonical_label": target_entry.canonical_label,
+            "target_clase_yolo": list(target_entry.clase_yolo),
+            "reference_label": reference_label,
+            "reference_canonical_label": reference_entry.canonical_label,
+            "reference_clase_yolo": list(reference_entry.clase_yolo),
+            "canonical_label": target_entry.canonical_label,
+            "object_label": target_label,
+            "clase_yolo_candidates": list(target_entry.clase_yolo),
+            "attributes": attributes,
+        }
+    )
+
+
+def _apply_simple_class_fallback(
+    structured: StructuredQuery, query: str
+) -> StructuredQuery:
+    # Prefer LLM labels over matching the full compound query string.
+    lookup_terms = [
+        structured.target_canonical_label or "",
+        structured.canonical_label or "",
+        structured.target_label or "",
+        structured.object_label or "",
+        query,
+    ]
+    entry = _resolve_entry_from_terms(lookup_terms)
 
     if entry is not None:
         candidates = list(entry.clase_yolo)
@@ -333,8 +461,11 @@ def apply_catalog_fallback(structured: StructuredQuery, query: str) -> Structure
     if not candidates:
         return structured
 
-    updates: dict[str, object] = {"clase_yolo_candidates": candidates}
-    if structured.intent != "search_class":
+    updates: dict[str, object] = {
+        "clase_yolo_candidates": candidates,
+        "target_clase_yolo": candidates,
+    }
+    if structured.intent not in ("search_class", "search_spatial"):
         updates["intent"] = "search_class"
 
     attributes = normalize_attributes(structured.attributes)
@@ -345,7 +476,24 @@ def apply_catalog_fallback(structured: StructuredQuery, query: str) -> Structure
 
     if entry is not None:
         updates["canonical_label"] = entry.canonical_label
+        updates["target_canonical_label"] = entry.canonical_label
         if not structured.object_label:
             updates["object_label"] = query.strip()
+        if not structured.target_label:
+            updates["target_label"] = structured.object_label or query.strip()
 
     return structured.model_copy(update=updates)
+
+
+def apply_catalog_fallback(structured: StructuredQuery, query: str) -> StructuredQuery:
+    parsed = parse_spatial_relation(query)
+    is_spatial = (
+        structured.intent == "search_spatial"
+        or structured.relation is not None
+        or parsed is not None
+    )
+
+    if is_spatial:
+        return resolve_spatial_query(structured, query)
+
+    return _apply_simple_class_fallback(structured, query)

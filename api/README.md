@@ -108,7 +108,7 @@ Arranque en frío: carga CLIP en el lifespan (puede tardar la primera vez).
 
 ### `POST /search`
 
-Cuerpo JSON:
+Cuerpo JSON (consulta simple):
 
 ```json
 {
@@ -119,11 +119,29 @@ Cuerpo JSON:
 }
 ```
 
-Solo `query` es obligatorio. El resto usa defaults de `.env` / `config.py`.
+Consulta espacial (NL o con overrides explícitos):
 
-Flujo: Ollama estructura la consulta → CLIP embebe el texto → filtro por clase YOLO + ranking por similitud coseno en pgvector → GeoJSON.
+```json
+{
+  "query": "coches cerca de rotonda",
+  "target": "vehicle",
+  "reference": "roundabout",
+  "spatial_distance_m": 30
+}
+```
 
-Errores frecuentes: `400` validación, `503` LLM no disponible, `500` error interno.
+Solo `query` es obligatorio. Campos opcionales `target`, `reference`, `spatial_relation` (`near`) y `spatial_distance_m` (1–500) tienen prioridad sobre la interpretación del LLM. Defaults de distancia: `DEFAULT_SPATIAL_DISTANCE_M=50`, `MAX_SPATIAL_DISTANCE_M=500`.
+
+Flujo: Ollama + parser espacial → CLIP embebe solo el *target* (+ atributos) → `search_hybrid` (clase) o `search_spatial_near` (`ST_DWithin`) → GeoJSON con `metadata.interpretation` (y `distance_to_reference_m` / `reference_features` en espacial).
+
+**Índices espaciales recomendados** por capa (EPSG:3857, unidades ~metros):
+
+```sql
+CREATE INDEX IF NOT EXISTS idx_<capa>_geom ON <capa> USING GIST (geom);
+CREATE INDEX IF NOT EXISTS idx_<capa>_clase_geom ON <capa> (clase_yolo) INCLUDE (geom);
+```
+
+Errores frecuentes: `400` validación (p. ej. referencia espacial ausente), `503` LLM no disponible, `500` error interno.
 
 ## Gestión de modelos
 
@@ -195,4 +213,6 @@ Requiere `DATABASE_URL` válida y datos de catálogo cargados.
 | `CLIP_MODEL_NAME` | `clip-ViT-B-32` | Alias o ruta local |
 | `CLIP_LOCAL_DIR` | `../models/clip-vit-base-patch32` | Relativo a `api/` |
 | `DEFAULT_TOP_K` | `50` | |
+| `DEFAULT_SPATIAL_DISTANCE_M` | `50` | Radio por defecto en `search_spatial` |
+| `MAX_SPATIAL_DISTANCE_M` | `500` | Tope de `spatial_distance_m` |
 | `CORS_ORIGINS` | `["*"]` | JSON en `.env` |

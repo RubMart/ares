@@ -73,13 +73,28 @@ def extract_attributes_from_query(query: str) -> list[str]:
     return extracted
 
 
-def build_clip_embedding_text(structured: StructuredQuery, original_query: str) -> str:
+def build_target_embedding_text(structured: StructuredQuery) -> str:
+    """Build CLIP text from target + attributes only (never the full compound query)."""
     attributes = normalize_attributes(structured.attributes)
-    if not attributes:
-        return original_query.strip()
+    label = (
+        structured.effective_target_canonical()
+        or structured.effective_target_label()
+        or ""
+    ).strip()
 
-    label = (structured.canonical_label or structured.object_label or "").strip()
-    if not label:
-        return original_query.strip()
+    if attributes and label:
+        return f"{' '.join(attributes)} {label}"
+    if attributes:
+        return " ".join(attributes)
+    if label:
+        return label
+    return ""
 
-    return f"{' '.join(attributes)} {label}"
+
+def build_clip_embedding_text(structured: StructuredQuery, original_query: str) -> str:
+    text = build_target_embedding_text(structured)
+    if text:
+        return text
+    # Last resort: never embed a compound spatial phrase; strip to a short token.
+    fallback = (original_query or "").strip()
+    return fallback.split()[0] if fallback else ""
