@@ -29,6 +29,8 @@ class Settings(BaseSettings):
     default_min_confidence: float = 0.0
     default_spatial_distance_m: float = 50.0
     max_spatial_distance_m: float = 500.0
+    # Longitud máxima de SearchRequest.query (caracteres).
+    max_query_length: int = 500
 
     catalog_table: str = "detecciones_catalogo"
 

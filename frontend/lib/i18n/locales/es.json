@@ -37,6 +37,7 @@
     "runSearch": "Ejecuta una búsqueda para ver resultados ordenados aquí.",
     "error": "Error en la búsqueda",
     "emptyQuery": "Escribe una consulta para buscar.",
+    "queryTooLong": "La consulta no puede superar {{max}} caracteres.",
     "apiOffline": "La API no está disponible. Comprueba el estado e inténtalo de nuevo."
   },
   "searchHelp": {

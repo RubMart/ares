@@ -27,6 +27,7 @@ import {
   confidenceLevel,
   type ConfidenceLevel,
 } from '@/lib/map/confidence'
+import { MAX_QUERY_LENGTH } from '@/lib/search-limits'
 import { cn } from '@/lib/utils'
 
 const MapView = dynamic(() => import('@/components/ares/map-view'), {
@@ -220,6 +221,10 @@ export default function Page() {
     const q = query.trim()
     if (!q) {
       setSearchError(t('search.emptyQuery'))
+      return
+    }
+    if (q.length > MAX_QUERY_LENGTH) {
+      setSearchError(t('search.queryTooLong', { max: MAX_QUERY_LENGTH }))
       return
     }
     if (api.status === 'offline') {

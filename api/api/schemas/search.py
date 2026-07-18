@@ -2,9 +2,16 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
+from config import settings
+
 
 class SearchRequest(BaseModel):
-    query: str = Field(..., min_length=1, description="Consulta en español o inglés")
+    query: str = Field(
+        ...,
+        min_length=1,
+        max_length=settings.max_query_length,
+        description="Consulta en español o inglés",
+    )
     top_k: int | None = Field(default=None, ge=1, le=500)
     per_layer_limit: int | None = Field(default=None, ge=1, le=2000)
     min_confidence: float | None = Field(default=None, ge=0.0, le=1.0)

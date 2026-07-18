@@ -33,6 +33,18 @@ def test_format_pgvector_literal() -> None:
     assert format_pgvector_literal([1.0, 2.0]) == "[1.00000000,2.00000000]"
 
 
+def test_search_request_query_max_length() -> None:
+    from pydantic import ValidationError
+
+    from api.schemas.search import SearchRequest
+    from config import settings
+
+    max_len = settings.max_query_length
+    SearchRequest(query="a" * max_len)
+    with pytest.raises(ValidationError):
+        SearchRequest(query="a" * (max_len + 1))
+
+
 def test_resolve_clase_yolo_from_canonical() -> None:
     classes = resolve_clase_yolo_from_canonical("swimming pool")
     assert "swimming_pool" in classes

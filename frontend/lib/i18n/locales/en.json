@@ -37,6 +37,7 @@
     "runSearch": "Run a search to see ranked results here.",
     "error": "Search failed",
     "emptyQuery": "Enter a query to search.",
+    "queryTooLong": "The query cannot exceed {{max}} characters.",
     "apiOffline": "The API is unavailable. Check status and try again."
   },
   "searchHelp": {

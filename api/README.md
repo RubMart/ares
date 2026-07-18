@@ -132,7 +132,7 @@ Consulta espacial (NL o con overrides explícitos):
 }
 ```
 
-Solo `query` es obligatorio. Campos opcionales `target`, `reference`, `spatial_relation` (`near`) y `spatial_distance_m` (1–500) tienen prioridad sobre la interpretación del LLM. Defaults de distancia: `DEFAULT_SPATIAL_DISTANCE_M=50`, `MAX_SPATIAL_DISTANCE_M=500`.
+Solo `query` es obligatorio (1–`MAX_QUERY_LENGTH` caracteres; default 500). Campos opcionales `target`, `reference`, `spatial_relation` (`near`) y `spatial_distance_m` (1–500) tienen prioridad sobre la interpretación del LLM. Defaults de distancia: `DEFAULT_SPATIAL_DISTANCE_M=50`, `MAX_SPATIAL_DISTANCE_M=500`.
 
 Flujo de interpretación (salta Ollama cuando no hace falta):
 
@@ -224,6 +224,7 @@ Requiere `DATABASE_URL` válida y datos de catálogo cargados.
 | `DEFAULT_TOP_K` | `50` | |
 | `DEFAULT_SPATIAL_DISTANCE_M` | `50` | Radio por defecto en `search_spatial` |
 | `MAX_SPATIAL_DISTANCE_M` | `500` | Tope de `spatial_distance_m` |
+| `MAX_QUERY_LENGTH` | `500` | Tope de caracteres de `query` en `POST /search` |
 | `CORS_ORIGINS` | `["*"]` | JSON en `.env` |
 | `RATE_LIMIT_ENABLED` | `true` | Rate limit de `POST /search` |
 | `RATE_LIMIT_SEARCH` | `30/minute` | Formato slowapi (`N/minute`, `N/hour`, …) |

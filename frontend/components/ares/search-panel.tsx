@@ -11,6 +11,7 @@ import { LanguageSwitcher } from '@/components/ares/language-switcher'
 import { ResultsTable } from '@/components/ares/results-table'
 import type { ApiStatus } from '@/hooks/use-api-status'
 import type { SearchResult } from '@/lib/api/types'
+import { MAX_QUERY_LENGTH } from '@/lib/search-limits'
 import { cn } from '@/lib/utils'
 
 type SearchPanelProps = {
@@ -132,6 +133,7 @@ export function SearchPanel(props: SearchPanelProps) {
             onKeyDown={handleKeyDown}
             placeholder={t('search.queryPlaceholder')}
             autoComplete="off"
+            maxLength={MAX_QUERY_LENGTH}
             className="w-full rounded-lg border border-input bg-card px-3 py-2.5 text-sm text-foreground shadow-sm outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-ring/30"
           />
           <div className="flex flex-wrap items-center gap-1.5">
