@@ -225,3 +225,5 @@ Requiere `DATABASE_URL` válida y datos de catálogo cargados.
 | `DEFAULT_SPATIAL_DISTANCE_M` | `50` | Radio por defecto en `search_spatial` |
 | `MAX_SPATIAL_DISTANCE_M` | `500` | Tope de `spatial_distance_m` |
 | `CORS_ORIGINS` | `["*"]` | JSON en `.env` |
+| `RATE_LIMIT_ENABLED` | `true` | Rate limit de `POST /search` |
+| `RATE_LIMIT_SEARCH` | `30/minute` | Formato slowapi (`N/minute`, `N/hour`, …) |

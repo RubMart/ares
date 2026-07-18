@@ -6,6 +6,10 @@ class Settings(BaseSettings):
     debug: bool = False
     cors_origins: list[str] = ["*"]
 
+    # Rate limit de POST /search (formato slowapi: "30/minute", "100/hour", …).
+    rate_limit_enabled: bool = True
+    rate_limit_search: str = "15/minute"
+
     database_url: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/detecciones"
 
     ollama_base_url: str = "http://localhost:11434"

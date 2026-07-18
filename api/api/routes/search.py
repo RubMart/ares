@@ -1,7 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException
+import logging
+
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.dependencies import build_search_use_case, get_db_session
+from api.rate_limit import limiter, search_rate_limit
 from api.schemas.search import SearchRequest
 from application.dto.search_dto import SearchRequestDTO
 from application.use_cases.search_detections import SearchValidationError
@@ -9,11 +12,15 @@ from config import settings
 from domain.services.query_analyzer import QueryAnalyzerError
 from domain.value_objects.search_filters import SearchFilters
 
+logger = logging.getLogger(__name__)
+
 router = APIRouter(tags=["search"])
 
 
 @router.post("/search")
+@limiter.limit(search_rate_limit)
 async def search_detections(
+    request: Request,
     body: SearchRequest,
     session: AsyncSession = Depends(get_db_session),
 ) -> dict:
@@ -31,21 +38,23 @@ async def search_detections(
         target=body.target,
         reference=body.reference,
     )
-    request = SearchRequestDTO(query=body.query, filters=filters)
+    search_request = SearchRequestDTO(query=body.query, filters=filters)
 
     try:
-        result = await use_case.execute(request)
+        result = await use_case.execute(search_request)
     except SearchValidationError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     except QueryAnalyzerError as exc:
+        logger.warning("Analizador semántico no disponible: %s", exc)
         raise HTTPException(
             status_code=503,
-            detail=f"El analizador semántico no está disponible: {exc}",
+            detail="El analizador semántico no está disponible",
         ) from exc
-    except Exception as exc:
+    except Exception:
+        logger.exception("Error interno durante la búsqueda")
         raise HTTPException(
             status_code=500,
-            detail=f"Error interno durante la búsqueda: {exc}",
-        ) from exc
+            detail="Error interno durante la búsqueda",
+        ) from None
 
     return result.feature_collection
