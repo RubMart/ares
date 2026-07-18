@@ -17,7 +17,7 @@ def _build_use_case(
     *,
     structured: StructuredQuery,
     detection_repository: MagicMock | None = None,
-) -> tuple[SearchDetectionsUseCase, MagicMock, MagicMock]:
+) -> tuple[SearchDetectionsUseCase, MagicMock, MagicMock, MagicMock]:
     query_analyzer = MagicMock()
     query_analyzer.analyze = AsyncMock(return_value=structured)
 
@@ -40,7 +40,7 @@ def _build_use_case(
         catalog_repository=catalog_repository,
         detection_repository=detection_repository,
     )
-    return use_case, text_embedder, detection_repository
+    return use_case, text_embedder, detection_repository, query_analyzer
 
 
 def test_search_uses_attribute_enriched_embedding_text() -> None:
@@ -55,9 +55,11 @@ def test_search_uses_attribute_enriched_embedding_text() -> None:
         target_canonical_label="vehicle",
         target_clase_yolo=["car", "small vehicle"],
     )
-    use_case, text_embedder, detection_repository = _build_use_case(structured=structured)
+    use_case, text_embedder, detection_repository, query_analyzer = _build_use_case(
+        structured=structured
+    )
 
-    asyncio.run(
+    result = asyncio.run(
         use_case.execute(
             SearchRequestDTO(
                 query="coches rojos",
@@ -69,6 +71,9 @@ def test_search_uses_attribute_enriched_embedding_text() -> None:
     text_embedder.embed_text.assert_called_once_with("red vehicle")
     detection_repository.search_hybrid.assert_awaited_once()
     detection_repository.search_spatial_near.assert_not_awaited()
+    query_analyzer.analyze.assert_not_awaited()
+    assert result.feature_collection["metadata"]["interpretation"]["source"] == "parser"
+    assert result.feature_collection["metadata"]["timings"]["llm_ms"] == 0.0
 
 
 def test_search_spatial_calls_spatial_near() -> None:
@@ -88,9 +93,11 @@ def test_search_spatial_calls_spatial_near() -> None:
         reference_canonical_label="roundabout",
         reference_clase_yolo=["roundabout"],
     )
-    use_case, text_embedder, detection_repository = _build_use_case(structured=structured)
+    use_case, text_embedder, detection_repository, query_analyzer = _build_use_case(
+        structured=structured
+    )
 
-    asyncio.run(
+    result = asyncio.run(
         use_case.execute(
             SearchRequestDTO(
                 query="coches cerca de rotonda",
@@ -102,14 +109,17 @@ def test_search_spatial_calls_spatial_near() -> None:
     text_embedder.embed_text.assert_called_once_with("vehicle")
     detection_repository.search_spatial_near.assert_awaited_once()
     detection_repository.search_hybrid.assert_not_awaited()
+    query_analyzer.analyze.assert_not_awaited()
     call_kwargs = detection_repository.search_spatial_near.await_args.kwargs
-    assert call_kwargs["target_clase_yolo_list"] == ["car", "small vehicle"]
+    assert "car" in call_kwargs["target_clase_yolo_list"]
     assert call_kwargs["reference_clase_yolo_list"] == ["roundabout"]
     assert call_kwargs["distance_m"] == 50.0
+    assert result.feature_collection["metadata"]["interpretation"]["source"] == "parser"
+    assert result.feature_collection["metadata"]["timings"]["llm_ms"] == 0.0
 
 
 def test_search_spatial_override_target_reference() -> None:
-    # LLM wrongly classified as roundabout-only; overrides fix it.
+    # Overrides suficientes: no se invoca el LLM aunque el mock devolvería basura.
     structured = StructuredQuery(
         intent="search_class",
         detected_language="es",
@@ -119,9 +129,9 @@ def test_search_spatial_override_target_reference() -> None:
         attributes=[],
         reasoning="",
     )
-    use_case, _, detection_repository = _build_use_case(structured=structured)
+    use_case, _, detection_repository, query_analyzer = _build_use_case(structured=structured)
 
-    asyncio.run(
+    result = asyncio.run(
         use_case.execute(
             SearchRequestDTO(
                 query="coches cerca de rotonda",
@@ -138,11 +148,66 @@ def test_search_spatial_override_target_reference() -> None:
         )
     )
 
+    query_analyzer.analyze.assert_not_awaited()
     detection_repository.search_spatial_near.assert_awaited_once()
     call_kwargs = detection_repository.search_spatial_near.await_args.kwargs
     assert "car" in call_kwargs["target_clase_yolo_list"]
     assert call_kwargs["reference_clase_yolo_list"] == ["roundabout"]
     assert call_kwargs["distance_m"] == 30
+    assert result.feature_collection["metadata"]["interpretation"]["source"] == "override"
+    assert result.feature_collection["metadata"]["timings"]["llm_ms"] == 0.0
+
+
+def test_search_ambiguous_falls_back_to_llm() -> None:
+    structured = StructuredQuery(
+        intent="search_class",
+        detected_language="es",
+        object_label="vehículos",
+        canonical_label="vehicle",
+        clase_yolo_candidates=["car"],
+        attributes=[],
+        reasoning="llm",
+        target_canonical_label="vehicle",
+        target_clase_yolo=["car"],
+    )
+    use_case, _, detection_repository, query_analyzer = _build_use_case(structured=structured)
+
+    result = asyncio.run(
+        use_case.execute(
+            SearchRequestDTO(
+                query="quiero ver vehículos aparcados",
+                filters=SearchFilters(top_k=10, per_layer_limit=100, min_confidence=0.0),
+            )
+        )
+    )
+
+    query_analyzer.analyze.assert_awaited_once_with("quiero ver vehículos aparcados")
+    detection_repository.search_hybrid.assert_awaited_once()
+    assert result.feature_collection["metadata"]["interpretation"]["source"] == "llm"
+
+
+def test_search_piscinas_parser_skips_llm() -> None:
+    structured = StructuredQuery(
+        intent="unknown",
+        detected_language="unknown",
+        reasoning="",
+    )
+    use_case, _, detection_repository, query_analyzer = _build_use_case(structured=structured)
+
+    result = asyncio.run(
+        use_case.execute(
+            SearchRequestDTO(
+                query="piscinas",
+                filters=SearchFilters(top_k=10, per_layer_limit=100, min_confidence=0.0),
+            )
+        )
+    )
+
+    query_analyzer.analyze.assert_not_awaited()
+    detection_repository.search_hybrid.assert_awaited_once()
+    assert result.feature_collection["metadata"]["interpretation"]["source"] == "parser"
+    assert result.feature_collection["metadata"]["timings"]["llm_ms"] == 0.0
+    assert result.structured_query.target_canonical_label == "swimming pool"
 
 
 def test_search_spatial_missing_reference_raises() -> None:
@@ -159,7 +224,7 @@ def test_search_spatial_missing_reference_raises() -> None:
         target_clase_yolo=["car"],
         reference_clase_yolo=[],
     )
-    use_case, _, _ = _build_use_case(structured=structured)
+    use_case, _, _, _ = _build_use_case(structured=structured)
 
     with pytest.raises(SearchValidationError, match="referencia espacial"):
         asyncio.run(
@@ -185,7 +250,7 @@ def test_search_inside_relation_not_supported() -> None:
         target_clase_yolo=["car"],
         reference_clase_yolo=["roundabout"],
     )
-    use_case, _, _ = _build_use_case(structured=structured)
+    use_case, _, _, _ = _build_use_case(structured=structured)
 
     with pytest.raises(SearchValidationError, match="inside"):
         asyncio.run(
@@ -228,7 +293,7 @@ def test_search_spatial_embeds_target_not_full_phrase() -> None:
     detection_repository = MagicMock()
     detection_repository.search_hybrid = AsyncMock(return_value=[])
     detection_repository.search_spatial_near = AsyncMock(return_value=[detection])
-    use_case, text_embedder, _ = _build_use_case(
+    use_case, text_embedder, _, _ = _build_use_case(
         structured=structured, detection_repository=detection_repository
     )
 

@@ -132,7 +132,13 @@ Consulta espacial (NL o con overrides explícitos):
 
 Solo `query` es obligatorio. Campos opcionales `target`, `reference`, `spatial_relation` (`near`) y `spatial_distance_m` (1–500) tienen prioridad sobre la interpretación del LLM. Defaults de distancia: `DEFAULT_SPATIAL_DISTANCE_M=50`, `MAX_SPATIAL_DISTANCE_M=500`.
 
-Flujo: Ollama + parser espacial → CLIP embebe solo el *target* (+ atributos) → `search_hybrid` (clase) o `search_spatial_near` (`ST_DWithin`) → GeoJSON con `metadata.interpretation` (y `distance_to_reference_m` / `reference_features` en espacial).
+Flujo de interpretación (salta Ollama cuando no hace falta):
+
+1. Overrides suficientes (`target`, o `target`+`reference`) → `interpretation.source=override`, sin LLM.
+2. Match determinista inequívoco (catálogo exacto + `spatial_query_parser`, p. ej. `"piscinas"`, `"coches rojos"`, `"coches cerca de rotonda"`) → `source=parser`, sin LLM.
+3. Si no → Ollama + fallback de catálogo → `source=llm`.
+
+Después: CLIP embebe solo el *target* (+ atributos) → `search_hybrid` (clase) o `search_spatial_near` (`ST_DWithin`) → GeoJSON con `metadata.interpretation` (y `distance_to_reference_m` / `reference_features` en espacial).
 
 **Índices espaciales recomendados** por capa (EPSG:3857, unidades ~metros):
 

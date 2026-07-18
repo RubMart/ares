@@ -302,6 +302,22 @@ def find_catalog_entry(query_or_label: str) -> YoloClassEntry | None:
     return None
 
 
+def find_catalog_entry_exact(query_or_label: str) -> YoloClassEntry | None:
+    """Strict catalog match for LLM fast-path: exact term only (after strip)."""
+    normalized = _normalize_text(query_or_label)
+    if not normalized:
+        return None
+
+    entry = _match_exact(normalized)
+    if entry is not None:
+        return entry
+
+    cleaned = _strip_non_class_tokens(normalized)
+    if not cleaned:
+        return None
+    return _match_exact(cleaned)
+
+
 def build_catalog_prompt_section() -> str:
     lines: list[str] = []
     for entry in YOLO_CLASS_CATALOG:

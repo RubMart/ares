@@ -7,7 +7,11 @@ from domain.repositories.detection_repository import DetectionRepository
 from domain.services.query_analyzer import QueryAnalyzer
 from domain.services.text_embedder import TextEmbedder
 from domain.value_objects.semantic_query import StructuredQuery
-from infrastructure.ai.attribute_catalog import build_clip_embedding_text
+from infrastructure.ai.attribute_catalog import (
+    build_clip_embedding_text,
+    extract_attributes_from_query,
+)
+from infrastructure.ai.deterministic_query_parser import try_deterministic_parse
 from infrastructure.ai.yolo_class_catalog import find_catalog_entry
 from infrastructure.geo.geojson_serializer import GeoJsonSerializer
 
@@ -34,11 +38,72 @@ class SearchDetectionsUseCase:
         self._catalog_repository = catalog_repository
         self._detection_repository = detection_repository
 
+    def _build_from_overrides(self, request: SearchRequestDTO) -> StructuredQuery | None:
+        """Build StructuredQuery without LLM when target (and reference) overrides suffice."""
+        filters = request.filters
+        if not filters.target:
+            return None
+
+        # Incomplete spatial override: need reference when relation is set alone with target.
+        if filters.spatial_relation and not filters.reference:
+            return None
+
+        target_entry = find_catalog_entry(filters.target)
+        if target_entry is None:
+            raise SearchValidationError(
+                f"No se pudo mapear el target '{filters.target}' a ninguna clase YOLO conocida."
+            )
+
+        attributes = extract_attributes_from_query(request.query)
+        target_classes = list(target_entry.clase_yolo)
+
+        if filters.reference:
+            reference_entry = find_catalog_entry(filters.reference)
+            if reference_entry is None:
+                raise SearchValidationError(
+                    f"No se pudo mapear la referencia '{filters.reference}' "
+                    "a ninguna clase YOLO conocida."
+                )
+            relation = filters.spatial_relation or "near"
+            return StructuredQuery(
+                intent="search_spatial",
+                detected_language="unknown",
+                object_label=filters.target,
+                canonical_label=target_entry.canonical_label,
+                clase_yolo_candidates=target_classes,
+                attributes=attributes,
+                reasoning="explicit request overrides",
+                relation=relation,
+                target_label=filters.target,
+                target_canonical_label=target_entry.canonical_label,
+                target_clase_yolo=target_classes,
+                reference_label=filters.reference,
+                reference_canonical_label=reference_entry.canonical_label,
+                reference_clase_yolo=list(reference_entry.clase_yolo),
+            )
+
+        return StructuredQuery(
+            intent="search_class",
+            detected_language="unknown",
+            object_label=filters.target,
+            canonical_label=target_entry.canonical_label,
+            clase_yolo_candidates=target_classes,
+            attributes=attributes,
+            reasoning="explicit request overrides",
+            target_label=filters.target,
+            target_canonical_label=target_entry.canonical_label,
+            target_clase_yolo=target_classes,
+        )
+
     def _apply_request_overrides(
-        self, structured: StructuredQuery, request: SearchRequestDTO
+        self,
+        structured: StructuredQuery,
+        request: SearchRequestDTO,
+        *,
+        initial_source: str = "llm",
     ) -> tuple[StructuredQuery, list[str], str]:
         warnings: list[str] = []
-        source = "llm"
+        source = initial_source
         updates: dict[str, object] = {}
         filters = request.filters
 
@@ -84,7 +149,6 @@ class SearchDetectionsUseCase:
 
         if filters.spatial_distance_m is not None:
             updates["distance_m"] = filters.spatial_distance_m
-            source = "override" if source == "override" else "override"
 
         if updates:
             structured = structured.model_copy(update=updates)
@@ -117,12 +181,22 @@ class SearchDetectionsUseCase:
         if not query:
             raise SearchValidationError("La consulta no puede estar vacía.")
 
-        llm_started = time.perf_counter()
-        structured_query = await self._query_analyzer.analyze(query)
-        llm_ms = _elapsed_ms(llm_started)
+        llm_ms = 0.0
+        structured_query = self._build_from_overrides(request)
+        if structured_query is not None:
+            source = "override"
+        else:
+            structured_query = try_deterministic_parse(query)
+            if structured_query is not None:
+                source = "parser"
+            else:
+                llm_started = time.perf_counter()
+                structured_query = await self._query_analyzer.analyze(query)
+                llm_ms = _elapsed_ms(llm_started)
+                source = "llm"
 
         structured_query, warnings, source = self._apply_request_overrides(
-            structured_query, request
+            structured_query, request, initial_source=source
         )
 
         if structured_query.relation == "inside":
