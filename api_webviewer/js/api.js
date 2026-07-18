@@ -102,6 +102,14 @@ class ApiClient {
     return ApiClient.request(baseUrl, "/catalog");
   }
 
+  static async getLlmCache(baseUrl) {
+    return ApiClient.request(baseUrl, "/cache/llm");
+  }
+
+  static async clearLlmCache(baseUrl) {
+    return ApiClient.request(baseUrl, "/cache/llm", { method: "DELETE" });
+  }
+
   static async search(baseUrl, params) {
     const body = { query: params.query.trim() };
 

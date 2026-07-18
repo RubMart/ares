@@ -17,6 +17,10 @@
   const btnCopyJson = document.getElementById("btn-copy-json");
   const catalogList = document.getElementById("catalog-list");
   const btnRefreshCatalog = document.getElementById("btn-refresh-catalog");
+  const cacheMeta = document.getElementById("cache-meta");
+  const cacheKeys = document.getElementById("cache-keys");
+  const btnRefreshCache = document.getElementById("btn-refresh-cache");
+  const btnClearCache = document.getElementById("btn-clear-cache");
   const splitView = document.getElementById("split-view");
   const splitResizer = document.getElementById("split-resizer");
   const paneMap = document.getElementById("pane-map");
@@ -211,6 +215,86 @@
     const div = document.createElement("div");
     div.textContent = String(text);
     return div.innerHTML;
+  }
+
+  function parseCacheKey(key) {
+    const sep = key.indexOf("|");
+    if (sep < 0) {
+      return { model: "", query: key };
+    }
+    return { model: key.slice(0, sep), query: key.slice(sep + 1) };
+  }
+
+  function renderLlmCache(data) {
+    const size = data.size ?? 0;
+    const maxsize = data.maxsize ?? 0;
+    const enabled = Boolean(data.enabled);
+    const keys = Array.isArray(data.keys) ? data.keys : [];
+
+    cacheMeta.textContent = enabled
+      ? `${size} / ${maxsize} entradas`
+      : `Desactivada (maxsize=${maxsize})`;
+    btnClearCache.disabled = size === 0;
+
+    cacheKeys.replaceChildren();
+    if (keys.length === 0) {
+      const empty = document.createElement("p");
+      empty.className = "muted cache-keys__empty";
+      empty.textContent = "Caché vacía";
+      cacheKeys.appendChild(empty);
+      return;
+    }
+
+    // API returns LRU order (oldest first); show newest at the top.
+    for (const key of [...keys].reverse()) {
+      const { model, query } = parseCacheKey(key);
+      const item = document.createElement("div");
+      item.className = "cache-key";
+      item.title = key;
+
+      const queryEl = document.createElement("span");
+      queryEl.className = "cache-key__query";
+      queryEl.textContent = query || key;
+      item.appendChild(queryEl);
+
+      if (model) {
+        const modelEl = document.createElement("span");
+        modelEl.className = "cache-key__model";
+        modelEl.textContent = model;
+        item.appendChild(modelEl);
+      }
+
+      cacheKeys.appendChild(item);
+    }
+  }
+
+  async function loadLlmCache() {
+    cacheMeta.textContent = "Cargando…";
+    btnClearCache.disabled = true;
+    try {
+      const data = await ApiClient.getLlmCache(getBaseUrl());
+      renderLlmCache(data);
+    } catch (error) {
+      cacheMeta.textContent = "Error";
+      cacheKeys.innerHTML = `<p class="muted cache-keys__empty">${escapeHtml(error.message)}</p>`;
+      btnClearCache.disabled = true;
+    }
+  }
+
+  async function clearLlmCache() {
+    if (!window.confirm("¿Vaciar toda la caché LLM de interpretaciones?")) {
+      return;
+    }
+    btnClearCache.disabled = true;
+    try {
+      const data = await ApiClient.clearLlmCache(getBaseUrl());
+      renderLlmCache({ ...data, keys: [] });
+      showInfo("Caché LLM vaciada.");
+      setTimeout(() => hideBanner(infoBanner), 2000);
+    } catch (error) {
+      showError(error.message);
+      btnClearCache.disabled = false;
+    }
   }
 
   function renderHistory() {
@@ -790,10 +874,13 @@
     ApiClient.saveBaseUrl(apiUrlInput.value);
     checkHealth();
     loadCatalog();
+    loadLlmCache();
   });
 
   btnHealth.addEventListener("click", checkHealth);
   btnRefreshCatalog.addEventListener("click", loadCatalog);
+  btnRefreshCache.addEventListener("click", loadLlmCache);
+  btnClearCache.addEventListener("click", clearLlmCache);
 
   document.querySelectorAll(".chip").forEach((chip) => {
     chip.addEventListener("click", () => {
@@ -909,6 +996,7 @@
       ApiClient.addToHistory(queryInput.value);
       renderHistory();
       renderResults(response);
+      loadLlmCache();
     } catch (error) {
       showError(error.message);
     } finally {
@@ -918,6 +1006,7 @@
 
   checkHealth();
   loadCatalog();
+  loadLlmCache();
   renderHistory();
   initSplitResizer();
 })();

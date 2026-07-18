@@ -175,6 +175,54 @@ h2 {
   margin-bottom: 0;
 }
 
+.panel__header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.cache-meta {
+  font-size: 0.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.cache-keys {
+  max-height: 10rem;
+  overflow-y: auto;
+  font-size: 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+}
+
+.cache-keys__empty {
+  margin: 0;
+  padding: 0.5rem 0.65rem;
+  font-size: 0.75rem;
+}
+
+.cache-key {
+  display: block;
+  padding: 0.4rem 0.65rem;
+  border-bottom: 1px solid var(--border);
+  word-break: break-all;
+}
+
+.cache-key:last-child {
+  border-bottom: none;
+}
+
+.cache-key__query {
+  display: block;
+  font-weight: 500;
+}
+
+.cache-key__model {
+  display: block;
+  color: var(--muted);
+  font-size: 0.7rem;
+}
+
 .field {
   margin-bottom: 0.75rem;
 }
