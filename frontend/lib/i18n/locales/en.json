@@ -4,7 +4,17 @@
   },
   "brand": {
     "tagline": "AI Retrieval of Entities in Space",
-    "subtitle": "Semantic search over aerial detections"
+    "subtitle": "Semantic search over aerial detections",
+    "disclaimerToggle": "About ARES",
+    "disclaimer": {
+      "title": "About ARES",
+      "description": "Platform scope and usage notice.",
+      "purpose": "ARES lets you search, in natural language, for entities previously detected in aerial imagery. It helps explore a spatial index through semantic queries.",
+      "demo": "This platform is an example use case for demonstration purposes only. It is not intended for commercial use.",
+      "responsibility": "Users are responsible for how they use the results obtained.",
+      "humanReview": "Human interpretation remains necessary: results are indicative and do not replace expert judgment.",
+      "close": "Got it"
+    }
   },
   "api": {
     "status": {
@@ -153,6 +163,10 @@
     "catalogShow": "Show layer",
     "catalogHide": "Hide layer",
     "catalogZoomHint": "Double-click to zoom to extent",
+    "catalogDisclaimerToggle": "Dataset information",
+    "catalogDisclaimerTitle": "Test dataset",
+    "catalogDisclaimerClose": "Close",
+    "catalogDisclaimer": "True orthophotography at 2.5 cm resolution (GSD) obtained from the nadir and oblique helicopter photogrammetric flight carried out by the Subdirección General de Innovación e Información Urbana of the Madrid City Council between 11 and 21 July 2024 over the city's urban area.",
     "resultFilters": "Result filters",
     "filterLayers": "Layers",
     "filterLayersEmpty": "No layers in results.",

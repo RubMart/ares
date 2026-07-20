@@ -1,9 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { Search, Loader2, SlidersHorizontal, Eraser, CircleHelp } from 'lucide-react'
+import { Search, Loader2, SlidersHorizontal, Eraser, CircleHelp, Info } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { ApiStatusBadge } from '@/components/ares/api-status-badge'
+import { BrandDisclaimerModal } from '@/components/ares/brand-disclaimer-modal'
 import { SearchHelpModal } from '@/components/ares/search-help-modal'
 import { Button } from '@/components/ui/button'
 import { Slider } from '@/components/ui/slider'
@@ -41,6 +42,7 @@ type SearchPanelProps = {
 export function SearchPanel(props: SearchPanelProps) {
   const { t, i18n } = useTranslation()
   const [helpOpen, setHelpOpen] = useState(false)
+  const [disclaimerOpen, setDisclaimerOpen] = useState(false)
   const examples = t('search.examples', { returnObjects: true })
   const exampleQueries = Array.isArray(examples) ? (examples as string[]) : []
   const {
@@ -88,9 +90,20 @@ export function SearchPanel(props: SearchPanelProps) {
                 height={40}
                 className="size-10 shrink-0"
               />
-              <h1 className="font-display text-4xl font-bold tracking-[0.18em] text-primary">
-                ARES
-              </h1>
+              <div className="flex items-start gap-1">
+                <h1 className="font-display text-4xl font-bold tracking-[0.18em] text-primary">
+                  ARES
+                </h1>
+                <button
+                  type="button"
+                  onClick={() => setDisclaimerOpen(true)}
+                  className="mt-1.5 shrink-0 cursor-pointer rounded-md p-0.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                  title={t('brand.disclaimerToggle')}
+                  aria-label={t('brand.disclaimerToggle')}
+                >
+                  <Info className="size-3.5" />
+                </button>
+              </div>
             </div>
             <div className="flex shrink-0 items-center gap-1.5">
               <LanguageSwitcher />
@@ -276,6 +289,10 @@ export function SearchPanel(props: SearchPanelProps) {
       </div>
 
       <SearchHelpModal open={helpOpen} onOpenChange={setHelpOpen} />
+      <BrandDisclaimerModal
+        open={disclaimerOpen}
+        onOpenChange={setDisclaimerOpen}
+      />
     </aside>
   )
 }

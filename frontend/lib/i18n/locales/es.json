@@ -4,7 +4,17 @@
   },
   "brand": {
     "tagline": "AI Retrieval of Entities in Space",
-    "subtitle": "Búsqueda semántica sobre detecciones aéreas"
+    "subtitle": "Búsqueda semántica sobre detecciones aéreas",
+    "disclaimerToggle": "Información sobre ARES",
+    "disclaimer": {
+      "title": "Acerca de ARES",
+      "description": "Aviso de uso y alcance de la plataforma.",
+      "purpose": "ARES permite buscar, en lenguaje natural, entidades previamente detectadas en imágenes aéreas. Facilita la exploración de un índice espacial a partir de consultas semánticas.",
+      "demo": "Esta plataforma es un caso de uso de ejemplo con fines únicamente demostrativos. No está destinada a uso comercial.",
+      "responsibility": "El usuario es responsable del uso que haga de los resultados obtenidos.",
+      "humanReview": "La interpretación humana sigue siendo necesaria: los resultados son orientativos y no sustituyen el criterio experto.",
+      "close": "Entendido"
+    }
   },
   "api": {
     "status": {
@@ -153,6 +163,10 @@
     "catalogShow": "Mostrar capa",
     "catalogHide": "Ocultar capa",
     "catalogZoomHint": "Doble clic para ir a la extensión",
+    "catalogDisclaimerToggle": "Información del dataset",
+    "catalogDisclaimerTitle": "Dataset de prueba",
+    "catalogDisclaimerClose": "Cerrar",
+    "catalogDisclaimer": "Ortofotografía verdadera de resolución 2,5 cm (GSD) obtenida a partir del vuelo fotogramétrico cenital y oblicuo de helicóptero realizado por la Subdirección General de Innovación e Información Urbana del Ayuntamiento de Madrid entre el 11 y 21 de julio de 2024 sobre la zona urbana de la ciudad.",
     "resultFilters": "Filtros de resultados",
     "filterLayers": "Capas",
     "filterLayersEmpty": "Sin capas en los resultados.",
