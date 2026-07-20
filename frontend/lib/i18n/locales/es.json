@@ -154,6 +154,8 @@
     "catalogHide": "Ocultar capa",
     "catalogZoomHint": "Doble clic para ir a la extensión",
     "resultFilters": "Filtros de resultados",
+    "filterLayers": "Capas",
+    "filterLayersEmpty": "Sin capas en los resultados.",
     "filterClasses": "Clases",
     "filterClassesEmpty": "Sin clases en los resultados.",
     "filterAll": "Todas",

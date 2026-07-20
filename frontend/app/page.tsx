@@ -80,6 +80,7 @@ function buildFiltersFromResults(rows: SearchResult[]): {
   return {
     bounds,
     filters: {
+      enabledLayers: new Set(rows.map((r) => r.layer)),
       enabledClasses: new Set(rows.map((r) => r.claseYolo)),
       confidenceLevels: new Set(ALL_CONFIDENCE_LEVELS),
       similarity: { ...bounds.similarity },
@@ -88,12 +89,22 @@ function buildFiltersFromResults(rows: SearchResult[]): {
 }
 
 function passesFilters(row: SearchResult, filters: ResultFilterState) {
+  if (!filters.enabledLayers.has(row.layer)) return false
   if (!filters.enabledClasses.has(row.claseYolo)) return false
   if (!filters.confidenceLevels.has(confidenceLevel(row.confianza))) return false
   if (row.similarity < filters.similarity.min || row.similarity > filters.similarity.max) {
     return false
   }
   return true
+}
+
+function emptyResultFilters(bounds: ResultFilterBounds = DEFAULT_BOUNDS): ResultFilterState {
+  return {
+    enabledLayers: new Set(),
+    enabledClasses: new Set(),
+    confidenceLevels: new Set(ALL_CONFIDENCE_LEVELS),
+    similarity: { ...bounds.similarity },
+  }
 }
 
 export default function Page() {
@@ -112,11 +123,7 @@ export default function Page() {
   const [hasSearched, setHasSearched] = useState(false)
   const [rawResults, setRawResults] = useState<SearchResult[]>([])
   const [filterBounds, setFilterBounds] = useState<ResultFilterBounds>(DEFAULT_BOUNDS)
-  const [resultFilters, setResultFilters] = useState<ResultFilterState>({
-    enabledClasses: new Set(),
-    confidenceLevels: new Set(ALL_CONFIDENCE_LEVELS),
-    similarity: { ...DEFAULT_BOUNDS.similarity },
-  })
+  const [resultFilters, setResultFilters] = useState<ResultFilterState>(emptyResultFilters)
   const [metadata, setMetadata] = useState<SearchMetadata | null>(null)
   const [referenceFeatures, setReferenceFeatures] =
     useState<ReferenceFeatureCollection | null>(null)
@@ -166,6 +173,16 @@ export default function Page() {
     [rawResults, resultFilters],
   )
 
+  const layerCounts = useMemo(() => {
+    const counts = new Map<string, number>()
+    for (const row of rawResults) {
+      counts.set(row.layer, (counts.get(row.layer) || 0) + 1)
+    }
+    return [...counts.entries()]
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name))
+  }, [rawResults])
+
   const classCounts = useMemo(() => {
     const counts = new Map<string, number>()
     for (const row of rawResults) {
@@ -205,11 +222,7 @@ export default function Page() {
     setInfoOpen(false)
     setRawResults([])
     setFilterBounds(DEFAULT_BOUNDS)
-    setResultFilters({
-      enabledClasses: new Set(),
-      confidenceLevels: new Set(ALL_CONFIDENCE_LEVELS),
-      similarity: { ...DEFAULT_BOUNDS.similarity },
-    })
+    setResultFilters(emptyResultFilters())
     setMetadata(null)
     setReferenceFeatures(null)
     setActiveQuery('')
@@ -244,11 +257,7 @@ export default function Page() {
     // Clear previous hits immediately so the map/table don't keep stale data.
     setRawResults([])
     setFilterBounds(DEFAULT_BOUNDS)
-    setResultFilters({
-      enabledClasses: new Set(),
-      confidenceLevels: new Set(ALL_CONFIDENCE_LEVELS),
-      similarity: { ...DEFAULT_BOUNDS.similarity },
-    })
+    setResultFilters(emptyResultFilters())
     setMetadata(null)
     setReferenceFeatures(null)
     setFitSelectionRequest(null)
@@ -288,11 +297,7 @@ export default function Page() {
       }
       setRawResults([])
       setFilterBounds(DEFAULT_BOUNDS)
-      setResultFilters({
-        enabledClasses: new Set(),
-        confidenceLevels: new Set(ALL_CONFIDENCE_LEVELS),
-        similarity: { ...DEFAULT_BOUNDS.similarity },
-      })
+      setResultFilters(emptyResultFilters())
       setMetadata(null)
       setReferenceFeatures(null)
       setActiveQuery(q)
@@ -303,6 +308,29 @@ export default function Page() {
       }
     }
   }, [query, count, filterResults, api.status, t])
+
+  const toggleLayer = useCallback((layer: string) => {
+    setResultFilters((prev) => {
+      const enabledLayers = new Set(prev.enabledLayers)
+      if (enabledLayers.has(layer)) enabledLayers.delete(layer)
+      else enabledLayers.add(layer)
+      return { ...prev, enabledLayers }
+    })
+  }, [])
+
+  const enableAllLayers = useCallback(() => {
+    setResultFilters((prev) => ({
+      ...prev,
+      enabledLayers: new Set(layerCounts.map((c) => c.name)),
+    }))
+  }, [layerCounts])
+
+  const disableAllLayers = useCallback(() => {
+    setResultFilters((prev) => ({
+      ...prev,
+      enabledLayers: new Set(),
+    }))
+  }, [])
 
   const toggleClass = useCallback((className: string) => {
     setResultFilters((prev) => {
@@ -417,11 +445,15 @@ export default function Page() {
 
           {hasSearched && rawResults.length > 0 && (
             <ResultFiltersControl
+              layerCounts={layerCounts}
               classCounts={classCounts}
               bounds={filterBounds}
               filters={resultFilters}
               visibleCount={visibleResults.length}
               totalCount={rawResults.length}
+              onToggleLayer={toggleLayer}
+              onEnableAllLayers={enableAllLayers}
+              onDisableAllLayers={disableAllLayers}
               onToggleClass={toggleClass}
               onEnableAllClasses={enableAllClasses}
               onDisableAllClasses={disableAllClasses}

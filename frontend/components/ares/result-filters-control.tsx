@@ -13,6 +13,7 @@ import { cn } from '@/lib/utils'
 export type MetricRange = { min: number; max: number }
 
 export type ResultFilterState = {
+  enabledLayers: Set<string>
   enabledClasses: Set<string>
   confidenceLevels: Set<ConfidenceLevel>
   similarity: MetricRange
@@ -22,14 +23,18 @@ export type ResultFilterBounds = {
   similarity: MetricRange
 }
 
-type ClassCount = { name: string; count: number }
+type NamedCount = { name: string; count: number }
 
 type ResultFiltersControlProps = {
-  classCounts: ClassCount[]
+  layerCounts: NamedCount[]
+  classCounts: NamedCount[]
   bounds: ResultFilterBounds
   filters: ResultFilterState
   visibleCount: number
   totalCount: number
+  onToggleLayer: (layer: string) => void
+  onEnableAllLayers: () => void
+  onDisableAllLayers: () => void
   onToggleClass: (className: string) => void
   onEnableAllClasses: () => void
   onDisableAllClasses: () => void
@@ -48,11 +53,15 @@ const LEVEL_LABEL_KEY: Record<ConfidenceLevel, string> = {
 }
 
 export function ResultFiltersControl({
+  layerCounts,
   classCounts,
   bounds,
   filters,
   visibleCount,
   totalCount,
+  onToggleLayer,
+  onEnableAllLayers,
+  onDisableAllLayers,
   onToggleClass,
   onEnableAllClasses,
   onDisableAllClasses,
@@ -74,54 +83,29 @@ export function ResultFiltersControl({
       </div>
 
       <div className="flex max-h-[min(50vh,28rem)] flex-col gap-3 overflow-y-auto px-3 py-3">
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center justify-between gap-2">
-            <span className="text-xs font-medium text-foreground">{t('map.filterClasses')}</span>
-            <div className="flex gap-1">
-              <button
-                type="button"
-                onClick={onEnableAllClasses}
-                className="rounded px-1.5 py-0.5 text-[0.65rem] text-primary hover:bg-secondary"
-              >
-                {t('map.filterAll')}
-              </button>
-              <button
-                type="button"
-                onClick={onDisableAllClasses}
-                className="rounded px-1.5 py-0.5 text-[0.65rem] text-muted-foreground hover:bg-secondary hover:text-foreground"
-              >
-                {t('map.filterNone')}
-              </button>
-            </div>
-          </div>
+        <ChipFilterSection
+          label={t('map.filterLayers')}
+          emptyLabel={t('map.filterLayersEmpty')}
+          counts={layerCounts}
+          enabled={filters.enabledLayers}
+          allLabel={t('map.filterAll')}
+          noneLabel={t('map.filterNone')}
+          onToggle={onToggleLayer}
+          onEnableAll={onEnableAllLayers}
+          onDisableAll={onDisableAllLayers}
+        />
 
-          {classCounts.length === 0 ? (
-            <p className="text-xs text-muted-foreground">{t('map.filterClassesEmpty')}</p>
-          ) : (
-            <div className="flex flex-wrap gap-1.5">
-              {classCounts.map(({ name, count }) => {
-                const active = filters.enabledClasses.has(name)
-                return (
-                  <button
-                    key={name}
-                    type="button"
-                    onClick={() => onToggleClass(name)}
-                    aria-pressed={active}
-                    className={cn(
-                      'inline-flex max-w-full items-center gap-1 rounded-md border px-2 py-1 text-[0.7rem] transition-colors',
-                      active
-                        ? 'border-primary/40 bg-primary/10 text-primary'
-                        : 'border-border bg-background text-muted-foreground hover:bg-secondary',
-                    )}
-                  >
-                    <span className="truncate">{name}</span>
-                    <span className="shrink-0 tabular-nums opacity-70">{count}</span>
-                  </button>
-                )
-              })}
-            </div>
-          )}
-        </div>
+        <ChipFilterSection
+          label={t('map.filterClasses')}
+          emptyLabel={t('map.filterClassesEmpty')}
+          counts={classCounts}
+          enabled={filters.enabledClasses}
+          allLabel={t('map.filterAll')}
+          noneLabel={t('map.filterNone')}
+          onToggle={onToggleClass}
+          onEnableAll={onEnableAllClasses}
+          onDisableAll={onDisableAllClasses}
+        />
 
         <div className="flex flex-col gap-2">
           <span className="text-xs font-medium text-foreground">{t('map.filterConfidence')}</span>
@@ -168,6 +152,79 @@ export function ResultFiltersControl({
           onChange={onSimilarityChange}
         />
       </div>
+    </div>
+  )
+}
+
+function ChipFilterSection({
+  label,
+  emptyLabel,
+  counts,
+  enabled,
+  allLabel,
+  noneLabel,
+  onToggle,
+  onEnableAll,
+  onDisableAll,
+}: {
+  label: string
+  emptyLabel: string
+  counts: NamedCount[]
+  enabled: Set<string>
+  allLabel: string
+  noneLabel: string
+  onToggle: (name: string) => void
+  onEnableAll: () => void
+  onDisableAll: () => void
+}) {
+  return (
+    <div className="flex flex-col gap-2">
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-xs font-medium text-foreground">{label}</span>
+        <div className="flex gap-1">
+          <button
+            type="button"
+            onClick={onEnableAll}
+            className="rounded px-1.5 py-0.5 text-[0.65rem] text-primary hover:bg-secondary"
+          >
+            {allLabel}
+          </button>
+          <button
+            type="button"
+            onClick={onDisableAll}
+            className="rounded px-1.5 py-0.5 text-[0.65rem] text-muted-foreground hover:bg-secondary hover:text-foreground"
+          >
+            {noneLabel}
+          </button>
+        </div>
+      </div>
+
+      {counts.length === 0 ? (
+        <p className="text-xs text-muted-foreground">{emptyLabel}</p>
+      ) : (
+        <div className="flex flex-wrap gap-1.5">
+          {counts.map(({ name, count }) => {
+            const active = enabled.has(name)
+            return (
+              <button
+                key={name}
+                type="button"
+                onClick={() => onToggle(name)}
+                aria-pressed={active}
+                className={cn(
+                  'inline-flex max-w-full items-center gap-1 rounded-md border px-2 py-1 text-[0.7rem] transition-colors',
+                  active
+                    ? 'border-primary/40 bg-primary/10 text-primary'
+                    : 'border-border bg-background text-muted-foreground hover:bg-secondary',
+                )}
+              >
+                <span className="truncate">{name}</span>
+                <span className="shrink-0 tabular-nums opacity-70">{count}</span>
+              </button>
+            )
+          })}
+        </div>
+      )}
     </div>
   )
 }

@@ -154,6 +154,8 @@
     "catalogHide": "Hide layer",
     "catalogZoomHint": "Double-click to zoom to extent",
     "resultFilters": "Result filters",
+    "filterLayers": "Layers",
+    "filterLayersEmpty": "No layers in results.",
     "filterClasses": "Classes",
     "filterClassesEmpty": "No classes in results.",
     "filterAll": "All",
