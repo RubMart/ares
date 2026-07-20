@@ -374,9 +374,133 @@ def discover_mapml_extents_near_cog(cog_path: Path) -> list[tuple[int, int, int,
     return extents
 
 
-def cog_bbox_sql_from_path(cog_path: Path) -> str:
-    """Resolve a COG bounding box SQL expression from adjacent gdal2tiles mapml files."""
-    cog_path = cog_path.resolve()
+def _parse_geotiff_epsg(geokeys: tuple | list) -> int | None:
+    """Extract EPSG code from a GeoKeyDirectoryTag (ProjectedCS or Geographic)."""
+    if len(geokeys) < 4:
+        return None
+
+    key_count = int(geokeys[3])
+    # Each key: id, TIFFTagLocation, count, value/offset
+    for offset in range(4, 4 + key_count * 4, 4):
+        if offset + 3 >= len(geokeys):
+            break
+        key_id = int(geokeys[offset])
+        location = int(geokeys[offset + 1])
+        value = int(geokeys[offset + 3])
+        # 3072 = ProjectedCSTypeGeoKey, 2048 = GeographicTypeGeoKey
+        if key_id in {3072, 2048} and location == 0 and value > 0:
+            return value
+    return None
+
+
+def read_geotiff_native_envelope(cog_path: Path) -> tuple[int, dict[str, float]]:
+    """
+    Read the native CRS EPSG and axis-aligned envelope from GeoTIFF tags.
+
+    Supports north-up images with ModelTiepointTag + ModelPixelScaleTag
+    (typical COG from gdal_translate). Does not load raster pixels.
+    """
+    from PIL import Image
+
+    previous_limit = Image.MAX_IMAGE_PIXELS
+    Image.MAX_IMAGE_PIXELS = None
+    try:
+        with Image.open(cog_path) as image:
+            tags = image.tag_v2
+            width = int(tags[256])
+            height = int(tags[257])
+            scale = tags.get(33550)  # ModelPixelScaleTag
+            tie = tags.get(33922)  # ModelTiepointTag
+            geokeys = tags.get(34735)  # GeoKeyDirectoryTag
+    finally:
+        Image.MAX_IMAGE_PIXELS = previous_limit
+
+    if not scale or len(scale) < 2:
+        raise ValueError(
+            f"El GeoTIFF no tiene ModelPixelScaleTag usable: {cog_path.resolve()}"
+        )
+    if not tie or len(tie) < 5:
+        raise ValueError(
+            f"El GeoTIFF no tiene ModelTiepointTag usable: {cog_path.resolve()}"
+        )
+    if not geokeys:
+        raise ValueError(
+            f"El GeoTIFF no tiene GeoKeyDirectoryTag (CRS): {cog_path.resolve()}"
+        )
+
+    epsg = _parse_geotiff_epsg(geokeys)
+    if epsg is None:
+        raise ValueError(
+            f"No se pudo leer el EPSG del GeoTIFF: {cog_path.resolve()}"
+        )
+
+    pixel_i, pixel_j = float(tie[0]), float(tie[1])
+    if abs(pixel_i) > 1e-6 or abs(pixel_j) > 1e-6:
+        raise ValueError(
+            f"Solo se soporta ModelTiepoint en píxel (0,0); "
+            f"recibido ({pixel_i}, {pixel_j}) en {cog_path.resolve()}"
+        )
+
+    sx = float(scale[0])
+    sy = float(scale[1])
+    origin_x = float(tie[3])
+    origin_y = float(tie[4])
+    # GeoTIFF: Y scale is stored positive; north-up images decrease northing with row.
+    return epsg, {
+        "x1": origin_x,
+        "y1": origin_y - height * sy,
+        "x2": origin_x + width * sx,
+        "y2": origin_y,
+    }
+
+
+def transform_envelope_to_epsg3857(
+    source_epsg: int,
+    envelope: dict[str, float],
+) -> dict[str, float]:
+    """Reproject an axis-aligned envelope to EPSG:3857 (corner hull)."""
+    if source_epsg == 3857:
+        return {
+            "x1": round(min(envelope["x1"], envelope["x2"]), 3),
+            "y1": round(min(envelope["y1"], envelope["y2"]), 3),
+            "x2": round(max(envelope["x1"], envelope["x2"]), 3),
+            "y2": round(max(envelope["y1"], envelope["y2"]), 3),
+        }
+
+    try:
+        from pyproj import Transformer
+    except ImportError as exc:
+        raise ImportError(
+            "Se necesita pyproj para reproyectar el bbox del COG a EPSG:3857. "
+            "Instala con: pip install pyproj"
+        ) from exc
+
+    transformer = Transformer.from_crs(source_epsg, 3857, always_xy=True)
+    corners = [
+        (envelope["x1"], envelope["y1"]),
+        (envelope["x2"], envelope["y1"]),
+        (envelope["x2"], envelope["y2"]),
+        (envelope["x1"], envelope["y2"]),
+    ]
+    projected = [transformer.transform(x, y) for x, y in corners]
+    xs = [point[0] for point in projected]
+    ys = [point[1] for point in projected]
+    return {
+        "x1": round(min(xs), 3),
+        "y1": round(min(ys), 3),
+        "x2": round(max(xs), 3),
+        "y2": round(max(ys), 3),
+    }
+
+
+def cog_envelope_epsg3857_from_geotiff(cog_path: Path) -> dict[str, float]:
+    """Compute the true COG envelope in EPSG:3857 from GeoTIFF georeferencing."""
+    source_epsg, native = read_geotiff_native_envelope(cog_path)
+    return transform_envelope_to_epsg3857(source_epsg, native)
+
+
+def cog_envelope_epsg3857_from_mapml(cog_path: Path) -> dict[str, float]:
+    """Fallback: envelope of adjacent gdal2tiles mapml tile ranges (tile-snapped)."""
     extents = discover_mapml_extents_near_cog(cog_path)
     if not extents:
         raise ValueError(
@@ -384,14 +508,47 @@ def cog_bbox_sql_from_path(cog_path: Path) -> str:
             "Genera primero el piramidado gdal2tiles o indica otra ruta."
         )
 
-    zoom, tile_x_min, tile_x_max, tile_y_min, tile_y_max = min(extents, key=lambda item: item[0])
-    envelope = tile_range_envelope_epsg3857(
+    zoom, tile_x_min, tile_x_max, tile_y_min, tile_y_max = min(
+        extents, key=lambda item: item[0]
+    )
+    return tile_range_envelope_epsg3857(
         zoom,
         tile_x_min,
         tile_x_max,
         tile_y_min,
         tile_y_max,
     )
+
+
+def cog_bbox_sql_from_path(cog_path: Path) -> str:
+    """
+    Resolve a COG bounding box SQL expression in EPSG:3857.
+
+    Prefers the GeoTIFF georeferencing (true raster extent). Falls back to the
+    adjacent gdal2tiles mapml tile range only if geotags/reprojection fail —
+    that fallback is tile-aligned and can be displaced vs the COG.
+    """
+    cog_path = cog_path.resolve()
+    if not cog_path.exists():
+        raise FileNotFoundError(f"No se encontró el COG: {cog_path}")
+
+    try:
+        envelope = cog_envelope_epsg3857_from_geotiff(cog_path)
+    except (OSError, ValueError, ImportError, KeyError) as geotiff_exc:
+        try:
+            envelope = cog_envelope_epsg3857_from_mapml(cog_path)
+        except (FileNotFoundError, ValueError) as mapml_exc:
+            raise ValueError(
+                f"No se pudo calcular el bbox del COG desde geotags ({geotiff_exc}) "
+                f"ni desde mapml ({mapml_exc})."
+            ) from mapml_exc
+        print(
+            "Aviso: bbox del catálogo calculado desde tiles mapml (alineado a malla XYZ); "
+            f"no desde geotags del COG ({geotiff_exc}). "
+            "Puede quedar desplazado respecto al ráster real.",
+            flush=True,
+        )
+
     return envelope_3857_to_sql(envelope)
 
 

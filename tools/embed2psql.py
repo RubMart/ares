@@ -40,7 +40,7 @@ LAYER_NAME_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
 EPILOG = f"""
 Parámetros obligatorios:
   --layer NOMBRE   Nombre de la tabla/capa en PostgreSQL
-  --cog-path RUTA  Ruta local al COG (recomendado; calcula bbox desde mapml)
+  --cog-path RUTA  Ruta local al COG (recomendado; bbox EPSG:3857 desde geotags)
   --cog-url URL    URL remota del COG (alternativa a --cog-path)
 
 Parámetros (modo entrada única):
@@ -61,7 +61,9 @@ Parámetros opcionales:
 Salida:
   Genera {DEFAULT_CATALOG_TABLE}_schema.sql, {{capa}}_schema.sql,
   {DEFAULT_CATALOG_TABLE}_data.sql y {{capa}}_data.sql.
-  El catálogo usa el bbox del COG (--cog-path) o la unión de tiles procesados.
+  El catálogo usa el bbox real del COG (--cog-path, geotags→3857) o, si falla,
+  el rango mapml de tiles (alineado a malla XYZ; puede desplazarse). Con solo
+  --cog-url, usa la unión de tiles procesados.
   En modo batch, genera {SUMMARY_FILENAME} en la raíz de la carpeta indicada.
 
 Ejemplos:
@@ -168,7 +170,7 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         default=None,
         metavar="RUTA",
-        help="Ruta local al COG; se usa como cog_url y para calcular bbox desde mapml.",
+        help="Ruta local al COG; se usa como cog_url y para calcular bbox EPSG:3857 desde geotags.",
     )
     parser.add_argument(
         "--cog-url",

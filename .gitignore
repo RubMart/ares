@@ -56,3 +56,7 @@ Desktop.ini
 tmp/
 temp/
 .cache/
+/tools/sql/detecciones_catalogo_data.sql
+/tools/sql/detecciones_catalogo_schema.sql
+/tools/sql/madrid_norte_detections_data.sql
+/tools/sql/madrid_norte_detections_schema.sql
