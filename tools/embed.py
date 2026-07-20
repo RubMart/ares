@@ -25,9 +25,14 @@ from utils import (
 )
 
 DEFAULT_MODEL = "openai/clip-vit-base-patch32"
+CLIP_MODEL_ALIASES = frozenset({DEFAULT_MODEL, "clip-ViT-B-32"})
 DEFAULT_BATCH_SIZE = 16
 DEFAULT_PADDING = 0
 SUMMARY_FILENAME = "embedding_summary.json"
+
+SCRIPT_DIR = Path(__file__).resolve().parent
+REPO_ROOT = SCRIPT_DIR.parent
+DEFAULT_CLIP_LOCAL_DIR = REPO_ROOT / "models" / "clip-vit-base-patch32"
 
 EPILOG = f"""
 Parámetros (modo entrada única):
@@ -235,9 +240,78 @@ def parse_args() -> argparse.Namespace:
     return args
 
 
+def _is_clip_dir_ready(path: Path) -> bool:
+    return path.is_dir() and (path / "config.json").is_file()
+
+
+def _hf_hub_cache_root() -> Path:
+    import os
+
+    if os.environ.get("HF_HUB_CACHE"):
+        return Path(os.environ["HF_HUB_CACHE"])
+    if os.environ.get("HUGGINGFACE_HUB_CACHE"):
+        return Path(os.environ["HUGGINGFACE_HUB_CACHE"])
+    hf_home = Path(os.environ.get("HF_HOME", Path.home() / ".cache" / "huggingface"))
+    return hf_home / "hub"
+
+
+def find_hf_hub_snapshot(repo_id: str) -> Path | None:
+    """Busca un snapshot usable en la caché global de Hugging Face Hub."""
+    cache_root = _hf_hub_cache_root()
+    repo_dir = cache_root / f"models--{repo_id.replace('/', '--')}"
+    if not repo_dir.is_dir():
+        return None
+
+    refs_main = repo_dir / "refs" / "main"
+    if refs_main.is_file():
+        revision = refs_main.read_text(encoding="utf-8").strip()
+        candidate = repo_dir / "snapshots" / revision
+        if _is_clip_dir_ready(candidate):
+            return candidate.resolve()
+
+    snapshots = repo_dir / "snapshots"
+    if not snapshots.is_dir():
+        return None
+    for snapshot in sorted(snapshots.iterdir(), reverse=True):
+        if _is_clip_dir_ready(snapshot):
+            return snapshot.resolve()
+    return None
+
+
+def resolve_clip_model_source(model_name: str) -> str:
+    """Resuelve ruta local o id HF; evita tokens HF inválidos en repos públicos."""
+    as_path = Path(model_name)
+    if _is_clip_dir_ready(as_path):
+        return str(as_path.resolve())
+
+    if model_name not in CLIP_MODEL_ALIASES:
+        return model_name
+
+    if _is_clip_dir_ready(DEFAULT_CLIP_LOCAL_DIR):
+        return str(DEFAULT_CLIP_LOCAL_DIR.resolve())
+
+    cached = find_hf_hub_snapshot(DEFAULT_MODEL)
+    if cached is not None:
+        return str(cached)
+
+    DEFAULT_CLIP_LOCAL_DIR.parent.mkdir(parents=True, exist_ok=True)
+    from huggingface_hub import snapshot_download
+
+    # token=False: repos públicos no deben usar un token local inválido/caducado
+    # (HF responde a veces "Repository Not Found" + OAuth signature failed).
+    snapshot_download(
+        repo_id=DEFAULT_MODEL,
+        local_dir=str(DEFAULT_CLIP_LOCAL_DIR),
+        token=False,
+    )
+    return str(DEFAULT_CLIP_LOCAL_DIR.resolve())
+
+
 def load_clip_model(model_name: str, device: torch.device) -> tuple[CLIPModel, CLIPProcessor]:
-    processor = CLIPProcessor.from_pretrained(model_name)
-    model = CLIPModel.from_pretrained(model_name)
+    source = resolve_clip_model_source(model_name)
+    # token=False evita 401 por token OAuth/local corrupto al cargar un modelo público.
+    processor = CLIPProcessor.from_pretrained(source, token=False)
+    model = CLIPModel.from_pretrained(source, token=False)
     model.to(device)
     model.eval()
     return model, processor
@@ -578,7 +652,11 @@ def run_batch(
     except Exception as exc:
         report_error(
             f"No se pudo cargar el modelo CLIP: {exc}",
-            hint="Verifica que transformers esté instalado y el nombre del modelo sea válido.",
+            hint=(
+                "Verifica transformers y el nombre del modelo. "
+                "Si el error es 401/OAuth de Hugging Face, borra el token inválido "
+                "(huggingface-cli logout) o usa la caché local en models/clip-vit-base-patch32."
+            ),
         )
         return 1
 
