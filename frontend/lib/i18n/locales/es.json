@@ -99,7 +99,11 @@
     "class": "Clase",
     "confidence": "Confianza",
     "layer": "Capa",
-    "moreInfo": "Más info"
+    "moreInfo": "Más info",
+    "download": "Descargar",
+    "downloadMenu": "GeoJSON",
+    "downloadAll": "Todos los resultados",
+    "downloadFiltered": "Solo filtrados"
   },
   "detection": {
     "title": "Detección",

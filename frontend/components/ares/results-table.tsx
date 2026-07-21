@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react'
 import { Info } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { DownloadGeoJsonMenu } from '@/components/ares/download-geojson-menu'
 import { Button } from '@/components/ui/button'
 import type { SearchResult } from '@/lib/api/types'
 import { confidenceColor } from '@/lib/map/confidence'
@@ -10,6 +11,7 @@ import { cn } from '@/lib/utils'
 
 type ResultsTableProps = {
   results: SearchResult[]
+  allResults: SearchResult[]
   selectedId: string | null
   onSelect: (id: string | null) => void
   query: string
@@ -26,6 +28,7 @@ function confidenceClasses(confianza: number) {
 
 export function ResultsTable({
   results,
+  allResults,
   selectedId,
   onSelect,
   query,
@@ -52,19 +55,26 @@ export function ResultsTable({
               : t('results.matches', { count: results.length })}
           </p>
         </div>
-        {onMoreInfo && (
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={onMoreInfo}
-            disabled={moreInfoDisabled}
-            className="shrink-0"
-          >
-            <Info className="size-3.5" />
-            {t('results.moreInfo')}
-          </Button>
-        )}
+        <div className="flex shrink-0 items-center gap-1.5">
+          <DownloadGeoJsonMenu
+            allResults={allResults}
+            filteredResults={results}
+            query={query}
+          />
+          {onMoreInfo && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={onMoreInfo}
+              disabled={moreInfoDisabled}
+              className="shrink-0"
+            >
+              <Info className="size-3.5" />
+              {t('results.moreInfo')}
+            </Button>
+          )}
+        </div>
       </div>
 
       <div className="overflow-hidden rounded-lg border border-border">

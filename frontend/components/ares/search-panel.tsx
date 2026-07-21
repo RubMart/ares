@@ -9,6 +9,7 @@ import { SearchHelpModal } from '@/components/ares/search-help-modal'
 import { Button } from '@/components/ui/button'
 import { Slider } from '@/components/ui/slider'
 import { LanguageSwitcher } from '@/components/ares/language-switcher'
+import { DownloadGeoJsonMenu } from '@/components/ares/download-geojson-menu'
 import { ResultsTable } from '@/components/ares/results-table'
 import type { ApiStatus } from '@/hooks/use-api-status'
 import type { SearchResult } from '@/lib/api/types'
@@ -27,6 +28,7 @@ type SearchPanelProps = {
   loading: boolean
   hasSearched: boolean
   results: SearchResult[]
+  allResults: SearchResult[]
   selectedId: string | null
   onSelect: (id: string | null) => void
   activeQuery: string
@@ -57,6 +59,7 @@ export function SearchPanel(props: SearchPanelProps) {
     loading,
     hasSearched,
     results,
+    allResults,
     selectedId,
     onSelect,
     activeQuery,
@@ -164,6 +167,40 @@ export function SearchPanel(props: SearchPanelProps) {
           </div>
         </div>
 
+        <div className="flex gap-2">
+          <Button
+            onClick={onSearch}
+            disabled={loading}
+            className="h-11 flex-1 text-base font-semibold"
+            size="lg"
+          >
+            {loading ? (
+              <>
+                <Loader2 className="size-4 animate-spin" />
+                {t('search.searching')}
+              </>
+            ) : (
+              <>
+                <Search className="size-4" />
+                {t('search.search')}
+              </>
+            )}
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="lg"
+            className="h-11 shrink-0 gap-1.5 px-3"
+            onClick={onClearResults}
+            disabled={loading || !canClear}
+            title={t('search.clearResults')}
+            aria-label={t('search.clearResults')}
+          >
+            <Eraser className="size-4" />
+            <span className="hidden sm:inline">{t('search.clearResults')}</span>
+          </Button>
+        </div>
+
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between">
             <label htmlFor="ares-count" className="text-sm font-medium text-foreground">
@@ -199,40 +236,6 @@ export function SearchPanel(props: SearchPanelProps) {
           />
         </div>
 
-        <div className="flex gap-2">
-          <Button
-            onClick={onSearch}
-            disabled={loading}
-            className="h-11 flex-1 text-base font-semibold"
-            size="lg"
-          >
-            {loading ? (
-              <>
-                <Loader2 className="size-4 animate-spin" />
-                {t('search.searching')}
-              </>
-            ) : (
-              <>
-                <Search className="size-4" />
-                {t('search.search')}
-              </>
-            )}
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            size="lg"
-            className="h-11 shrink-0 gap-1.5 px-3"
-            onClick={onClearResults}
-            disabled={loading || !canClear}
-            title={t('search.clearResults')}
-            aria-label={t('search.clearResults')}
-          >
-            <Eraser className="size-4" />
-            <span className="hidden sm:inline">{t('search.clearResults')}</span>
-          </Button>
-        </div>
-
         {searchError && (
           <p
             role="alert"
@@ -247,6 +250,7 @@ export function SearchPanel(props: SearchPanelProps) {
           results.length > 0 ? (
             <ResultsTable
               results={results}
+              allResults={allResults}
               selectedId={selectedId}
               onSelect={onSelect}
               query={activeQuery}
@@ -256,7 +260,14 @@ export function SearchPanel(props: SearchPanelProps) {
           ) : (
             <div className="space-y-3">
               {!loading && (
-                <div className="flex items-center justify-end">
+                <div className="flex items-center justify-end gap-1.5">
+                  {unfilteredCount > 0 && (
+                    <DownloadGeoJsonMenu
+                      allResults={allResults}
+                      filteredResults={results}
+                      query={activeQuery}
+                    />
+                  )}
                   <Button
                     type="button"
                     variant="outline"

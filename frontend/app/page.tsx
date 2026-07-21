@@ -388,6 +388,7 @@ export default function Page() {
           loading={loading}
           hasSearched={hasSearched}
           results={visibleResults}
+          allResults={rawResults}
           selectedId={selectedId}
           onSelect={selectFromTable}
           activeQuery={activeQuery}
