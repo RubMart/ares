@@ -231,6 +231,30 @@ Nombre histórico `ClipOnnxTextEmbedder`: el ONNX es opcional; el contrato del p
 
 El parser determinista reduce coste y varianza; el LLM cubre paráfrasis. Ambos producen el **mismo** VO de dominio.
 
+#### Caché LRU de interpretaciones (`CachingQueryAnalyzer`)
+
+Implementación en `infrastructure/ai/caching_query_analyzer.py`. Es un **decorador** del puerto `QueryAnalyzer`: el use case no conoce la caché; solo llama `analyze(query)` y, si el adaptador expone `last_hit`, marca `source=cache` en lugar de `source=llm`.
+
+| Propiedad | Detalle |
+|-----------|---------|
+| Estructura | `OrderedDict[str, StructuredQuery]` + `asyncio.Lock` |
+| Clave | `{OLLAMA_MODEL}\|{normalize_cache_query(query)}` — NFKC, trim, espacios colapsados, `casefold` |
+| Hit | `move_to_end` + `model_copy(deep=True)` (el consumidor no muta la entrada cacheada) |
+| Miss | Delega a `OllamaQueryAnalyzer`; inserta copia; evicta por el extremo LRU si `len > maxsize` |
+| Desactivar | `LLM_CACHE_MAXSIZE=0` (pasa todo al inner sin almacenar) |
+| Alcance | Solo interpretaciones que llegan al paso LLM; **no** CLIP ni consultas SQL |
+| Persistencia | En memoria del proceso uvicorn; se vacía al reiniciar |
+
+Carrera concurrente: si dos requests con la misma clave hacen miss a la vez, tras el `await` del inner se reconsulta la clave; si otra coroutine ya la rellenó, se reutiliza esa entrada (`last_hit=True`) y no se duplica.
+
+HTTP de operación (`api/routes/cache.py`):
+
+- `GET /cache/llm` → `{ size, maxsize, enabled, keys }`
+- `DELETE /cache/llm` → vaciado; `{ cleared, size, maxsize, enabled }`
+- Si el analizador inyectado no es `CachingQueryAnalyzer` → `404` (`LLM cache not available`)
+
+Relación con el fast-path: overrides y parser **siguen** evitando Ollama en la primera petición. La LRU solo amortiza paráfrasis / frases ambiguas ya resueltas por el modelo. Referencia operativa: [`api/README.md`](../../api/README.md#caché-lru-de-interpretaciones).
+
 ### Serialización — `GeoJsonSerializer`
 
 Responsabilidad única: `Detection[]` + `StructuredQuery` + timings → `FeatureCollection` consumible por OpenLayers y por clientes HTTP.
@@ -363,6 +387,7 @@ Ejecución habitual: `pytest` desde `api/` (ver [`api/README.md`](../../api/READ
 | Estilo API | Use case + puertos ABC | «God service» en el router con SQL embebido |
 | Async I/O | FastAPI + asyncpg | Flask sync + psycopg2 |
 | Tipado de interpretación | Pydantic `StructuredQuery` compartido LLM/parser/overrides | `dict` libre post-LLM |
+| Caché de interpretaciones | Decorator `CachingQueryAnalyzer` (LRU en proceso) | Llamar Ollama en cada ambigua; caché Redis prematura |
 | Multi-capa | Catálogo + SQL por tabla | Una sola tabla monolítica hardcodeada |
 | Nombre de tabla | Validación allowlist | Concatenación cruda (riesgo SQLi) |
 | Estado UI | React local en `page.tsx` | Store global prematuro |
@@ -372,4 +397,4 @@ Ejecución habitual: `pytest` desde `api/` (ver [`api/README.md`](../../api/READ
 
 ## Resumen del capítulo
 
-La implementación de ARES separa **batch offline** (`tools/`) de **servicio online** (`api/` + `frontend/`). La API materializa Clean Architecture con composition root explícito, un caso de uso que fija el orden override → parser → LLM, y adaptadores sustituibles (Postgres/pgvector, CLIP, Ollama, GeoJSON). El frontend es un cliente tipado del contrato, sin reimplementar la semántica. Las pruebas anclan esas invariantes para que evoluciones (nuevas relaciones espaciales, otro LLM, ONNX) entren por los puertos sin reescribir la orquestación.
+La implementación de ARES separa **batch offline** (`tools/`) de **servicio online** (`api/` + `frontend/`). La API materializa Clean Architecture con composition root explícito, un caso de uso que fija el orden override → parser → (caché LRU \| LLM), y adaptadores sustituibles (Postgres/pgvector, CLIP, Ollama + `CachingQueryAnalyzer`, GeoJSON). El frontend es un cliente tipado del contrato, sin reimplementar la semántica. Las pruebas anclan esas invariantes para que evoluciones (nuevas relaciones espaciales, otro LLM, ONNX) entren por los puertos sin reescribir la orquestación.

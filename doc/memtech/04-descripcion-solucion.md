@@ -245,10 +245,11 @@ La API no inventa geometrías en consulta: solo **selecciona y ordena** filas ya
 
 La API REST (`api/`, FastAPI) expone la búsqueda sobre el índice ya materializado. A nivel de **solución** importa:
 
-- Interpretación en cascada: overrides HTTP → parser determinista → Ollama (solo si hace falta).
+- Interpretación en cascada: overrides HTTP → parser determinista → caché LRU / Ollama (solo si hace falta).
+- Caché LRU en memoria de interpretaciones LLM (`CachingQueryAnalyzer`), con introspección vía `GET`/`DELETE /cache/llm`.
 - CLIP sobre *target* + atributos (no sobre la frase espacial completa).
 - Recuperación híbrida o espacial (`ST_DWithin`) según el intent.
-- Respuesta GeoJSON con `metadata.interpretation` auditable.
+- Respuesta GeoJSON con `metadata.interpretation` auditable (`source`: `override` \| `parser` \| `cache` \| `llm`).
 
 Si CLIP recibiera «coches cerca de rotonda» como un único string, mezclaría semántica de *target* y *reference*. ARES descompone el problema: CLIP ordena el target; PostGIS aplica la proximidad.
 
@@ -369,8 +370,8 @@ Quedan fuera o parcialmente preparados, de forma coherente con el alcance:
 
 - Relaciones `inside` / `within` (schema preparado; sin implementación operativa).
 - Filtro `bbox` como fase de producto adicional.
-- Caché LRU amplia de interpretaciones Ollama (existe soporte básico de cache; no es el foco de producto).
 - Evaluación cuantitativa formal (precision/recall por tipo de consulta).
+- Dimensionado y medición formal de la LRU de interpretaciones bajo carga (la caché ya está operativa; ver §05).
 
 Estos límites no alteran la arquitectura descrita: el esqueleto (offline materializado + online híbrido/espacial + interpretación auditable) permanece estable para evoluciones posteriores.
 

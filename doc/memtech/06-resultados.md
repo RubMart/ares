@@ -125,15 +125,17 @@ La API expone `metadata.timings`: `llm_ms`, `clip_ms`, `database_ms`, `total_ms`
 |-------|---------------|-------------------|
 | `llm_ms` | Parser / override (`piscinas`, muchas espaciales inequívocas) | **0 ms** |
 | `llm_ms` | Ollama `llama3.2:3b` en CPU (consulta ambigua, caché miss) | **~1–5 s** (variable; cold start mayor) |
+| `llm_ms` | Misma consulta ambigua, caché hit (`source=cache`) | **≈ 0 ms** (lookup en memoria; sin Ollama) |
 | `clip_ms` | Un embed de texto ViT-B/32 | **~50–300 ms** en CPU (menos si el modelo ya está en memoria) |
 | `database_ms` | Híbrida o espacial con HNSW + GIST, `top_k` ≤ 100 | **~50–500 ms** según cardinalidad y capas |
 | `total_ms` | Fast-path (sin LLM) | **~0,2–1 s** extremo a extremo API |
-| `total_ms` | Con LLM en CPU | **~1–6 s** (dominado por Ollama) |
+| `total_ms` | Con LLM en CPU (miss) | **~1–6 s** (dominado por Ollama) |
+| `total_ms` | Consulta ambigua repetida (hit LRU) | Orden del fast-path (CLIP + BD) |
 
 Implicaciones de diseño ya contrastadas en uso:
 
 1. El **fast-path** no es cosmética: convierte consultas frecuentes en latencia de índice, no de LLM.
-2. La caché LRU de interpretaciones (`CachingQueryAnalyzer`) reduce repeticiones del mismo texto.
+2. La caché LRU (`CachingQueryAnalyzer`, `LLM_CACHE_MAXSIZE`) evita re-invocar Ollama cuando la misma frase normalizada (y modelo) ya se interpretó; el GeoJSON marca `source=cache`. Se inspecciona o vacía con `GET`/`DELETE /cache/llm`.
 3. El coste YOLO/CLIP de indexado **no** entra en estos *timings*: ya está amortizado offline.
 
 Para cifras exactas en un entorno dado, basta inspeccionar `metadata.timings` en la respuesta o el modal *Más info* del frontend tras cada búsqueda.
@@ -154,4 +156,4 @@ Sí permiten, en una memoria técnica de entrega, **verificar visualmente** que 
 
 ## Resumen del capítulo
 
-Sobre el índice de Madrid, ARES recupera de forma usable consultas de clase (`piscinas`), clase+atributo (`coches rojos`), dominio energético (`paneles solares`) y espacial (`coches cerca de rotondas`), con evidencia cartográfica y tabular en el visor. Los tiempos de consulta se mantienen en el rango interactivo gracias al índice materializado y al fast-path sin LLM; el coste dominante, cuando aparece, es la interpretación Ollama en CPU.
+Sobre el índice de Madrid, ARES recupera de forma usable consultas de clase (`piscinas`), clase+atributo (`coches rojos`), dominio energético (`paneles solares`) y espacial (`coches cerca de rotondas`), con evidencia cartográfica y tabular en el visor. Los tiempos de consulta se mantienen en el rango interactivo gracias al índice materializado, al fast-path sin LLM y a la caché LRU en repeticiones ambiguas; el coste dominante, cuando aparece, es la interpretación Ollama en CPU (caché miss).

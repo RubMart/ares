@@ -52,7 +52,7 @@ Líneas naturales de continuación, ordenadas por impacto sobre el producto:
 
 ### Rendimiento y operación
 
-8. **Caché y calentamiento** — evaluar y dimensionar la LRU de interpretaciones; precarga de CLIP/Ollama; medición formal de `timings` bajo carga.
+8. **Calentamiento y carga** — precarga de CLIP/Ollama; medición formal de `timings` bajo carga; afinar `LLM_CACHE_MAXSIZE` según el patrón real de consultas (la LRU ya está en producción local).
 9. **Aceleración opcional** — GPU/CUDA y backend ONNX de CLIP como perfil de despliegue, manteniendo CPU como camino feliz documentado.
 10. **Indexación incremental** — pipelines que actualicen solo tiles nuevos o modelos añadidos, con versionado de capa en catálogo.
 

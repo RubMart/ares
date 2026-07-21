@@ -48,7 +48,7 @@ Orden en `SearchDetectionsUseCase` (no reordenar sin plan):
 
 1. **Overrides HTTP** (`target`, o `target`+`reference`) → `interpretation.source=override`, sin Ollama.
 2. **Parser determinista** (`try_deterministic_parse`) — match exacto de catálogo ± color ± espacial inequívoco → `source=parser`, sin Ollama.
-3. **Ollama** + `apply_catalog_fallback` → `source=llm`.
+3. **Caché LRU** (`CachingQueryAnalyzer`) o **Ollama** + `apply_catalog_fallback` → `source=cache` \| `source=llm`.
 4. CLIP embebe solo **target + atributos** (no la frase completa espacial).
 5. `search_hybrid` (`search_class`) o `search_spatial_near` + `ST_DWithin` (`search_spatial` / relation `near`).
 6. GeoJSON con `metadata.interpretation`, y en espacial `distance_to_reference_m` + `reference_features`.
@@ -62,6 +62,7 @@ Módulos clave:
 | Fast-path | `infrastructure/ai/deterministic_query_parser.py`, `find_catalog_entry_exact` |
 | Catálogo / CLIP text | `yolo_class_catalog.py`, `attribute_catalog.py` |
 | LLM | `infrastructure/ai/ollama_query_analyzer.py` |
+| Caché LRU | `infrastructure/ai/caching_query_analyzer.py`, `api/routes/cache.py` |
 | PostGIS | `postgres_detection_repository.py` (`search_hybrid`, `search_spatial_near`) |
 | Respuesta | `infrastructure/geo/geojson_serializer.py` |
 
@@ -87,6 +88,7 @@ Defaults (`api/config.py` / `.env.example`):
 - CLIP: `clip-ViT-B-32`, dim 512
 - Tabla catálogo: `detecciones_catalogo`
 - Distancia espacial: `DEFAULT_SPATIAL_DISTANCE_M=50`, `MAX_SPATIAL_DISTANCE_M=500`
+- Caché LRU de interpretaciones: `LLM_CACHE_MAXSIZE=256` (`0` = off)
 
 Tests: `pytest` desde `api/` (ver [`api/README.md`](api/README.md)).
 
@@ -128,13 +130,13 @@ Pesos en `<repo>/models/` (fuera de git). Detalle en [`tools/README.md`](tools/R
 - Analizador de consultas vía Ollama local
 - **Consulta espacial enriquecida** (`target` / `reference` / `relation=near`, `ST_DWithin`, CLIP solo target+attrs, interpretación en API + frontend) — plan `consulta_espacial_enriquecida_abdaa577`
 - **Fast-path sin LLM** (overrides + parser determinista; `llm_ms=0`) — plan `fast-path_sin_llm_484fbd49`
+- **Caché LRU de interpretaciones** (`CachingQueryAnalyzer`, `LLM_CACHE_MAXSIZE`, `GET`/`DELETE /cache/llm`, `source=cache`)
 - **Historial de búsquedas** en `api_webviewer` (últimas 5, solo texto, localStorage) — plan `historial_búsquedas_viewer_172cb185`
 
 **Fuera de alcance / siguiente (si se retoma):**
 
 - Relación `inside` / `within` (schema preparado, sin implementar)
 - Filtro `bbox` / fase espacial adicional
-- LRU / caché de interpretaciones Ollama
 
 ## Convenciones para el agente
 
@@ -144,7 +146,7 @@ Pesos en `<repo>/models/` (fuera de git). Detalle en [`tools/README.md`](tools/R
 4. Pipeline offline vive en `tools/`; la API en `api/` — no mezclar responsabilidades.
 5. Cambios de API: mantener tests en `api/tests/` y compatibilidad del GeoJSON cuando sea posible (`metadata.interpretation`, campos espaciales).
 6. Cambios mínimos y enfocados; no refactorizar fuera del alcance pedido.
-7. No llamar Ollama si overrides o el parser determinista ya resuelven la consulta; preservar el orden override → parser → LLM.
+7. No llamar Ollama si overrides o el parser determinista ya resuelven la consulta; preservar el orden override → parser → (caché LRU \| LLM).
 
 ## Origen
 

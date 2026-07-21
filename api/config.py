@@ -8,7 +8,7 @@ class Settings(BaseSettings):
 
     # Rate limit de POST /search (formato slowapi: "30/minute", "100/hour", …).
     rate_limit_enabled: bool = True
-    rate_limit_search: str = "15/minute"
+    rate_limit_search: str = "30/minute"
 
     database_url: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/detecciones"
 

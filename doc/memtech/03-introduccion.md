@@ -69,7 +69,7 @@ Toda decisión de diseño implica costes. Los más relevantes en ARES son:
 | **Relación espacial limitada** | En el estado actual se implementa de forma operativa la proximidad (`near` / `ST_DWithin`). Relaciones del tipo *inside* / *within* están preparadas a nivel de esquema pero no implementadas. |
 | **Cobertura lingüística imperfecta** | El parser determinista cubre frases inequívocas; el LLM cubre el resto con riesgo de interpretación errónea o de *fallback* de catálogo. |
 | **Coste de indexación previo** | Antes de consultar hay que ejecutar el pipeline offline (tiles, detección, embeddings, carga SQL). No es búsqueda *ad hoc* sobre la ortofoto en crudo en tiempo de petición. |
-| **Escala y evaluación** | El sistema está validado de forma cualitativa sobre datasets de prueba; no incluye aún un banco de evaluación cuantitativa (precision/recall por tipo de consulta) ni optimizaciones de caché LRU de interpretaciones. |
+| **Escala y evaluación** | El sistema está validado de forma cualitativa sobre datasets de prueba; no incluye aún un banco de evaluación cuantitativa (precision/recall por tipo de consulta). La caché LRU de interpretaciones reduce repeticiones del LLM, pero el dimensionado bajo carga formal queda abierto. |
 | **No sustituye un GIS completo** | Edición de capas, análisis multicriterio avanzado, simbología cartográfica profesional o publicación OGC completa quedan fuera de alcance. |
 
 Estas limitaciones no invalidan el enfoque; delimitan el **perfil de uso** para el que ARES está pensado: exploración semántico-espacial de un índice de detecciones, con bajo *friction* para el usuario y control local del despliegue.
@@ -81,7 +81,7 @@ Estas limitaciones no invalidan el enfoque; delimitan el **perfil de uso** para 
 - **Detección offline** de objetos sobre teselas derivadas de ortofotos de alta resolución, mediante modelos YOLO, generando entidades con geometría, clase y confianza.
 - **Generación de embeddings CLIP** (dimensión 512) asociados a cada detección, y miniaturas para apoyo visual.
 - **Indexación** en PostgreSQL con PostGIS (geometrías, proximidad) y pgvector (similitud), organizada por catálogo de capas.
-- **Interpretación de consultas** en español e inglés: overrides HTTP, parser determinista o Ollama, con *fallback* a catálogo cuando procede.
+- **Interpretación de consultas** en español e inglés: overrides HTTP, parser determinista o Ollama (con caché LRU de interpretaciones), con *fallback* a catálogo cuando procede.
 - **Búsqueda híbrida** (filtro de clase + ranking CLIP) y **búsqueda espacial** (*target* cerca de *reference* con radio configurable).
 - **API REST** que devuelve GeoJSON (`FeatureCollection`) con metadatos de interpretación y, en consultas espaciales, distancia a la referencia y features de referencia.
 - **Visor de producto** (mapa OpenLayers, tabla, filtros, chips espaciales, panel de interpretación) y un visor secundario de testing de la API.
@@ -92,7 +92,7 @@ Estas limitaciones no invalidan el enfoque; delimitan el **perfil de uso** para 
 - **No es un GIS completo**: no sustituye edición vectorial, geoprocesos complejos ni flujos de publicación cartográfica institucional.
 - **No sustituye la fotointerpretación experta** ni garantiza exactitud legal o catastral de las detecciones.
 - **No detecta en tiempo real** sobre el mapa durante la consulta; opera sobre un índice previamente materializado.
-- **No implementa aún** relaciones espaciales de contención (`inside` / `within`), filtro por `bbox` como fase adicional de producto, ni caché LRU de interpretaciones Ollama.
+- **No implementa aún** relaciones espaciales de contención (`inside` / `within`) ni filtro por `bbox` como fase adicional de producto.
 - **No depende** (ni pretende depender) de APIs cloud de visión o de LLM como camino feliz; el diseño prioriza el *stack* local.
 
 ## Metodología de trabajo (visión general)
@@ -100,7 +100,7 @@ Estas limitaciones no invalidan el enfoque; delimitan el **perfil de uso** para 
 El desarrollo se ha articulado en capas desacopladas, de forma que cada una pueda evolucionar sin romper el contrato de las demás:
 
 1. **Pipeline offline** (`tools/`): detección → embedding → thumbnails → carga a PostgreSQL.
-2. **Dominio y aplicación de búsqueda** (`api/`): Clean Architecture; caso de uso `SearchDetections` con orden fijo override → parser → LLM.
+2. **Dominio y aplicación de búsqueda** (`api/`): Clean Architecture; caso de uso `SearchDetections` con orden fijo override → parser → (caché LRU \| LLM).
 3. **Infraestructura**: repositorio PostGIS/pgvector, analizador Ollama, CLIP text encoder, serialización GeoJSON.
 4. **Presentación**: frontend de producto y, de forma secundaria, visor estático de pruebas de la API.
 5. **Documentación y decisiones**: planes de diseño, guías de uso y preparación de datos, y esta memoria técnica.
