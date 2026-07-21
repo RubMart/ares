@@ -103,7 +103,7 @@ Abre `http://localhost:8080`. URL de la API en la cabecera del visor o en `api_w
 
 ## Documentación
 
-Las guías están en [`doc/`](doc/) y en los README de cada módulo:
+Índice de `doc/` (contenidos, para qué sirven y cómo visualizarlos): [`doc/README.md`](doc/README.md).
 
 ### Uso del producto
 

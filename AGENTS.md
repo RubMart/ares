@@ -37,7 +37,7 @@ ares/
 ├── tools/                    # pipeline offline (detect → embed → SQL)
 │   ├── detect.py, embed.py, embed2psql.py, thumbnail.py, visualize.py
 │   └── utils.py
-└── doc/                      # guía de uso, preparación de datos, memtech/
+└── doc/                      # índice en doc/README.md; guías, capturas, memtech/
 ```
 
 **No versionar:** `models/`, `data/`, `runs/`, `pruebas/`, `sql_test/`, `.venv/`, pesos `.pt`/`.onnx`, ni `.env`.
