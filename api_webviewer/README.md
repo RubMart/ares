@@ -83,4 +83,4 @@ El mapa usa OSM por defecto. Si quieres superponer un COG, sírvelo con soporte 
 3. Revisa interpretación en el panel de metadata, features en mapa/tabla y el JSON crudo.
 4. Ajusta filtros en cliente o parámetros avanzados y vuelve a buscar.
 
-Para el flujo de producto (UX, i18n, chips espaciales, etc.) usa [`../frontend/`](../frontend/) y la [guía de uso](../doc/guia-de-uso.md).
+Para el flujo de producto (UX, i18n, chips espaciales, etc.) usa [`../frontend/`](../frontend/) ([README](../frontend/README.md)) y la [guía de uso](../doc/guia-de-uso.md).

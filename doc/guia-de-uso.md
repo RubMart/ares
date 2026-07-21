@@ -1,6 +1,6 @@
 # Guía de uso de ARES
 
-Esta guía explica cómo usar ARES desde el **frontend** ([`frontend/`](../frontend/)), el visor de producto. Para el contrato HTTP detallado, ver la [API reference](../api/README.md).
+Esta guía explica cómo usar ARES desde el **frontend** ([`frontend/`](../frontend/)), el visor de producto. Arranque y variables de entorno: [`frontend/README.md`](../frontend/README.md). Contrato HTTP: [API reference](../api/README.md).
 
 > **Nota:** [`api_webviewer/`](../api_webviewer/) es un visor **secundario** solo para testing manual de la API (mapa, tabla y JSON). No es la interfaz de usuario principal.
 

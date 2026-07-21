@@ -2,7 +2,7 @@
 
 Índice de la documentación del repositorio: guías de producto, preparación de datos y memoria técnica del TFM.
 
-Para arrancar API y frontend, ver el [README del proyecto](../README.md). Base de datos (Docker Compose, esquema, SQL de ejemplo): [`db/README.md`](../db/README.md). Contratos HTTP y CLI: [`api/README.md`](../api/README.md) y [`tools/README.md`](../tools/README.md).
+Para arrancar API y frontend, ver el [README del proyecto](../README.md). Base de datos (Docker Compose, esquema, SQL de ejemplo): [`db/README.md`](../db/README.md). Contratos HTTP, visor y CLI: [`api/README.md`](../api/README.md), [`frontend/README.md`](../frontend/README.md) y [`tools/README.md`](../tools/README.md).
 
 ## Contenidos
 
@@ -32,4 +32,5 @@ doc/
 | Indexar una ortofoto nueva | [`preparacion-de-datos.md`](preparacion-de-datos.md) (detalle CLI en [`tools/`](../tools/README.md)) |
 | Entender el diseño y el relato del TFM | [`memtech/`](memtech/) desde el capítulo 02 |
 | Endpoints y configuración de la API | [`api/README.md`](../api/README.md) (fuera de `doc/`) |
+| Arranque y env del frontend | [`frontend/README.md`](../frontend/README.md) (fuera de `doc/`) |
 | PostgreSQL / PostGIS / pgvector | [`db/README.md`](../db/README.md) (fuera de `doc/`) |

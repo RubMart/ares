@@ -93,6 +93,8 @@ npm run dev
 
 Abre `http://127.0.0.1:3000`. La URL de la API se configura en `NEXT_PUBLIC_API_URL` (`.env.local`; por defecto `http://127.0.0.1:8000`).
 
+Detalle de estructura, variables de entorno y scripts: [`frontend/README.md`](frontend/README.md).
+
 ### Visor de testing (`api_webviewer`)
 
 Herramienta **secundaria** para probar la API a mano (mapa, tabla y JSON crudo). No es el frontend de producto ni tiene propósito público.
@@ -121,6 +123,7 @@ Abre `http://localhost:8080`. URL de la API en la cabecera del visor o en `api_w
 |------|------|----------|
 | **API reference** | [`api/README.md`](api/README.md) | Endpoints, `POST /search`, configuración y tests |
 | **OpenAPI** | `http://127.0.0.1:8000/docs` | Documentación interactiva (con la API en marcha) |
+| **Frontend** | [`frontend/README.md`](frontend/README.md) | Visor de producto: estructura, env, arranque |
 | **Base de datos** | [`db/README.md`](db/README.md) | PostGIS + pgvector, tablas, SQL de ejemplo, Docker Compose |
 | **Visor de testing** | [`api_webviewer/README.md`](api_webviewer/README.md) | Cliente estático HTML/JS para depurar la API |
 | **Pipeline offline** | [`tools/README.md`](tools/README.md) | CLI de detección, embeddings y carga a PostgreSQL |

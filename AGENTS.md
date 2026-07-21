@@ -2,7 +2,7 @@
 
 **ARES** (*AI Retrieval of Entities in Space*): búsqueda en lenguaje natural sobre detecciones en imágenes aéreas (YOLO + CLIP + PostGIS/pgvector + Ollama + FastAPI + OpenLayers).
 
-Índice humano del repo: [`README.md`](README.md). Pipeline offline: [`tools/README.md`](tools/README.md). Preparación de datos: [`doc/preparacion-de-datos.md`](doc/preparacion-de-datos.md). API: [`api/README.md`](api/README.md).
+Índice humano del repo: [`README.md`](README.md). Pipeline offline: [`tools/README.md`](tools/README.md). Preparación de datos: [`doc/preparacion-de-datos.md`](doc/preparacion-de-datos.md). API: [`api/README.md`](api/README.md). Frontend: [`frontend/README.md`](frontend/README.md).
 
 ## Stack
 
@@ -32,7 +32,7 @@ ares/
 │   └── tests/
 ├── frontend/                 # visor de producto (Next.js + OpenLayers)
 │   ├── app/, components/, lib/, hooks/
-│   └── package.json, .env.example
+│   └── package.json, .env.example, README.md
 ├── api_webviewer/            # visor de testing de la API (mapa, tabla, JSON)
 ├── db/                       # PostgreSQL + PostGIS + pgvector (Docker Compose)
 │   └── Dockerfile, docker-compose.yml, sql/, README.md
@@ -115,7 +115,7 @@ npm install
 npm run dev
 ```
 
-URL API: `NEXT_PUBLIC_API_URL` en `.env.local`. UX de producto: mapa, tabla, interpretación, filtros, chips espaciales, distancia opcional, capa de referencias.
+URL API: `NEXT_PUBLIC_API_URL` en `.env.local`. Detalle: [`frontend/README.md`](frontend/README.md). UX de producto: mapa, tabla, interpretación, filtros, chips espaciales, distancia opcional, capa de referencias.
 
 ### Visor de testing (`api_webviewer`)
 
