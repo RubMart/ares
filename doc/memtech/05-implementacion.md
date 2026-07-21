@@ -3,20 +3,7 @@
 > Decisiones de diseño e implementación a nivel de ingeniería de software.  
 > El *qué* y el *porqué* de producto están en el capítulo 04; aquí se detalla el *cómo* se construye el código.
 
-Este capítulo se centra en la **arquitectura software de la API y del frontend**, el **composition root**, los **contratos de dominio**, el **pipeline del caso de uso**, los **adaptadores** (BD, CLIP, Ollama, parsers) y las **prácticas de prueba y configuración**. El pipeline offline (`tools/`) se trata como módulo de implementación batch, sin repetir la justificación multi-modelo del capítulo anterior.
-
----
-
-## Organización del repositorio (límites de módulo)
-
-| Árbol | Responsabilidad de implementación | No es |
-|-------|-----------------------------------|--------|
-| `tools/` | CLI batch: YOLO → CLIP imagen → SQL | Servicio online ni Clean Architecture |
-| `api/` | Servicio de búsqueda (CA + FastAPI) | Detección YOLO |
-| `frontend/` | Cliente Next.js + OpenLayers | Lógica de interpretación NL |
-| `api_webviewer/` | Cliente estático de prueba del contrato HTTP | Producto |
-
-La frontera es intencional: **ningún import** de Ultralytics entra en el request path de `api/`. Eso fija el SLA de consulta al índice materializado y permite desplegar API/frontend sin GPU ni pesos YOLO.
+Este capítulo se centra en la **arquitectura software de la API y del frontend**, el **composition root**, los **contratos de dominio**, el **pipeline del caso de uso**, los **adaptadores** (BD, CLIP, Ollama, parsers) y las **prácticas de prueba y configuración**. El pipeline offline (`tools/`) se trata como módulo de implementación batch, sin repetir la justificación multi-modelo del capítulo anterior. La frontera online/offline se mantiene en código: ningún import de Ultralytics entra en el request path de `api/`.
 
 ---
 
