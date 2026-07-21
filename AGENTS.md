@@ -12,7 +12,8 @@
 | BD | PostgreSQL + PostGIS + pgvector |
 | LLM local | Ollama (`llama3.2:3b` por defecto); se salta si la consulta es inequívoca |
 | API | FastAPI en [`api/`](api/) (Clean Architecture) |
-| Visor | OpenLayers en [`api_webviewer/`](api_webviewer/) |
+| Frontend (visor) | Next.js + OpenLayers en [`frontend/`](frontend/) |
+| Visor de testing | [`api_webviewer/`](api_webviewer/) (secundario; pruebas de la API) |
 | Memoria técnica | [`doc/memtech/`](doc/memtech/) |
 
 ## Layout del repo
@@ -29,7 +30,10 @@ ares/
 │   ├── domain/               # entities, value objects, ports
 │   ├── infrastructure/       # Postgres, CLIP, Ollama, parsers, GeoJSON
 │   └── tests/
-├── api_webviewer/            # mapa + tabla + JSON + historial local
+├── frontend/                 # visor de producto (Next.js + OpenLayers)
+│   ├── app/, components/, lib/, hooks/
+│   └── package.json, .env.example
+├── api_webviewer/            # visor de testing de la API (mapa, tabla, JSON)
 ├── tools/                    # pipeline offline (detect → embed → SQL)
 │   ├── detect.py, embed.py, embed2psql.py, thumbnail.py, visualize.py
 │   └── utils.py
@@ -86,11 +90,20 @@ Defaults (`api/config.py` / `.env.example`):
 
 Tests: `pytest` desde `api/` (ver [`api/README.md`](api/README.md)).
 
-### Visor
+### Frontend (visor)
 
-Servir `api_webviewer/` con un HTTP estático (URL API en `api_webviewer/js/api.js`).
+```powershell
+cd frontend
+copy .env.example .env.local
+npm install
+npm run dev
+```
 
-UX relevante: panel de interpretación, chips espaciales, distancia opcional, capa de referencias en el mapa, columna distancia, historial de las últimas 5 consultas en `localStorage` (`api_webviewer_search_history`).
+URL API: `NEXT_PUBLIC_API_URL` en `.env.local`. UX de producto: mapa, tabla, interpretación, filtros, chips espaciales, distancia opcional, capa de referencias.
+
+### Visor de testing (`api_webviewer`)
+
+Secundario: servir estáticamente para probar la API a mano (mapa, tabla, JSON). URL en `api_webviewer/js/api.js`. Historial local opcional: `api_webviewer_search_history`.
 
 ### Pipeline offline
 
@@ -111,11 +124,11 @@ Pesos en `<repo>/models/` (fuera de git). Detalle en [`tools/README.md`](tools/R
 
 - Scripts YOLO urbanos, CLIP embeddings, thumbnails 512, carga a PostgreSQL
 - API de búsqueda semántica híbrida (clase YOLO + ranking CLIP)
-- Visor web OpenLayers
+- Visor web de producto ([`frontend/`](frontend/)); `api_webviewer` queda como testing de la API
 - Analizador de consultas vía Ollama local
-- **Consulta espacial enriquecida** (`target` / `reference` / `relation=near`, `ST_DWithin`, CLIP solo target+attrs, interpretación en API + viewer) — plan `consulta_espacial_enriquecida_abdaa577`
+- **Consulta espacial enriquecida** (`target` / `reference` / `relation=near`, `ST_DWithin`, CLIP solo target+attrs, interpretación en API + frontend) — plan `consulta_espacial_enriquecida_abdaa577`
 - **Fast-path sin LLM** (overrides + parser determinista; `llm_ms=0`) — plan `fast-path_sin_llm_484fbd49`
-- **Historial de búsquedas** en el viewer (últimas 5, solo texto, localStorage) — plan `historial_búsquedas_viewer_172cb185`
+- **Historial de búsquedas** en `api_webviewer` (últimas 5, solo texto, localStorage) — plan `historial_búsquedas_viewer_172cb185`
 
 **Fuera de alcance / siguiente (si se retoma):**
 
