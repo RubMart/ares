@@ -2,6 +2,8 @@
 
 Scripts CLI para pasar de ortofoto/tile a filas en PostgreSQL (PostGIS + pgvector).
 
+Guía técnica completa (COG, publicación HTTP, `gdal2tiles` z=16, YOLO, CLIP, SQL): [`doc/preparacion-de-datos.md`](../doc/preparacion-de-datos.md).
+
 ## Flujo
 
 ```

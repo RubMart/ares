@@ -2,7 +2,7 @@
 
 **ARES** (*AI Retrieval of Entities in Space*): búsqueda en lenguaje natural sobre detecciones en imágenes aéreas (YOLO + CLIP + PostGIS/pgvector + Ollama + FastAPI + OpenLayers).
 
-Índice humano del repo: [`README.md`](README.md). Pipeline offline: [`tools/README.md`](tools/README.md). API: [`api/README.md`](api/README.md).
+Índice humano del repo: [`README.md`](README.md). Pipeline offline: [`tools/README.md`](tools/README.md). Preparación de datos: [`doc/preparacion-de-datos.md`](doc/preparacion-de-datos.md). API: [`api/README.md`](api/README.md).
 
 ## Stack
 
@@ -33,7 +33,7 @@ ares/
 ├── tools/                    # pipeline offline (detect → embed → SQL)
 │   ├── detect.py, embed.py, embed2psql.py, thumbnail.py, visualize.py
 │   └── utils.py
-└── doc/memtech/              # memoria técnica del TFM
+└── doc/                      # guía de uso, preparación de datos, memtech/
 ```
 
 **No versionar:** `models/`, `data/`, `runs/`, `pruebas/`, `sql_test/`, `.venv/`, pesos `.pt`/`.onnx`, ni `.env`.
