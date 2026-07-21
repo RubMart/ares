@@ -92,14 +92,14 @@ Abre `http://127.0.0.1:3000`. La URL de la API se configura en `NEXT_PUBLIC_API_
 
 ### Visor de testing (`api_webviewer`)
 
-Herramienta **secundaria** para probar la API a mano (mapa, tabla y JSON crudo). No es el frontend de producto.
+Herramienta **secundaria** para probar la API a mano (mapa, tabla y JSON crudo). No es el frontend de producto ni tiene propósito público.
 
 ```powershell
 cd api_webviewer
 python -m http.server 8080
 ```
 
-Abre `http://localhost:8080`. URL de la API en la cabecera del visor o en `api_webviewer/js/api.js`.
+Abre `http://localhost:8080`. URL de la API en la cabecera del visor o en `api_webviewer/js/api.js`. Detalle: [`api_webviewer/README.md`](api_webviewer/README.md).
 
 ## Documentación
 
@@ -118,6 +118,7 @@ Abre `http://localhost:8080`. URL de la API en la cabecera del visor o en `api_w
 |------|------|----------|
 | **API reference** | [`api/README.md`](api/README.md) | Endpoints, `POST /search`, configuración y tests |
 | **OpenAPI** | `http://127.0.0.1:8000/docs` | Documentación interactiva (con la API en marcha) |
+| **Visor de testing** | [`api_webviewer/README.md`](api_webviewer/README.md) | Cliente estático HTML/JS para depurar la API |
 | **Pipeline offline** | [`tools/README.md`](tools/README.md) | CLI de detección, embeddings y carga a PostgreSQL |
 | **Memoria técnica** | [`doc/memtech/`](doc/memtech/) | Narrativa del TFM |
 

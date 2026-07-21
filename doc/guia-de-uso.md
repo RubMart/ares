@@ -98,7 +98,7 @@ Sin relanzar la búsqueda puedes restringir el conjunto mostrado en el mapa (cap
 
 ## Visor de testing (`api_webviewer`)
 
-Para depurar la API a mano (opciones `top_k` / `per_layer_limit` / `min_confidence` / distancia, tabla ampliada, JSON crudo e historial local de las últimas 5 consultas), usa [`api_webviewer/`](../api_webviewer/). Es una herramienta secundaria, no el frontend de producto.
+Para depurar la API a mano (opciones `top_k` / `per_layer_limit` / `min_confidence` / distancia, tabla ampliada, JSON crudo e historial local de las últimas 5 consultas), usa [`api_webviewer/`](../api_webviewer/). Es una herramienta secundaria, no el frontend de producto. Arranque y dependencias: [`api_webviewer/README.md`](../api_webviewer/README.md).
 
 ## Uso directo de la API
 
