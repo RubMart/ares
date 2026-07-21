@@ -34,11 +34,14 @@ ares/
 │   ├── app/, components/, lib/, hooks/
 │   └── package.json, .env.example
 ├── api_webviewer/            # visor de testing de la API (mapa, tabla, JSON)
+├── db/                       # PostgreSQL + PostGIS + pgvector (Docker Compose)
+│   └── Dockerfile, docker-compose.yml, sql/, README.md
 ├── tools/                    # pipeline offline (detect → embed → SQL)
 │   ├── detect.py, embed.py, embed2psql.py, thumbnail.py, visualize.py
 │   └── utils.py
 └── doc/                      # índice en doc/README.md; guías, capturas, memtech/
 ```
+
 
 **No versionar:** `models/`, `data/`, `runs/`, `pruebas/`, `sql_test/`, `.venv/`, pesos `.pt`/`.onnx`, ni `.env`.
 
@@ -70,6 +73,17 @@ Ejemplos: `"piscinas"`, `"coches rojos"` → clase; `"coches cerca de rotonda"` 
 
 ## Arranque rápido
 
+### Base de datos
+
+Docker Compose en [`db/`](db/) (detalle: [`db/README.md`](db/README.md)):
+
+```powershell
+cd db
+docker compose up -d --build
+```
+
+Compose por defecto: `user` / `password`, BD `embedding_db`, puerto host **7432**. Ajusta `DATABASE_URL` en `api/.env` en consecuencia, o alinea el compose con los defaults de la API.
+
 ### API
 
 ```powershell
@@ -83,7 +97,7 @@ uvicorn main:app --reload --app-dir .
 
 Defaults (`api/config.py` / `.env.example`):
 
-- DB: `postgresql+asyncpg://postgres:postgres@localhost:5432/detecciones`
+- DB: `postgresql+asyncpg://postgres:postgres@localhost:5432/detecciones` (nativo; con Compose de `db/` usar puerto `7432` y credenciales del compose)
 - Ollama: `http://localhost:11434`, modelo `llama3.2:3b`
 - CLIP: `clip-ViT-B-32`, dim 512
 - Tabla catálogo: `detecciones_catalogo`

@@ -46,6 +46,7 @@ ares/
 ├── api/                 # API REST de búsqueda semántica / espacial
 ├── frontend/            # Visor de producto (Next.js + OpenLayers)
 ├── api_webviewer/       # Visor de testing de la API (mapa, tabla, JSON)
+├── db/                  # PostgreSQL + PostGIS + pgvector (Docker Compose)
 ├── tools/               # Pipeline offline: detección, embeddings, SQL
 ├── doc/                 # Guía de uso, capturas y memoria técnica
 ├── AGENTS.md            # Contexto operativo para agentes / desarrollo
@@ -55,7 +56,9 @@ ares/
 
 ## Arranque rápido
 
-Antes de arrancar API o frontend hace falta una **base de datos PostgreSQL** con PostGIS y pgvector, con el catálogo de capas y las tablas de detecciones ya cargadas (por defecto BD `detecciones`). Sin ese índice no hay resultados que consultar. Para crear esos datos desde una ortofoto, ver [`doc/preparacion-de-datos.md`](doc/preparacion-de-datos.md); el CLI resumido está en [`tools/`](tools/).
+Antes de arrancar API o frontend hace falta una **base de datos PostgreSQL** con PostGIS y pgvector, con el catálogo de capas y las tablas de detecciones ya cargadas. Sin ese índice no hay resultados que consultar.
+
+Arranque local con Docker Compose, esquema de tablas y SQL de ejemplo: [`db/README.md`](db/README.md). Para crear el índice desde una ortofoto: [`doc/preparacion-de-datos.md`](doc/preparacion-de-datos.md); CLI en [`tools/`](tools/).
 
 También se recomienda tener **Ollama** en marcha (`ollama pull llama3.2:3b`) para consultas ambiguas; las inequívocas pueden resolverse sin LLM.
 
@@ -118,6 +121,7 @@ Abre `http://localhost:8080`. URL de la API en la cabecera del visor o en `api_w
 |------|------|----------|
 | **API reference** | [`api/README.md`](api/README.md) | Endpoints, `POST /search`, configuración y tests |
 | **OpenAPI** | `http://127.0.0.1:8000/docs` | Documentación interactiva (con la API en marcha) |
+| **Base de datos** | [`db/README.md`](db/README.md) | PostGIS + pgvector, tablas, SQL de ejemplo, Docker Compose |
 | **Visor de testing** | [`api_webviewer/README.md`](api_webviewer/README.md) | Cliente estático HTML/JS para depurar la API |
 | **Pipeline offline** | [`tools/README.md`](tools/README.md) | CLI de detección, embeddings y carga a PostgreSQL |
 | **Memoria técnica** | [`doc/memtech/`](doc/memtech/) | Narrativa del TFM |
