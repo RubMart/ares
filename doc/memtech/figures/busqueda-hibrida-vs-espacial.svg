@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 380" role="img" aria-labelledby="title">
+  <title id="title">Búsqueda híbrida frente a búsqueda espacial</title>
+  <defs>
+    <style>
+      .card { fill:#f8fafc; stroke:#64748b; stroke-width:1.2; rx:10; }
+      .h { font-family:Segoe UI,Helvetica,Arial,sans-serif; fill:#0f172a; font-size:15px; font-weight:700; }
+      .t { font-family:Segoe UI,Helvetica,Arial,sans-serif; fill:#0f172a; font-size:12.5px; }
+      .s { font-family:Segoe UI,Helvetica,Arial,sans-serif; fill:#475569; font-size:11px; }
+      .pill { fill:#ccfbf1; stroke:#0f766e; }
+      .pill2 { fill:#dbeafe; stroke:#1d4ed8; }
+    </style>
+  </defs>
+  <text class="h" x="24" y="28">Dos modos de recuperación sobre el mismo índice</text>
+
+  <rect class="card" x="24" y="52" width="390" height="300"/>
+  <rect class="pill" x="44" y="72" width="160" height="28" rx="14"/>
+  <text class="t" x="68" y="91">search_hybrid</text>
+  <text class="t" x="44" y="124">Intent: search_class</text>
+  <text class="s" x="44" y="148">Ej.: «piscinas», «coches rojos»</text>
+  <text class="t" x="44" y="180">1. WHERE clase_yolo = ANY(&)</text>
+  <text class="t" x="44" y="202">2. ORDER BY embedding &lt;=&gt; q</text>
+  <text class="t" x="44" y="224">3. similarity = 1  distancia</text>
+  <text class="s" x="44" y="256">CLIP embebe solo target + attrs</text>
+  <text class="s" x="44" y="274">(p. ej. «coches rojos» ’ color)</text>
+  <text class="s" x="44" y="304">Índice: HNSW vector_cosine_ops</text>
+  <text class="s" x="44" y="322">+ filtro categórico duro</text>
+
+  <rect class="card" x="446" y="52" width="390" height="300"/>
+  <rect class="pill2" x="466" y="72" width="200" height="28" rx="14"/>
+  <text class="t" x="486" y="91">search_spatial_near</text>
+  <text class="t" x="466" y="124">Intent: search_spatial</text>
+  <text class="s" x="466" y="148">Ej.: «coches cerca de rotonda»</text>
+  <text class="t" x="466" y="180">1. Candidatos target + reference</text>
+  <text class="t" x="466" y="202">2. ST_DWithin(t.geom, r.geom, d)</text>
+  <text class="t" x="466" y="224">3. Nearest ref + rank CLIP target</text>
+  <text class="s" x="466" y="256">d default 50 m (máx. 500 m)</text>
+  <text class="s" x="466" y="274">EPSG:3857 H metros</text>
+  <text class="s" x="466" y="304">Respuesta: distance_to_reference_m</text>
+  <text class="s" x="466" y="322">+ metadata.reference_features</text>
+</svg>

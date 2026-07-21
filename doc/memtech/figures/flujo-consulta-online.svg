@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 560" role="img" aria-labelledby="title">
+  <title id="title">Flujo de interpretación y búsqueda online</title>
+  <defs>
+    <marker id="a" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#334155"/>
+    </marker>
+    <style>
+      .n { fill:#f8fafc; stroke:#0f766e; stroke-width:1.5; }
+      .d { fill:#fff7ed; stroke:#c2410c; stroke-width:1.5; }
+      .ok { fill:#ecfdf5; stroke:#047857; stroke-width:1.5; }
+      .llm { fill:#f5f3ff; stroke:#6d28d9; stroke-width:1.5; }
+      .t { font-family:Segoe UI,Helvetica,Arial,sans-serif; fill:#0f172a; font-size:13px; }
+      .s { font-family:Segoe UI,Helvetica,Arial,sans-serif; fill:#475569; font-size:11px; }
+      .h { font-family:Segoe UI,Helvetica,Arial,sans-serif; fill:#0f172a; font-size:15px; font-weight:700; }
+      .e { stroke:#334155; stroke-width:1.5; fill:none; marker-end:url(#a); }
+    </style>
+  </defs>
+  <text class="h" x="24" y="28">SearchDetectionsUseCase  orden de interpretación</text>
+
+  <rect class="n" x="280" y="48" width="220" height="48" rx="8"/>
+  <text class="t" x="318" y="78">POST /search (query&)</text>
+
+  <path class="e" d="M390,96 V118"/>
+  <rect class="d" x="250" y="118" width="280" height="52" rx="8"/>
+  <text class="t" x="290" y="140">¿Overrides suficientes?</text>
+  <text class="s" x="278" y="158">target [, reference, relation]</text>
+
+  <path class="e" d="M250,144 H140"/>
+  <text class="s" x="148" y="136">sí</text>
+  <rect class="ok" x="40" y="122" width="100" height="44" rx="8"/>
+  <text class="t" x="52" y="150">override</text>
+
+  <path class="e" d="M390,170 V192"/>
+  <text class="s" x="398" y="186">no</text>
+  <rect class="d" x="250" y="192" width="280" height="52" rx="8"/>
+  <text class="t" x="278" y="214">¿Parser determinista?</text>
+  <text class="s" x="268" y="232">match exacto de catálogo</text>
+
+  <path class="e" d="M250,218 H140"/>
+  <text class="s" x="148" y="210">sí</text>
+  <rect class="ok" x="40" y="196" width="100" height="44" rx="8"/>
+  <text class="t" x="62" y="224">parser</text>
+
+  <path class="e" d="M390,244 V266"/>
+  <text class="s" x="398" y="260">no</text>
+  <rect class="llm" x="250" y="266" width="280" height="52" rx="8"/>
+  <text class="t" x="300" y="288">Ollama (+ cache)</text>
+  <text class="s" x="272" y="306">+ fallback de catálogo ’ llm</text>
+
+  <path class="e" d="M90,166 V360"/>
+  <path class="e" d="M90,240 V360"/>
+  <path class="e" d="M390,318 V360"/>
+
+  <rect class="n" x="200" y="360" width="380" height="56" rx="8"/>
+  <text class="t" x="250" y="384">StructuredQuery consolidada</text>
+  <text class="s" x="230" y="402">intent · clases · attrs · spatial fields</text>
+
+  <path class="e" d="M390,416 V438"/>
+  <rect class="n" x="200" y="438" width="380" height="48" rx="8"/>
+  <text class="t" x="236" y="468">CLIP texto = target + atributos</text>
+
+  <path class="e" d="M390,486 V508"/>
+  <rect class="ok" x="120" y="508" width="540" height="40" rx="8"/>
+  <text class="t" x="180" y="534">BD: search_hybrid  |  search_spatial_near ’ GeoJSON</text>
+</svg>

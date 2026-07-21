@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 420" role="img" aria-labelledby="title">
+  <title id="title">Clean Architecture de la API ARES</title>
+  <defs>
+    <style>
+      .L1 { fill:#eff6ff; stroke:#1d4ed8; stroke-width:1.5; rx:10; }
+      .L2 { fill:#ecfdf5; stroke:#047857; stroke-width:1.5; rx:10; }
+      .L3 { fill:#fff7ed; stroke:#c2410c; stroke-width:1.5; rx:10; }
+      .L4 { fill:#f5f3ff; stroke:#6d28d9; stroke-width:1.5; rx:10; }
+      .t { font-family:Segoe UI,Helvetica,Arial,sans-serif; fill:#0f172a; font-size:13px; }
+      .s { font-family:Segoe UI,Helvetica,Arial,sans-serif; fill:#475569; font-size:11px; }
+      .h { font-family:Segoe UI,Helvetica,Arial,sans-serif; fill:#0f172a; font-size:15px; font-weight:700; }
+    </style>
+  </defs>
+  <text class="h" x="24" y="28">api/  capas y dependencias hacia dentro</text>
+
+  <rect class="L1" x="40" y="52" width="680" height="70"/>
+  <text class="t" x="60" y="82">api (HTTP)</text>
+  <text class="s" x="60" y="102">routes · schemas Pydantic · dependencies · rate limit</text>
+
+  <rect class="L2" x="40" y="140" width="680" height="70"/>
+  <text class="t" x="60" y="170">application</text>
+  <text class="s" x="60" y="190">SearchDetectionsUseCase · DTOs · orquestación override/parser/LLM/CLIP/BD</text>
+
+  <rect class="L3" x="40" y="228" width="680" height="70"/>
+  <text class="t" x="60" y="258">domain</text>
+  <text class="s" x="60" y="278">Detection · CatalogLayer · StructuredQuery · puertos (ABC) repositorio / embedder / analyzer</text>
+
+  <rect class="L4" x="40" y="316" width="680" height="80"/>
+  <text class="t" x="60" y="346">infrastructure</text>
+  <text class="s" x="60" y="366">PostgresDetectionRepository · ClipOnnxTextEmbedder · OllamaQueryAnalyzer</text>
+  <text class="s" x="60" y="384">deterministic_query_parser · GeoJsonSerializer · catálogos YOLO/atributos</text>
+</svg>

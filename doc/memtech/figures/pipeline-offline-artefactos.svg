@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 300" role="img" aria-labelledby="title">
+  <title id="title">Pipeline offline de indexación</title>
+  <defs>
+    <marker id="ar" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#334155"/>
+    </marker>
+    <style>
+      .b { fill:#f8fafc; stroke:#0f766e; stroke-width:1.5; rx:8; }
+      .t { font-family:Segoe UI,Helvetica,Arial,sans-serif; fill:#0f172a; font-size:12px; }
+      .s { font-family:Segoe UI,Helvetica,Arial,sans-serif; fill:#475569; font-size:10.5px; }
+      .h { font-family:Segoe UI,Helvetica,Arial,sans-serif; fill:#0f172a; font-size:14px; font-weight:700; }
+      .e { stroke:#334155; stroke-width:1.5; fill:none; marker-end:url(#ar); }
+    </style>
+  </defs>
+  <text class="h" x="20" y="28">Artefactos por etapa (companions junto al tile)</text>
+
+  <rect class="b" x="20" y="60" width="120" height="90"/>
+  <text class="t" x="48" y="98">tile.png</text>
+  <text class="s" x="36" y="118">16/x/y.png</text>
+
+  <path class="e" d="M140,105 H160"/>
+  <rect class="b" x="160" y="60" width="120" height="90"/>
+  <text class="t" x="182" y="92">detect.py</text>
+  <text class="s" x="172" y="112">{stem}.json</text>
+  <text class="s" x="168" y="128">bbox + 3857</text>
+
+  <path class="e" d="M280,105 H300"/>
+  <rect class="b" x="300" y="60" width="120" height="90"/>
+  <text class="t" x="324" y="92">embed.py</text>
+  <text class="s" x="306" y="112">*_emb.json</text>
+  <text class="s" x="314" y="128">512-d L2</text>
+
+  <path class="e" d="M420,105 H440"/>
+  <rect class="b" x="440" y="60" width="130" height="90"/>
+  <text class="t" x="454" y="92">thumbnail.py</text>
+  <text class="s" x="454" y="112">*_thumb.jpg</text>
+  <text class="s" x="458" y="128">opcional</text>
+
+  <path class="e" d="M570,105 H590"/>
+  <rect class="b" x="590" y="60" width="200" height="90"/>
+  <text class="t" x="622" y="92">embed2psql.py</text>
+  <text class="s" x="608" y="112">*_schema.sql / *_data.sql</text>
+  <text class="s" x="618" y="128">+ detecciones_catalogo</text>
+
+  <text class="s" x="20" y="190">Requisito geométrico: layout XYZ de gdal2tiles (z/x/y). Sin él no hay tile_id ni bbox3857 válidos.</text>
+  <text class="s" x="20" y="212">Modelos habituales (--all-models): visdrone, photovoltaic, building, swimming-pool, yolo11m-obb.</text>
+  <text class="s" x="20" y="234">Pesos en &lt;repo&gt;/models/ (fuera de git). Inferencia operable en CPU.</text>
+  <text class="s" x="20" y="256">Catálogo: nombre_capa ’ tabla de detecciones; bbox de capa + cog_url para el visor.</text>
+</svg>

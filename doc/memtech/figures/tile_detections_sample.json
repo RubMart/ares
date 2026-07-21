@@ -1,0 +1,3722 @@
+{
+  "source_image": "D:\\TFM\\yolo_example\\pruebas\\tiles16\\16\\32101\\24711.png",
+  "models": [
+    "visdrone-yolov11s",
+    "yolo-remote-sensing-photovoltaic",
+    "building-detector",
+    "swimming-pool-detector",
+    "yolo11m-obb.pt"
+  ],
+  "confidence_threshold": 0.3,
+  "inference_size": 1280,
+  "model_settings": {
+    "visdrone-yolov11s": {
+      "inference_size": 1280,
+      "confidence_threshold": 0.3
+    },
+    "yolo-remote-sensing-photovoltaic": {
+      "inference_size": 1280,
+      "confidence_threshold": 0.3
+    },
+    "building-detector": {
+      "inference_size": 1280,
+      "confidence_threshold": 0.3
+    },
+    "swimming-pool-detector": {
+      "inference_size": 1280,
+      "confidence_threshold": 0.3
+    },
+    "yolo11m-obb.pt": {
+      "inference_size": 1280,
+      "confidence_threshold": 0.3
+    }
+  },
+  "image_size": {
+    "width": 2048,
+    "height": 2048
+  },
+  "detections": [
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.8012,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1939.75,
+        "y1": 1934.03,
+        "x2": 1962.02,
+        "y2": 1949.95
+      },
+      "bbox3857": {
+        "x1": -407288.808,
+        "y1": 4926247.628,
+        "x2": -407282.159,
+        "y2": 4926242.875
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.7767,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1710.32,
+        "y1": 1991.45,
+        "x2": 1735.8,
+        "y2": 2009.21
+      },
+      "bbox3857": {
+        "x1": -407357.312,
+        "y1": 4926230.484,
+        "x2": -407349.704,
+        "y2": 4926225.181
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.77,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1838.47,
+        "y1": 1583.86,
+        "x2": 1856.44,
+        "y2": 1599.67
+      },
+      "bbox3857": {
+        "x1": -407319.049,
+        "y1": 4926352.183,
+        "x2": -407313.683,
+        "y2": 4926347.462
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.7543,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 2025.56,
+        "y1": 1666.4,
+        "x2": 2038.91,
+        "y2": 1688.16
+      },
+      "bbox3857": {
+        "x1": -407263.187,
+        "y1": 4926327.538,
+        "x2": -407259.201,
+        "y2": 4926321.041
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.7473,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1966.59,
+        "y1": 1638.49,
+        "x2": 1979.29,
+        "y2": 1657.93
+      },
+      "bbox3857": {
+        "x1": -407280.794,
+        "y1": 4926335.871,
+        "x2": -407277.002,
+        "y2": 4926330.067
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.7459,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1843.87,
+        "y1": 1562.05,
+        "x2": 1865.12,
+        "y2": 1574.7
+      },
+      "bbox3857": {
+        "x1": -407317.436,
+        "y1": 4926358.695,
+        "x2": -407311.091,
+        "y2": 4926354.918
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.7344,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1790.32,
+        "y1": 1458.16,
+        "x2": 1801.81,
+        "y2": 1477.45
+      },
+      "bbox3857": {
+        "x1": -407333.425,
+        "y1": 4926389.715,
+        "x2": -407329.995,
+        "y2": 4926383.955
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.7261,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1946.44,
+        "y1": 1629.61,
+        "x2": 1961.31,
+        "y2": 1650.5
+      },
+      "bbox3857": {
+        "x1": -407286.811,
+        "y1": 4926338.523,
+        "x2": -407282.371,
+        "y2": 4926332.285
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.7226,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1847.81,
+        "y1": 1540.34,
+        "x2": 1867.81,
+        "y2": 1553.61
+      },
+      "bbox3857": {
+        "x1": -407316.26,
+        "y1": 4926365.177,
+        "x2": -407310.288,
+        "y2": 4926361.215
+      }
+    },
+    {
+      "class_id": 4,
+      "class_name": "van",
+      "confidence": 0.7171,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1882.0,
+        "y1": 1598.78,
+        "x2": 1897.95,
+        "y2": 1622.54
+      },
+      "bbox3857": {
+        "x1": -407306.051,
+        "y1": 4926347.728,
+        "x2": -407301.289,
+        "y2": 4926340.634
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.7143,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 2038.92,
+        "y1": 1668.21,
+        "x2": 2047.74,
+        "y2": 1689.99
+      },
+      "bbox3857": {
+        "x1": -407259.198,
+        "y1": 4926326.997,
+        "x2": -407256.564,
+        "y2": 4926320.494
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.7055,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1893.27,
+        "y1": 1608.52,
+        "x2": 1908.28,
+        "y2": 1627.45
+      },
+      "bbox3857": {
+        "x1": -407302.686,
+        "y1": 4926344.82,
+        "x2": -407298.205,
+        "y2": 4926339.168
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.6978,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1975.75,
+        "y1": 1609.29,
+        "x2": 1996.8,
+        "y2": 1623.74
+      },
+      "bbox3857": {
+        "x1": -407278.059,
+        "y1": 4926344.59,
+        "x2": -407271.774,
+        "y2": 4926340.275
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.693,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1889.33,
+        "y1": 1517.7,
+        "x2": 1902.67,
+        "y2": 1536.95
+      },
+      "bbox3857": {
+        "x1": -407303.863,
+        "y1": 4926371.937,
+        "x2": -407299.88,
+        "y2": 4926366.189
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.6917,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1847.27,
+        "y1": 1551.49,
+        "x2": 1867.66,
+        "y2": 1564.43
+      },
+      "bbox3857": {
+        "x1": -407316.421,
+        "y1": 4926361.848,
+        "x2": -407310.333,
+        "y2": 4926357.984
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.6902,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 2009.44,
+        "y1": 1982.18,
+        "x2": 2030.09,
+        "y2": 1997.91
+      },
+      "bbox3857": {
+        "x1": -407268.0,
+        "y1": 4926233.252,
+        "x2": -407261.834,
+        "y2": 4926228.555
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.6878,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1919.27,
+        "y1": 1594.12,
+        "x2": 1932.6,
+        "y2": 1613.75
+      },
+      "bbox3857": {
+        "x1": -407294.923,
+        "y1": 4926349.119,
+        "x2": -407290.943,
+        "y2": 4926343.258
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.6846,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1864.79,
+        "y1": 1592.98,
+        "x2": 1880.07,
+        "y2": 1609.98
+      },
+      "bbox3857": {
+        "x1": -407311.19,
+        "y1": 4926349.46,
+        "x2": -407306.628,
+        "y2": 4926344.384
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.6835,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1452.66,
+        "y1": 2036.76,
+        "x2": 1477.38,
+        "y2": 2047.48
+      },
+      "bbox3857": {
+        "x1": -407434.245,
+        "y1": 4926216.955,
+        "x2": -407426.864,
+        "y2": 4926213.754
+      }
+    },
+    {
+      "class_id": 4,
+      "class_name": "van",
+      "confidence": 0.6792,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 2001.77,
+        "y1": 1619.94,
+        "x2": 2023.93,
+        "y2": 1636.52
+      },
+      "bbox3857": {
+        "x1": -407270.29,
+        "y1": 4926341.41,
+        "x2": -407263.674,
+        "y2": 4926336.46
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.6781,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 2006.98,
+        "y1": 1545.33,
+        "x2": 2023.38,
+        "y2": 1569.64
+      },
+      "bbox3857": {
+        "x1": -407268.735,
+        "y1": 4926363.687,
+        "x2": -407263.838,
+        "y2": 4926356.429
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.676,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1990.07,
+        "y1": 1647.51,
+        "x2": 2001.12,
+        "y2": 1667.12
+      },
+      "bbox3857": {
+        "x1": -407273.784,
+        "y1": 4926333.178,
+        "x2": -407270.484,
+        "y2": 4926327.323
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.6742,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1963.81,
+        "y1": 1950.83,
+        "x2": 1987.36,
+        "y2": 1968.25
+      },
+      "bbox3857": {
+        "x1": -407281.624,
+        "y1": 4926242.612,
+        "x2": -407274.593,
+        "y2": 4926237.411
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.6736,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1576.69,
+        "y1": 1935.36,
+        "x2": 1592.37,
+        "y2": 1957.61
+      },
+      "bbox3857": {
+        "x1": -407397.211,
+        "y1": 4926247.231,
+        "x2": -407392.53,
+        "y2": 4926240.588
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.67,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1905.83,
+        "y1": 1590.21,
+        "x2": 1921.47,
+        "y2": 1606.31
+      },
+      "bbox3857": {
+        "x1": -407298.936,
+        "y1": 4926350.287,
+        "x2": -407294.266,
+        "y2": 4926345.48
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.6619,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1599.78,
+        "y1": 1933.8,
+        "x2": 1610.92,
+        "y2": 1954.11
+      },
+      "bbox3857": {
+        "x1": -407390.317,
+        "y1": 4926247.697,
+        "x2": -407386.991,
+        "y2": 4926241.633
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.6612,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1839.76,
+        "y1": 1853.93,
+        "x2": 1851.8,
+        "y2": 1877.33
+      },
+      "bbox3857": {
+        "x1": -407318.663,
+        "y1": 4926271.545,
+        "x2": -407315.069,
+        "y2": 4926264.558
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.6602,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1852.34,
+        "y1": 1591.94,
+        "x2": 1866.06,
+        "y2": 1609.83
+      },
+      "bbox3857": {
+        "x1": -407314.907,
+        "y1": 4926349.77,
+        "x2": -407310.811,
+        "y2": 4926344.429
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.6585,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1574.51,
+        "y1": 1979.39,
+        "x2": 1597.84,
+        "y2": 1992.81
+      },
+      "bbox3857": {
+        "x1": -407397.862,
+        "y1": 4926234.085,
+        "x2": -407390.896,
+        "y2": 4926230.078
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.6563,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1934.43,
+        "y1": 1538.2,
+        "x2": 1951.41,
+        "y2": 1560.04
+      },
+      "bbox3857": {
+        "x1": -407290.397,
+        "y1": 4926365.816,
+        "x2": -407285.327,
+        "y2": 4926359.295
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.6452,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1651.36,
+        "y1": 1806.75,
+        "x2": 1668.01,
+        "y2": 1826.01
+      },
+      "bbox3857": {
+        "x1": -407374.916,
+        "y1": 4926285.632,
+        "x2": -407369.945,
+        "y2": 4926279.881
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.6441,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1958.18,
+        "y1": 1547.48,
+        "x2": 1974.5,
+        "y2": 1566.84
+      },
+      "bbox3857": {
+        "x1": -407283.305,
+        "y1": 4926363.045,
+        "x2": -407278.432,
+        "y2": 4926357.265
+      }
+    },
+    {
+      "class_id": 4,
+      "class_name": "van",
+      "confidence": 0.6438,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 2036.2,
+        "y1": 1556.92,
+        "x2": 2048.0,
+        "y2": 1585.56
+      },
+      "bbox3857": {
+        "x1": -407260.01,
+        "y1": 4926360.227,
+        "x2": -407256.487,
+        "y2": 4926351.675
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.6401,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1977.52,
+        "y1": 1591.78,
+        "x2": 1996.44,
+        "y2": 1608.62
+      },
+      "bbox3857": {
+        "x1": -407277.531,
+        "y1": 4926349.818,
+        "x2": -407271.882,
+        "y2": 4926344.79
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.6377,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1974.55,
+        "y1": 1640.49,
+        "x2": 1988.82,
+        "y2": 1663.02
+      },
+      "bbox3857": {
+        "x1": -407278.418,
+        "y1": 4926335.274,
+        "x2": -407274.157,
+        "y2": 4926328.547
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.6253,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1528.02,
+        "y1": 1825.96,
+        "x2": 1553.41,
+        "y2": 1847.12
+      },
+      "bbox3857": {
+        "x1": -407411.743,
+        "y1": 4926279.896,
+        "x2": -407404.162,
+        "y2": 4926273.578
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.614,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1560.58,
+        "y1": 1817.51,
+        "x2": 1587.24,
+        "y2": 1837.13
+      },
+      "bbox3857": {
+        "x1": -407402.022,
+        "y1": 4926282.419,
+        "x2": -407394.061,
+        "y2": 4926276.561
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.6123,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 2001.81,
+        "y1": 1599.84,
+        "x2": 2017.51,
+        "y2": 1617.92
+      },
+      "bbox3857": {
+        "x1": -407270.278,
+        "y1": 4926347.411,
+        "x2": -407265.59,
+        "y2": 4926342.013
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.6101,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1915.24,
+        "y1": 1529.72,
+        "x2": 1927.58,
+        "y2": 1550.78
+      },
+      "bbox3857": {
+        "x1": -407296.126,
+        "y1": 4926368.348,
+        "x2": -407292.442,
+        "y2": 4926362.06
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.5936,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1880.36,
+        "y1": 1513.29,
+        "x2": 1892.8,
+        "y2": 1535.1
+      },
+      "bbox3857": {
+        "x1": -407306.541,
+        "y1": 4926373.254,
+        "x2": -407302.827,
+        "y2": 4926366.742
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.5923,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 2005.16,
+        "y1": 1653.19,
+        "x2": 2017.32,
+        "y2": 1676.99
+      },
+      "bbox3857": {
+        "x1": -407269.278,
+        "y1": 4926331.482,
+        "x2": -407265.647,
+        "y2": 4926324.376
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.5841,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1839.86,
+        "y1": 1570.88,
+        "x2": 1860.58,
+        "y2": 1582.39
+      },
+      "bbox3857": {
+        "x1": -407318.634,
+        "y1": 4926356.058,
+        "x2": -407312.447,
+        "y2": 4926352.622
+      }
+    },
+    {
+      "class_id": 4,
+      "class_name": "van",
+      "confidence": 0.5688,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1924.71,
+        "y1": 1618.18,
+        "x2": 1937.93,
+        "y2": 1642.2
+      },
+      "bbox3857": {
+        "x1": -407293.299,
+        "y1": 4926341.935,
+        "x2": -407289.352,
+        "y2": 4926334.764
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.5656,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1504.18,
+        "y1": 1834.48,
+        "x2": 1527.11,
+        "y2": 1851.89
+      },
+      "bbox3857": {
+        "x1": -407418.862,
+        "y1": 4926277.352,
+        "x2": -407412.015,
+        "y2": 4926272.154
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.5595,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1902.33,
+        "y1": 1526.73,
+        "x2": 1915.33,
+        "y2": 1547.67
+      },
+      "bbox3857": {
+        "x1": -407299.981,
+        "y1": 4926369.241,
+        "x2": -407296.1,
+        "y2": 4926362.989
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.5585,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1929.58,
+        "y1": 1535.64,
+        "x2": 1942.28,
+        "y2": 1557.12
+      },
+      "bbox3857": {
+        "x1": -407291.845,
+        "y1": 4926366.58,
+        "x2": -407288.053,
+        "y2": 4926360.167
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.5527,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1841.21,
+        "y1": 1854.32,
+        "x2": 1860.5,
+        "y2": 1878.51
+      },
+      "bbox3857": {
+        "x1": -407318.231,
+        "y1": 4926271.428,
+        "x2": -407312.471,
+        "y2": 4926264.206
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.5502,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1490.89,
+        "y1": 1838.96,
+        "x2": 1516.14,
+        "y2": 1858.25
+      },
+      "bbox3857": {
+        "x1": -407422.83,
+        "y1": 4926276.015,
+        "x2": -407415.291,
+        "y2": 4926270.255
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.5425,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1801.01,
+        "y1": 1512.46,
+        "x2": 1819.38,
+        "y2": 1532.36
+      },
+      "bbox3857": {
+        "x1": -407330.234,
+        "y1": 4926373.502,
+        "x2": -407324.749,
+        "y2": 4926367.56
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.5249,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1877.98,
+        "y1": 1571.7,
+        "x2": 1891.77,
+        "y2": 1591.31
+      },
+      "bbox3857": {
+        "x1": -407307.252,
+        "y1": 4926355.814,
+        "x2": -407303.134,
+        "y2": 4926349.958
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.5131,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 2011.39,
+        "y1": 1602.6,
+        "x2": 2030.83,
+        "y2": 1622.44
+      },
+      "bbox3857": {
+        "x1": -407267.418,
+        "y1": 4926346.587,
+        "x2": -407261.613,
+        "y2": 4926340.664
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.4991,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 2026.13,
+        "y1": 1609.7,
+        "x2": 2043.79,
+        "y2": 1630.04
+      },
+      "bbox3857": {
+        "x1": -407263.017,
+        "y1": 4926344.467,
+        "x2": -407257.744,
+        "y2": 4926338.394
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.4886,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1487.21,
+        "y1": 1840.91,
+        "x2": 1507.23,
+        "y2": 1861.33
+      },
+      "bbox3857": {
+        "x1": -407423.929,
+        "y1": 4926275.432,
+        "x2": -407417.951,
+        "y2": 4926269.335
+      }
+    },
+    {
+      "class_id": 4,
+      "class_name": "van",
+      "confidence": 0.4797,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1794.24,
+        "y1": 1436.77,
+        "x2": 1809.05,
+        "y2": 1456.59
+      },
+      "bbox3857": {
+        "x1": -407332.255,
+        "y1": 4926396.101,
+        "x2": -407327.833,
+        "y2": 4926390.183
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.4769,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1476.01,
+        "y1": 1850.41,
+        "x2": 1495.09,
+        "y2": 1866.47
+      },
+      "bbox3857": {
+        "x1": -407427.273,
+        "y1": 4926272.596,
+        "x2": -407421.576,
+        "y2": 4926267.801
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.4742,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1936.16,
+        "y1": 1624.75,
+        "x2": 1948.54,
+        "y2": 1645.25
+      },
+      "bbox3857": {
+        "x1": -407289.88,
+        "y1": 4926339.974,
+        "x2": -407286.184,
+        "y2": 4926333.853
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.4637,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1767.49,
+        "y1": 2009.8,
+        "x2": 1790.42,
+        "y2": 2026.54
+      },
+      "bbox3857": {
+        "x1": -407340.242,
+        "y1": 4926225.005,
+        "x2": -407333.395,
+        "y2": 4926220.006
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.4608,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1555.68,
+        "y1": 1939.48,
+        "x2": 1574.82,
+        "y2": 1959.08
+      },
+      "bbox3857": {
+        "x1": -407403.485,
+        "y1": 4926246.001,
+        "x2": -407397.77,
+        "y2": 4926240.149
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.4355,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1870.24,
+        "y1": 1511.78,
+        "x2": 1881.32,
+        "y2": 1530.34
+      },
+      "bbox3857": {
+        "x1": -407309.563,
+        "y1": 4926373.705,
+        "x2": -407306.254,
+        "y2": 4926368.163
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.4334,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1708.05,
+        "y1": 1810.03,
+        "x2": 1723.84,
+        "y2": 1833.26
+      },
+      "bbox3857": {
+        "x1": -407357.99,
+        "y1": 4926284.653,
+        "x2": -407353.275,
+        "y2": 4926277.716
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.4312,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1459.2,
+        "y1": 2025.07,
+        "x2": 1486.05,
+        "y2": 2035.34
+      },
+      "bbox3857": {
+        "x1": -407432.292,
+        "y1": 4926220.445,
+        "x2": -407424.275,
+        "y2": 4926217.379
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.4284,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1819.19,
+        "y1": 2012.49,
+        "x2": 1847.93,
+        "y2": 2031.98
+      },
+      "bbox3857": {
+        "x1": -407324.805,
+        "y1": 4926224.202,
+        "x2": -407316.224,
+        "y2": 4926218.382
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.4264,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1525.31,
+        "y1": 1828.37,
+        "x2": 1545.29,
+        "y2": 1847.88
+      },
+      "bbox3857": {
+        "x1": -407412.553,
+        "y1": 4926279.177,
+        "x2": -407406.587,
+        "y2": 4926273.351
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.4242,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 2039.53,
+        "y1": 1964.24,
+        "x2": 2048.0,
+        "y2": 1983.2
+      },
+      "bbox3857": {
+        "x1": -407259.016,
+        "y1": 4926238.608,
+        "x2": -407256.487,
+        "y2": 4926232.947
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.416,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1551.29,
+        "y1": 1983.83,
+        "x2": 1575.06,
+        "y2": 1999.86
+      },
+      "bbox3857": {
+        "x1": -407404.795,
+        "y1": 4926232.759,
+        "x2": -407397.698,
+        "y2": 4926227.973
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.3996,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1502.35,
+        "y1": 1835.53,
+        "x2": 1523.24,
+        "y2": 1855.66
+      },
+      "bbox3857": {
+        "x1": -407419.408,
+        "y1": 4926277.039,
+        "x2": -407413.171,
+        "y2": 4926271.028
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.3996,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1546.02,
+        "y1": 1946.78,
+        "x2": 1567.67,
+        "y2": 1962.03
+      },
+      "bbox3857": {
+        "x1": -407406.369,
+        "y1": 4926243.821,
+        "x2": -407399.905,
+        "y2": 4926239.268
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.3989,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1976.95,
+        "y1": 1642.46,
+        "x2": 1990.02,
+        "y2": 1662.34
+      },
+      "bbox3857": {
+        "x1": -407277.701,
+        "y1": 4926334.686,
+        "x2": -407273.798,
+        "y2": 4926328.75
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.3936,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1787.88,
+        "y1": 2020.45,
+        "x2": 1814.3,
+        "y2": 2040.97
+      },
+      "bbox3857": {
+        "x1": -407334.154,
+        "y1": 4926221.825,
+        "x2": -407326.265,
+        "y2": 4926215.698
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.3932,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1924.71,
+        "y1": 1532.33,
+        "x2": 1940.17,
+        "y2": 1553.72
+      },
+      "bbox3857": {
+        "x1": -407293.299,
+        "y1": 4926367.569,
+        "x2": -407288.683,
+        "y2": 4926361.182
+      }
+    },
+    {
+      "class_id": 4,
+      "class_name": "van",
+      "confidence": 0.3885,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1523.17,
+        "y1": 1951.49,
+        "x2": 1558.83,
+        "y2": 1971.06
+      },
+      "bbox3857": {
+        "x1": -407413.192,
+        "y1": 4926242.415,
+        "x2": -407402.544,
+        "y2": 4926236.572
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.3876,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1654.37,
+        "y1": 1981.11,
+        "x2": 1675.84,
+        "y2": 1990.61
+      },
+      "bbox3857": {
+        "x1": -407374.018,
+        "y1": 4926233.571,
+        "x2": -407367.607,
+        "y2": 4926230.735
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.3836,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1945.11,
+        "y1": 1544.97,
+        "x2": 1963.46,
+        "y2": 1564.55
+      },
+      "bbox3857": {
+        "x1": -407287.208,
+        "y1": 4926363.795,
+        "x2": -407281.729,
+        "y2": 4926357.948
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.3817,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1757.49,
+        "y1": 1982.91,
+        "x2": 1780.52,
+        "y2": 1997.3
+      },
+      "bbox3857": {
+        "x1": -407343.228,
+        "y1": 4926233.034,
+        "x2": -407336.351,
+        "y2": 4926228.737
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.3703,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1795.07,
+        "y1": 1436.89,
+        "x2": 1808.48,
+        "y2": 1456.89
+      },
+      "bbox3857": {
+        "x1": -407332.007,
+        "y1": 4926396.065,
+        "x2": -407328.003,
+        "y2": 4926390.094
+      }
+    },
+    {
+      "class_id": 4,
+      "class_name": "van",
+      "confidence": 0.365,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1911.38,
+        "y1": 1616.85,
+        "x2": 1930.59,
+        "y2": 1642.04
+      },
+      "bbox3857": {
+        "x1": -407297.279,
+        "y1": 4926342.333,
+        "x2": -407291.543,
+        "y2": 4926334.811
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.3449,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1618.75,
+        "y1": 1979.29,
+        "x2": 1649.32,
+        "y2": 1988.7
+      },
+      "bbox3857": {
+        "x1": -407384.653,
+        "y1": 4926234.115,
+        "x2": -407375.525,
+        "y2": 4926231.305
+      }
+    },
+    {
+      "class_id": 4,
+      "class_name": "van",
+      "confidence": 0.3405,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1910.57,
+        "y1": 1615.92,
+        "x2": 1927.13,
+        "y2": 1638.47
+      },
+      "bbox3857": {
+        "x1": -407297.521,
+        "y1": 4926342.61,
+        "x2": -407292.576,
+        "y2": 4926335.877
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.3345,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1465.67,
+        "y1": 2012.05,
+        "x2": 1489.31,
+        "y2": 2023.81
+      },
+      "bbox3857": {
+        "x1": -407430.36,
+        "y1": 4926224.333,
+        "x2": -407423.302,
+        "y2": 4926220.822
+      }
+    },
+    {
+      "class_id": 3,
+      "class_name": "car",
+      "confidence": 0.3068,
+      "source_model": "visdrone-yolov11s",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1910.07,
+        "y1": 1615.3,
+        "x2": 1926.4,
+        "y2": 1637.98
+      },
+      "bbox3857": {
+        "x1": -407297.67,
+        "y1": 4926342.795,
+        "x2": -407292.794,
+        "y2": 4926336.024
+      }
+    },
+    {
+      "class_id": 0,
+      "class_name": "building",
+      "confidence": 0.8706,
+      "source_model": "yolo-remote-sensing-photovoltaic",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1872.09,
+        "y1": 1436.22,
+        "x2": 2048.0,
+        "y2": 1534.62
+      },
+      "bbox3857": {
+        "x1": -407309.01,
+        "y1": 4926396.266,
+        "x2": -407256.487,
+        "y2": 4926366.885
+      }
+    },
+    {
+      "class_id": 0,
+      "class_name": "Building",
+      "confidence": 0.538,
+      "source_model": "building-detector",
+      "bbox_type": "axis",
+      "bbox": {
+        "x1": 1867.06,
+        "y1": 1435.59,
+        "x2": 2045.78,
+        "y2": 1532.76
+      },
+      "bbox3857": {
+        "x1": -407310.512,
+        "y1": 4926396.454,
+        "x2": -407257.15,
+        "y2": 4926367.44
+      }
+    },
+    {
+      "class_id": 10,
+      "class_name": "small vehicle",
+      "confidence": 0.7417,
+      "source_model": "yolo11m-obb.pt",
+      "bbox_type": "obb",
+      "bbox": {
+        "x1": 1941.27,
+        "y1": 1932.7,
+        "x2": 1963.09,
+        "y2": 1951.09
+      },
+      "obb": {
+        "points": [
+          {
+            "x": 1958.13,
+            "y": 1951.09
+          },
+          {
+            "x": 1963.09,
+            "y": 1942.82
+          },
+          {
+            "x": 1946.23,
+            "y": 1932.7
+          },
+          {
+            "x": 1941.27,
+            "y": 1940.96
+          }
+        ]
+      },
+      "bbox3857": {
+        "x1": -407288.354,
+        "y1": 4926248.025,
+        "x2": -407281.839,
+        "y2": 4926242.535
+      },
+      "obb3857": {
+        "points": [
+          {
+            "x": -407283.32,
+            "y": 4926242.535
+          },
+          {
+            "x": -407281.839,
+            "y": 4926245.004
+          },
+          {
+            "x": -407286.873,
+            "y": 4926248.025
+          },
+          {
+            "x": -407288.354,
+            "y": 4926245.559
+          }
+        ]
+      }
+    },
+    {
+      "class_id": 10,
+      "class_name": "small vehicle",
+      "confidence": 0.7163,
+      "source_model": "yolo11m-obb.pt",
+      "bbox_type": "obb",
+      "bbox": {
+        "x1": 1758.86,
+        "y1": 1982.66,
+        "x2": 1779.53,
+        "y2": 1998.04
+      },
+      "obb": {
+        "points": [
+          {
+            "x": 1776.13,
+            "y": 1998.04
+          },
+          {
+            "x": 1779.53,
+            "y": 1989.71
+          },
+          {
+            "x": 1762.26,
+            "y": 1982.66
+          },
+          {
+            "x": 1758.86,
+            "y": 1991.0
+          }
+        ]
+      },
+      "bbox3857": {
+        "x1": -407342.819,
+        "y1": 4926233.108,
+        "x2": -407336.647,
+        "y2": 4926228.516
+      },
+      "obb3857": {
+        "points": [
+          {
+            "x": -407337.662,
+            "y": 4926228.516
+          },
+          {
+            "x": -407336.647,
+            "y": 4926231.003
+          },
+          {
+            "x": -407341.804,
+            "y": 4926233.108
+          },
+          {
+            "x": -407342.819,
+            "y": 4926230.618
+          }
+        ]
+      }
+    },
+    {
+      "class_id": 10,
+      "class_name": "small vehicle",
+      "confidence": 0.6667,
+      "source_model": "yolo11m-obb.pt",
+      "bbox_type": "obb",
+      "bbox": {
+        "x1": 1532.13,
+        "y1": 1824.39,
+        "x2": 1551.58,
+        "y2": 1844.87
+      },
+      "obb": {
+        "points": [
+          {
+            "x": 1544.56,
+            "y": 1844.87
+          },
+          {
+            "x": 1551.58,
+            "y": 1838.83
+          },
+          {
+            "x": 1539.15,
+            "y": 1824.39
+          },
+          {
+            "x": 1532.13,
+            "y": 1830.43
+          }
+        ]
+      },
+      "bbox3857": {
+        "x1": -407410.516,
+        "y1": 4926280.365,
+        "x2": -407404.709,
+        "y2": 4926274.25
+      },
+      "obb3857": {
+        "points": [
+          {
+            "x": -407406.805,
+            "y": 4926274.25
+          },
+          {
+            "x": -407404.709,
+            "y": 4926276.053
+          },
+          {
+            "x": -407408.42,
+            "y": 4926280.365
+          },
+          {
+            "x": -407410.516,
+            "y": 4926278.561
+          }
+        ]
+      }
+    },
+    {
+      "class_id": 10,
+      "class_name": "small vehicle",
+      "confidence": 0.6213,
+      "source_model": "yolo11m-obb.pt",
+      "bbox_type": "obb",
+      "bbox": {
+        "x1": 1520.46,
+        "y1": 1830.21,
+        "x2": 1540.74,
+        "y2": 1851.4
+      },
+      "obb": {
+        "points": [
+          {
+            "x": 1533.49,
+            "y": 1851.4
+          },
+          {
+            "x": 1540.74,
+            "y": 1845.02
+          },
+          {
+            "x": 1527.71,
+            "y": 1830.21
+          },
+          {
+            "x": 1520.46,
+            "y": 1836.59
+          }
+        ]
+      },
+      "bbox3857": {
+        "x1": -407414.001,
+        "y1": 4926278.627,
+        "x2": -407407.945,
+        "y2": 4926272.3
+      },
+      "obb3857": {
+        "points": [
+          {
+            "x": -407410.11,
+            "y": 4926272.3
+          },
+          {
+            "x": -407407.945,
+            "y": 4926274.205
+          },
+          {
+            "x": -407411.836,
+            "y": 4926278.627
+          },
+          {
+            "x": -407414.001,
+            "y": 4926276.722
+          }
+        ]
+      }
+    },
+    {
+      "class_id": 10,
+      "class_name": "small vehicle",
+      "confidence": 0.5717,
+      "source_model": "yolo11m-obb.pt",
+      "bbox_type": "obb",
+      "bbox": {
+        "x1": 1554.02,
+        "y1": 1985.44,
+        "x2": 1577.72,
+        "y2": 2000.63
+      },
+      "obb": {
+        "points": [
+          {
+            "x": 1556.57,
+            "y": 2000.63
+          },
+          {
+            "x": 1577.72,
+            "y": 1994.97
+          },
+          {
+            "x": 1575.17,
+            "y": 1985.44
+          },
+          {
+            "x": 1554.02,
+            "y": 1991.1
+          }
+        ]
+      },
+      "bbox3857": {
+        "x1": -407403.98,
+        "y1": 4926232.278,
+        "x2": -407396.904,
+        "y2": 4926227.743
+      },
+      "obb3857": {
+        "points": [
+          {
+            "x": -407403.219,
+            "y": 4926227.743
+          },
+          {
+            "x": -407396.904,
+            "y": 4926229.433
+          },
+          {
+            "x": -407397.665,
+            "y": 4926232.278
+          },
+          {
+            "x": -407403.98,
+            "y": 4926230.588
+          }
+        ]
+      }
+    },
+    {
+      "class_id": 10,
+      "class_name": "small vehicle",
+      "confidence": 0.5715,
+      "source_model": "yolo11m-obb.pt",
+      "bbox_type": "obb",
+      "bbox": {
+        "x1": 2009.99,
+        "y1": 1981.52,
+        "x2": 2030.63,
+        "y2": 1999.12
+      },
+      "obb": {
+        "points": [
+          {
+            "x": 2025.87,
+            "y": 1999.12
+          },
+          {
+            "x": 2030.63,
+            "y": 1991.64
+          },
+          {
+            "x": 2014.75,
+            "y": 1981.52
+          },
+          {
+            "x": 2009.99,
+            "y": 1989.0
+          }
+        ]
+      },
+      "bbox3857": {
+        "x1": -407267.836,
+        "y1": 4926233.449,
+        "x2": -407261.673,
+        "y2": 4926228.194
+      },
+      "obb3857": {
+        "points": [
+          {
+            "x": -407263.094,
+            "y": 4926228.194
+          },
+          {
+            "x": -407261.673,
+            "y": 4926230.427
+          },
+          {
+            "x": -407266.415,
+            "y": 4926233.449
+          },
+          {
+            "x": -407267.836,
+            "y": 4926231.215
+          }
+        ]
+      }
+    },
+    {
+      "class_id": 10,
+      "class_name": "small vehicle",
+      "confidence": 0.5666,
+      "source_model": "yolo11m-obb.pt",
+      "bbox_type": "obb",
+      "bbox": {
+        "x1": 1738.79,
+        "y1": 1999.42,
+        "x2": 1759.85,
+        "y2": 2013.95
+      },
+      "obb": {
+        "points": [
+          {
+            "x": 1757.03,
+            "y": 2013.95
+          },
+          {
+            "x": 1759.85,
+            "y": 2005.58
+          },
+          {
+            "x": 1741.61,
+            "y": 1999.42
+          },
+          {
+            "x": 1738.79,
+            "y": 2007.79
+          }
+        ]
+      },
+      "bbox3857": {
+        "x1": -407348.811,
+        "y1": 4926228.104,
+        "x2": -407342.523,
+        "y2": 4926223.766
+      },
+      "obb3857": {
+        "points": [
+          {
+            "x": -407343.365,
+            "y": 4926223.766
+          },
+          {
+            "x": -407342.523,
+            "y": 4926226.265
+          },
+          {
+            "x": -407347.969,
+            "y": 4926228.104
+          },
+          {
+            "x": -407348.811,
+            "y": 4926225.605
+          }
+        ]
+      }
+    },
+    {
+      "class_id": 10,
+      "class_name": "small vehicle",
+      "confidence": 0.5561,
+      "source_model": "yolo11m-obb.pt",
+      "bbox_type": "obb",
+      "bbox": {
+        "x1": 1787.36,
+        "y1": 1996.25,
+        "x2": 1809.01,
+        "y2": 2012.26
+      },
+      "obb": {
+        "points": [
+          {
+            "x": 1805.49,
+            "y": 2012.26
+          },
+          {
+            "x": 1809.01,
+            "y": 2003.84
+          },
+          {
+            "x": 1790.88,
+            "y": 1996.25
+          },
+          {
+            "x": 1787.36,
+            "y": 2004.68
+          }
+        ]
+      },
+      "bbox3857": {
+        "x1": -407334.309,
+        "y1": 4926229.051,
+        "x2": -407327.845,
+        "y2": 4926224.27
+      },
+      "obb3857": {
+        "points": [
+          {
+            "x": -407328.896,
+            "y": 4926224.27
+          },
+          {
+            "x": -407327.845,
+            "y": 4926226.784
+          },
+          {
+            "x": -407333.258,
+            "y": 4926229.051
+          },
+          {
+            "x": -407334.309,
+            "y": 4926226.534
+          }
+        ]
+      }
+    },
+    {
+      "class_id": 10,
+      "class_name": "small vehicle",
+      "confidence": 0.5498,
+      "source_model": "yolo11m-obb.pt",
+      "bbox_type": "obb",
+      "bbox": {
+        "x1": 1495.2,
+        "y1": 1838.43,
+        "x2": 1517.86,
+        "y2": 1858.43
+      },
+      "obb": {
+        "points": [
+          {
+            "x": 1512.39,
+            "y": 1858.43
+          },
+          {
+            "x": 1517.86,
+            "y": 1850.87
+          },
+          {
+            "x": 1500.68,
+            "y": 1838.43
+          },
+          {
+            "x": 1495.2,
+            "y": 1845.99
+          }
+        ]
+      },
+      "bbox3857": {
+        "x1": -407421.543,
+        "y1": 4926276.173,
+        "x2": -407414.777,
+        "y2": 4926270.201
+      },
+      "obb3857": {
+        "points": [
+          {
+            "x": -407416.41,
+            "y": 4926270.201
+          },
+          {
+            "x": -407414.777,
+            "y": 4926272.458
+          },
+          {
+            "x": -407419.907,
+            "y": 4926276.173
+          },
+          {
+            "x": -407421.543,
+            "y": 4926273.916
+          }
+        ]
+      }
+    },
+    {
+      "class_id": 10,
+      "class_name": "small vehicle",
+      "confidence": 0.5266,
+      "source_model": "yolo11m-obb.pt",
+      "bbox_type": "obb",
+      "bbox": {
+        "x1": 1706.65,
+        "y1": 1807.98,
+        "x2": 1724.19,
+        "y2": 1832.76
+      },
+      "obb": {
+        "points": [
+          {
+            "x": 1714.57,
+            "y": 1832.76
+          },
+          {
+            "x": 1724.19,
+            "y": 1829.16
+          },
+          {
+            "x": 1716.27,
+            "y": 1807.98
+          },
+          {
+            "x": 1706.65,
+            "y": 1811.58
+          }
+        ]
+      },
+      "bbox3857": {
+        "x1": -407358.408,
+        "y1": 4926285.265,
+        "x2": -407353.171,
+        "y2": 4926277.866
+      },
+      "obb3857": {
+        "points": [
+          {
+            "x": -407356.043,
+            "y": 4926277.866
+          },
+          {
+            "x": -407353.171,
+            "y": 4926278.941
+          },
+          {
+            "x": -407355.535,
+            "y": 4926285.265
+          },
+          {
+            "x": -407358.408,
+            "y": 4926284.19
+          }
+        ]
+      }
+    },
+    {
+      "class_id": 10,
+      "class_name": "small vehicle",
+      "confidence": 0.5263,
+      "source_model": "yolo11m-obb.pt",
+      "bbox_type": "obb",
+      "bbox": {
+        "x1": 1724.91,
+        "y1": 1972.3,
+        "x2": 1743.04,
+        "y2": 1984.8
+      },
+      "obb": {
+        "points": [
+          {
+            "x": 1740.71,
+            "y": 1984.8
+          },
+          {
+            "x": 1743.04,
+            "y": 1977.02
+          },
+          {
+            "x": 1727.23,
+            "y": 1972.3
+          },
+          {
+            "x": 1724.91,
+            "y": 1980.08
+          }
+        ]
+      },
+      "bbox3857": {
+        "x1": -407352.956,
+        "y1": 4926236.202,
+        "x2": -407347.542,
+        "y2": 4926232.469
+      },
+      "obb3857": {
+        "points": [
+          {
+            "x": -407348.238,
+            "y": 4926232.469
+          },
+          {
+            "x": -407347.542,
+            "y": 4926234.792
+          },
+          {
+            "x": -407352.263,
+            "y": 4926236.202
+          },
+          {
+            "x": -407352.956,
+            "y": 4926233.879
+          }
+        ]
+      }
+    },
+    {
+      "class_id": 10,
+      "class_name": "small vehicle",
+      "confidence": 0.5236,
+      "source_model": "yolo11m-obb.pt",
+      "bbox_type": "obb",
+      "bbox": {
+        "x1": 1600.19,
+        "y1": 1932.5,
+        "x2": 1611.19,
+        "y2": 1954.09
+      },
+      "obb": {
+        "points": [
+          {
+            "x": 1611.19,
+            "y": 1953.67
+          },
+          {
+            "x": 1610.32,
+            "y": 1932.5
+          },
+          {
+            "x": 1600.19,
+            "y": 1932.92
+          },
+          {
+            "x": 1601.06,
+            "y": 1954.09
+          }
+        ]
+      },
+      "bbox3857": {
+        "x1": -407390.195,
+        "y1": 4926248.085,
+        "x2": -407386.91,
+        "y2": 4926241.639
+      },
+      "obb3857": {
+        "points": [
+          {
+            "x": -407386.91,
+            "y": 4926241.764
+          },
+          {
+            "x": -407387.17,
+            "y": 4926248.085
+          },
+          {
+            "x": -407390.195,
+            "y": 4926247.96
+          },
+          {
+            "x": -407389.935,
+            "y": 4926241.639
+          }
+        ]
+      }
+    },
+    {
+      "class_id": 10,
+      "class_name": "small vehicle",
+      "confidence": 0.5073,
+      "source_model": "yolo11m-obb.pt",
+      "bbox_type": "obb",
+      "bbox": {
+        "x1": 1621.13,
+        "y1": 1978.6,
+        "x2": 1642.78,
+        "y2": 1987.84
+      },
+      "obb": {
+        "points": [
+          {
+            "x": 1642.6,
+            "y": 1987.84
+          },
+          {
+            "x": 1642.78,
+            "y": 1979.04
+          },
+          {
+            "x": 1621.31,
+            "y": 1978.6
+          },
+          {
+            "x": 1621.13,
+            "y": 1987.4
+          }
+        ]
+      },
+      "bbox3857": {
+        "x1": -407383.942,
+        "y1": 4926234.321,
+        "x2": -407377.478,
+        "y2": 4926231.562
+      },
+      "obb3857": {
+        "points": [
+          {
+            "x": -407377.532,
+            "y": 4926231.562
+          },
+          {
+            "x": -407377.478,
+            "y": 4926234.189
+          },
+          {
+            "x": -407383.889,
+            "y": 4926234.321
+          },
+          {
+            "x": -407383.942,
+            "y": 4926231.693
+          }
+        ]
+      }
+    },
+    {
+      "class_id": 10,
+      "class_name": "small vehicle",
+      "confidence": 0.5015,
+      "source_model": "yolo11m-obb.pt",
+      "bbox_type": "obb",
+      "bbox": {
+        "x1": 1658.1,
+        "y1": 1806.35,
+        "x2": 1669.06,
+        "y2": 1825.08
+      },
+      "obb": {
+        "points": [
+          {
+            "x": 1669.06,
+            "y": 1824.79
+          },
+          {
+            "x": 1668.55,
+            "y": 1806.35
+          },
+          {
+            "x": 1658.1,
+            "y": 1806.63
+          },
+          {
+            "x": 1658.6,
+            "y": 1825.08
+          }
+        ]
+      },
+      "bbox3857": {
+        "x1": -407372.904,
+        "y1": 4926285.751,
+        "x2": -407369.631,
+        "y2": 4926280.159
+      },
+      "obb3857": {
+        "points": [
+          {
+            "x": -407369.631,
+            "y": 4926280.245
+          },
+          {
+            "x": -407369.784,
+            "y": 4926285.751
+          },
+          {
+            "x": -407372.904,
+            "y": 4926285.668
+          },
+          {
+            "x": -407372.755,
+            "y": 4926280.159
+          }
+        ]
+      }
+    },
+    {
+      "class_id": 10,
+      "class_name": "small vehicle",
+      "confidence": 0.4879,
+      "source_model": "yolo11m-obb.pt",
+      "bbox_type": "obb",
+      "bbox": {
+        "x1": 1967.82,
+        "y1": 1949.98,
+        "x2": 1988.89,
+        "y2": 1967.45
+      },
+      "obb": {
+        "points": [
+          {
+            "x": 1984.28,
+            "y": 1967.45
+          },
+          {
+            "x": 1988.89,
+            "y": 1959.4
+          },
+          {
+            "x": 1972.43,
+            "y": 1949.98
+          },
+          {
+            "x": 1967.82,
+            "y": 1958.04
+          }
+        ]
+      },
+      "bbox3857": {
+        "x1": -407280.427,
+        "y1": 4926242.866,
+        "x2": -407274.136,
+        "y2": 4926237.65
+      },
+      "obb3857": {
+        "points": [
+          {
+            "x": -407275.512,
+            "y": 4926237.65
+          },
+          {
+            "x": -407274.136,
+            "y": 4926240.053
+          },
+          {
+            "x": -407279.051,
+            "y": 4926242.866
+          },
+          {
+            "x": -407280.427,
+            "y": 4926240.459
+          }
+        ]
+      }
+    },
+    {
+      "class_id": 10,
+      "class_name": "small vehicle",
+      "confidence": 0.4775,
+      "source_model": "yolo11m-obb.pt",
+      "bbox_type": "obb",
+      "bbox": {
+        "x1": 1477.6,
+        "y1": 1851.94,
+        "x2": 1495.81,
+        "y2": 1868.73
+      },
+      "obb": {
+        "points": [
+          {
+            "x": 1490.49,
+            "y": 1868.73
+          },
+          {
+            "x": 1495.81,
+            "y": 1861.71
+          },
+          {
+            "x": 1482.92,
+            "y": 1851.94
+          },
+          {
+            "x": 1477.6,
+            "y": 1858.95
+          }
+        ]
+      },
+      "bbox3857": {
+        "x1": -407426.798,
+        "y1": 4926272.139,
+        "x2": -407421.361,
+        "y2": 4926267.126
+      },
+      "obb3857": {
+        "points": [
+          {
+            "x": -407422.949,
+            "y": 4926267.126
+          },
+          {
+            "x": -407421.361,
+            "y": 4926269.222
+          },
+          {
+            "x": -407425.21,
+            "y": 4926272.139
+          },
+          {
+            "x": -407426.798,
+            "y": 4926270.046
+          }
+        ]
+      }
+    },
+    {
+      "class_id": 10,
+      "class_name": "small vehicle",
+      "confidence": 0.4379,
+      "source_model": "yolo11m-obb.pt",
+      "bbox_type": "obb",
+      "bbox": {
+        "x1": 1703.91,
+        "y1": 1965.78,
+        "x2": 1724.15,
+        "y2": 1979.36
+      },
+      "obb": {
+        "points": [
+          {
+            "x": 1721.89,
+            "y": 1979.36
+          },
+          {
+            "x": 1724.15,
+            "y": 1970.25
+          },
+          {
+            "x": 1706.17,
+            "y": 1965.78
+          },
+          {
+            "x": 1703.91,
+            "y": 1974.89
+          }
+        ]
+      },
+      "bbox3857": {
+        "x1": -407359.226,
+        "y1": 4926238.148,
+        "x2": -407353.183,
+        "y2": 4926234.094
+      },
+      "obb3857": {
+        "points": [
+          {
+            "x": -407353.857,
+            "y": 4926234.094
+          },
+          {
+            "x": -407353.183,
+            "y": 4926236.814
+          },
+          {
+            "x": -407358.551,
+            "y": 4926238.148
+          },
+          {
+            "x": -407359.226,
+            "y": 4926235.428
+          }
+        ]
+      }
+    },
+    {
+      "class_id": 10,
+      "class_name": "small vehicle",
+      "confidence": 0.412,
+      "source_model": "yolo11m-obb.pt",
+      "bbox_type": "obb",
+      "bbox": {
+        "x1": 1561.44,
+        "y1": 1817.35,
+        "x2": 1577.6,
+        "y2": 1837.45
+      },
+      "obb": {
+        "points": [
+          {
+            "x": 1569.26,
+            "y": 1837.45
+          },
+          {
+            "x": 1577.6,
+            "y": 1833.39
+          },
+          {
+            "x": 1569.77,
+            "y": 1817.35
+          },
+          {
+            "x": 1561.44,
+            "y": 1821.41
+          }
+        ]
+      },
+      "bbox3857": {
+        "x1": -407401.765,
+        "y1": 4926282.467,
+        "x2": -407396.94,
+        "y2": 4926276.465
+      },
+      "obb3857": {
+        "points": [
+          {
+            "x": -407399.43,
+            "y": 4926276.465
+          },
+          {
+            "x": -407396.94,
+            "y": 4926277.678
+          },
+          {
+            "x": -407399.278,
+            "y": 4926282.467
+          },
+          {
+            "x": -407401.765,
+            "y": 4926281.255
+          }
+        ]
+      }
+    },
+    {
+      "class_id": 10,
+      "class_name": "small vehicle",
+      "confidence": 0.4111,
+      "source_model": "yolo11m-obb.pt",
+      "bbox_type": "obb",
+      "bbox": {
+        "x1": 1656.58,
+        "y1": 1981.19,
+        "x2": 1676.12,
+        "y2": 1992.51
+      },
+      "obb": {
+        "points": [
+          {
+            "x": 1674.77,
+            "y": 1992.51
+          },
+          {
+            "x": 1676.12,
+            "y": 1984.11
+          },
+          {
+            "x": 1657.93,
+            "y": 1981.19
+          },
+          {
+            "x": 1656.58,
+            "y": 1989.58
+          }
+        ]
+      },
+      "bbox3857": {
+        "x1": -407373.358,
+        "y1": 4926233.547,
+        "x2": -407367.523,
+        "y2": 4926230.167
+      },
+      "obb3857": {
+        "points": [
+          {
+            "x": -407367.927,
+            "y": 4926230.167
+          },
+          {
+            "x": -407367.523,
+            "y": 4926232.675
+          },
+          {
+            "x": -407372.955,
+            "y": 4926233.547
+          },
+          {
+            "x": -407373.358,
+            "y": 4926231.042
+          }
+        ]
+      }
+    },
+    {
+      "class_id": 10,
+      "class_name": "small vehicle",
+      "confidence": 0.4096,
+      "source_model": "yolo11m-obb.pt",
+      "bbox_type": "obb",
+      "bbox": {
+        "x1": 1790.32,
+        "y1": 1458.49,
+        "x2": 1801.64,
+        "y2": 1477.52
+      },
+      "obb": {
+        "points": [
+          {
+            "x": 1798.52,
+            "y": 1477.52
+          },
+          {
+            "x": 1801.64,
+            "y": 1459.95
+          },
+          {
+            "x": 1793.45,
+            "y": 1458.49
+          },
+          {
+            "x": 1790.32,
+            "y": 1476.06
+          }
+        ]
+      },
+      "bbox3857": {
+        "x1": -407333.425,
+        "y1": 4926389.616,
+        "x2": -407330.045,
+        "y2": 4926383.934
+      },
+      "obb3857": {
+        "points": [
+          {
+            "x": -407330.977,
+            "y": 4926383.934
+          },
+          {
+            "x": -407330.045,
+            "y": 4926389.18
+          },
+          {
+            "x": -407332.491,
+            "y": 4926389.616
+          },
+          {
+            "x": -407333.425,
+            "y": 4926384.37
+          }
+        ]
+      }
+    },
+    {
+      "class_id": 10,
+      "class_name": "small vehicle",
+      "confidence": 0.4014,
+      "source_model": "yolo11m-obb.pt",
+      "bbox_type": "obb",
+      "bbox": {
+        "x1": 1656.11,
+        "y1": 1807.06,
+        "x2": 1665.97,
+        "y2": 1825.1
+      },
+      "obb": {
+        "points": [
+          {
+            "x": 1665.97,
+            "y": 1825.04
+          },
+          {
+            "x": 1665.85,
+            "y": 1807.06
+          },
+          {
+            "x": 1656.11,
+            "y": 1807.12
+          },
+          {
+            "x": 1656.22,
+            "y": 1825.1
+          }
+        ]
+      },
+      "bbox3857": {
+        "x1": -407373.498,
+        "y1": 4926285.539,
+        "x2": -407370.554,
+        "y2": 4926280.153
+      },
+      "obb3857": {
+        "points": [
+          {
+            "x": -407370.554,
+            "y": 4926280.171
+          },
+          {
+            "x": -407370.59,
+            "y": 4926285.539
+          },
+          {
+            "x": -407373.498,
+            "y": 4926285.521
+          },
+          {
+            "x": -407373.465,
+            "y": 4926280.153
+          }
+        ]
+      }
+    },
+    {
+      "class_id": 10,
+      "class_name": "small vehicle",
+      "confidence": 0.3871,
+      "source_model": "yolo11m-obb.pt",
+      "bbox_type": "obb",
+      "bbox": {
+        "x1": 1453.8,
+        "y1": 1863.37,
+        "x2": 1471.36,
+        "y2": 1878.7
+      },
+      "obb": {
+        "points": [
+          {
+            "x": 1466.97,
+            "y": 1878.7
+          },
+          {
+            "x": 1471.36,
+            "y": 1872.04
+          },
+          {
+            "x": 1458.18,
+            "y": 1863.37
+          },
+          {
+            "x": 1453.8,
+            "y": 1870.03
+          }
+        ]
+      },
+      "bbox3857": {
+        "x1": -407433.904,
+        "y1": 4926268.726,
+        "x2": -407428.661,
+        "y2": 4926264.149
+      },
+      "obb3857": {
+        "points": [
+          {
+            "x": -407429.972,
+            "y": 4926264.149
+          },
+          {
+            "x": -407428.661,
+            "y": 4926266.137
+          },
+          {
+            "x": -407432.596,
+            "y": 4926268.726
+          },
+          {
+            "x": -407433.904,
+            "y": 4926266.738
+          }
+        ]
+      }
+    },
+    {
+      "class_id": 10,
+      "class_name": "small vehicle",
+      "confidence": 0.3789,
+      "source_model": "yolo11m-obb.pt",
+      "bbox_type": "obb",
+      "bbox": {
+        "x1": 1485.97,
+        "y1": 1844.55,
+        "x2": 1505.49,
+        "y2": 1862.15
+      },
+      "obb": {
+        "points": [
+          {
+            "x": 1500.24,
+            "y": 1862.15
+          },
+          {
+            "x": 1505.49,
+            "y": 1854.94
+          },
+          {
+            "x": 1491.22,
+            "y": 1844.55
+          },
+          {
+            "x": 1485.97,
+            "y": 1851.76
+          }
+        ]
+      },
+      "bbox3857": {
+        "x1": -407424.299,
+        "y1": 4926274.345,
+        "x2": -407418.471,
+        "y2": 4926269.09
+      },
+      "obb3857": {
+        "points": [
+          {
+            "x": -407420.038,
+            "y": 4926269.09
+          },
+          {
+            "x": -407418.471,
+            "y": 4926271.243
+          },
+          {
+            "x": -407422.731,
+            "y": 4926274.345
+          },
+          {
+            "x": -407424.299,
+            "y": 4926272.193
+          }
+        ]
+      }
+    },
+    {
+      "class_id": 10,
+      "class_name": "small vehicle",
+      "confidence": 0.3735,
+      "source_model": "yolo11m-obb.pt",
+      "bbox_type": "obb",
+      "bbox": {
+        "x1": 1840.19,
+        "y1": 1853.53,
+        "x2": 1852.16,
+        "y2": 1873.59
+      },
+      "obb": {
+        "points": [
+          {
+            "x": 1849.02,
+            "y": 1873.59
+          },
+          {
+            "x": 1852.16,
+            "y": 1855.02
+          },
+          {
+            "x": 1843.33,
+            "y": 1853.53
+          },
+          {
+            "x": 1840.19,
+            "y": 1872.1
+          }
+        ]
+      },
+      "bbox3857": {
+        "x1": -407318.535,
+        "y1": 4926271.664,
+        "x2": -407314.961,
+        "y2": 4926265.675
+      },
+      "obb3857": {
+        "points": [
+          {
+            "x": -407315.899,
+            "y": 4926265.675
+          },
+          {
+            "x": -407314.961,
+            "y": 4926271.219
+          },
+          {
+            "x": -407317.598,
+            "y": 4926271.664
+          },
+          {
+            "x": -407318.535,
+            "y": 4926266.12
+          }
+        ]
+      }
+    },
+    {
+      "class_id": 10,
+      "class_name": "small vehicle",
+      "confidence": 0.3684,
+      "source_model": "yolo11m-obb.pt",
+      "bbox_type": "obb",
+      "bbox": {
+        "x1": 2025.61,
+        "y1": 1667.56,
+        "x2": 2038.14,
+        "y2": 1686.52
+      },
+      "obb": {
+        "points": [
+          {
+            "x": 2033.85,
+            "y": 1686.52
+          },
+          {
+            "x": 2038.14,
+            "y": 1669.66
+          },
+          {
+            "x": 2029.9,
+            "y": 1667.56
+          },
+          {
+            "x": 2025.61,
+            "y": 1684.42
+          }
+        ]
+      },
+      "bbox3857": {
+        "x1": -407263.172,
+        "y1": 4926327.192,
+        "x2": -407259.431,
+        "y2": 4926321.53
+      },
+      "obb3857": {
+        "points": [
+          {
+            "x": -407260.712,
+            "y": 4926321.53
+          },
+          {
+            "x": -407259.431,
+            "y": 4926326.564
+          },
+          {
+            "x": -407261.891,
+            "y": 4926327.192
+          },
+          {
+            "x": -407263.172,
+            "y": 4926322.157
+          }
+        ]
+      }
+    },
+    {
+      "class_id": 10,
+      "class_name": "small vehicle",
+      "confidence": 0.3613,
+      "source_model": "yolo11m-obb.pt",
+      "bbox_type": "obb",
+      "bbox": {
+        "x1": 1816.84,
+        "y1": 2010.41,
+        "x2": 1840.82,
+        "y2": 2030.11
+      },
+      "obb": {
+        "points": [
+          {
+            "x": 1835.73,
+            "y": 2030.11
+          },
+          {
+            "x": 1840.82,
+            "y": 2021.22
+          },
+          {
+            "x": 1821.93,
+            "y": 2010.41
+          },
+          {
+            "x": 1816.84,
+            "y": 2019.3
+          }
+        ]
+      },
+      "bbox3857": {
+        "x1": -407325.507,
+        "y1": 4926224.823,
+        "x2": -407318.347,
+        "y2": 4926218.941
+      },
+      "obb3857": {
+        "points": [
+          {
+            "x": -407319.867,
+            "y": 4926218.941
+          },
+          {
+            "x": -407318.347,
+            "y": 4926221.595
+          },
+          {
+            "x": -407323.987,
+            "y": 4926224.823
+          },
+          {
+            "x": -407325.507,
+            "y": 4926222.168
+          }
+        ]
+      }
+    },
+    {
+      "class_id": 10,
+      "class_name": "small vehicle",
+      "confidence": 0.361,
+      "source_model": "yolo11m-obb.pt",
+      "bbox_type": "obb",
+      "bbox": {
+        "x1": 1868.44,
+        "y1": 1510.34,
+        "x2": 1882.78,
+        "y2": 1531.03
+      },
+      "obb": {
+        "points": [
+          {
+            "x": 1876.82,
+            "y": 1531.03
+          },
+          {
+            "x": 1882.78,
+            "y": 1513.13
+          },
+          {
+            "x": 1874.41,
+            "y": 1510.34
+          },
+          {
+            "x": 1868.44,
+            "y": 1528.24
+          }
+        ]
+      },
+      "bbox3857": {
+        "x1": -407310.1,
+        "y1": 4926374.135,
+        "x2": -407305.818,
+        "y2": 4926367.957
+      },
+      "obb3857": {
+        "points": [
+          {
+            "x": -407307.598,
+            "y": 4926367.957
+          },
+          {
+            "x": -407305.818,
+            "y": 4926373.302
+          },
+          {
+            "x": -407308.318,
+            "y": 4926374.135
+          },
+          {
+            "x": -407310.1,
+            "y": 4926368.79
+          }
+        ]
+      }
+    },
+    {
+      "class_id": 10,
+      "class_name": "small vehicle",
+      "confidence": 0.3605,
+      "source_model": "yolo11m-obb.pt",
+      "bbox_type": "obb",
+      "bbox": {
+        "x1": 1975.5,
+        "y1": 1607.61,
+        "x2": 1997.28,
+        "y2": 1624.75
+      },
+      "obb": {
+        "points": [
+          {
+            "x": 1993.11,
+            "y": 1624.75
+          },
+          {
+            "x": 1997.28,
+            "y": 1616.2
+          },
+          {
+            "x": 1979.67,
+            "y": 1607.61
+          },
+          {
+            "x": 1975.5,
+            "y": 1616.17
+          }
+        ]
+      },
+      "bbox3857": {
+        "x1": -407278.134,
+        "y1": 4926345.092,
+        "x2": -407271.631,
+        "y2": 4926339.974
+      },
+      "obb3857": {
+        "points": [
+          {
+            "x": -407272.876,
+            "y": 4926339.974
+          },
+          {
+            "x": -407271.631,
+            "y": 4926342.527
+          },
+          {
+            "x": -407276.889,
+            "y": 4926345.092
+          },
+          {
+            "x": -407278.134,
+            "y": 4926342.536
+          }
+        ]
+      }
+    },
+    {
+      "class_id": 10,
+      "class_name": "small vehicle",
+      "confidence": 0.3597,
+      "source_model": "yolo11m-obb.pt",
+      "bbox_type": "obb",
+      "bbox": {
+        "x1": 1642.14,
+        "y1": 1956.9,
+        "x2": 1663.79,
+        "y2": 1967.63
+      },
+      "obb": {
+        "points": [
+          {
+            "x": 1662.98,
+            "y": 1967.63
+          },
+          {
+            "x": 1663.79,
+            "y": 1958.83
+          },
+          {
+            "x": 1642.95,
+            "y": 1956.9
+          },
+          {
+            "x": 1642.14,
+            "y": 1965.7
+          }
+        ]
+      },
+      "bbox3857": {
+        "x1": -407377.669,
+        "y1": 4926240.8,
+        "x2": -407371.205,
+        "y2": 4926237.596
+      },
+      "obb3857": {
+        "points": [
+          {
+            "x": -407371.447,
+            "y": 4926237.596
+          },
+          {
+            "x": -407371.205,
+            "y": 4926240.223
+          },
+          {
+            "x": -407377.427,
+            "y": 4926240.8
+          },
+          {
+            "x": -407377.669,
+            "y": 4926238.172
+          }
+        ]
+      }
+    },
+    {
+      "class_id": 10,
+      "class_name": "small vehicle",
+      "confidence": 0.3553,
+      "source_model": "yolo11m-obb.pt",
+      "bbox_type": "obb",
+      "bbox": {
+        "x1": 1679.34,
+        "y1": 1985.83,
+        "x2": 1697.35,
+        "y2": 1996.66
+      },
+      "obb": {
+        "points": [
+          {
+            "x": 1695.96,
+            "y": 1996.66
+          },
+          {
+            "x": 1697.35,
+            "y": 1988.76
+          },
+          {
+            "x": 1680.74,
+            "y": 1985.83
+          },
+          {
+            "x": 1679.34,
+            "y": 1993.72
+          }
+        ]
+      },
+      "bbox3857": {
+        "x1": -407366.562,
+        "y1": 4926232.162,
+        "x2": -407361.185,
+        "y2": 4926228.928
+      },
+      "obb3857": {
+        "points": [
+          {
+            "x": -407361.6,
+            "y": 4926228.928
+          },
+          {
+            "x": -407361.185,
+            "y": 4926231.287
+          },
+          {
+            "x": -407366.144,
+            "y": 4926232.162
+          },
+          {
+            "x": -407366.562,
+            "y": 4926229.806
+          }
+        ]
+      }
+    },
+    {
+      "class_id": 10,
+      "class_name": "small vehicle",
+      "confidence": 0.3442,
+      "source_model": "yolo11m-obb.pt",
+      "bbox_type": "obb",
+      "bbox": {
+        "x1": 1546.4,
+        "y1": 1944.4,
+        "x2": 1568.75,
+        "y2": 1963.79
+      },
+      "obb": {
+        "points": [
+          {
+            "x": 1563.23,
+            "y": 1963.79
+          },
+          {
+            "x": 1568.75,
+            "y": 1955.16
+          },
+          {
+            "x": 1551.92,
+            "y": 1944.4
+          },
+          {
+            "x": 1546.4,
+            "y": 1953.03
+          }
+        ]
+      },
+      "bbox3857": {
+        "x1": -407406.256,
+        "y1": 4926244.532,
+        "x2": -407399.582,
+        "y2": 4926238.743
+      },
+      "obb3857": {
+        "points": [
+          {
+            "x": -407401.23,
+            "y": 4926238.743
+          },
+          {
+            "x": -407399.582,
+            "y": 4926241.319
+          },
+          {
+            "x": -407404.607,
+            "y": 4926244.532
+          },
+          {
+            "x": -407406.256,
+            "y": 4926241.955
+          }
+        ]
+      }
+    },
+    {
+      "class_id": 10,
+      "class_name": "small vehicle",
+      "confidence": 0.3413,
+      "source_model": "yolo11m-obb.pt",
+      "bbox_type": "obb",
+      "bbox": {
+        "x1": 1576.34,
+        "y1": 1979.49,
+        "x2": 1597.96,
+        "y2": 1994.68
+      },
+      "obb": {
+        "points": [
+          {
+            "x": 1579.31,
+            "y": 1994.68
+          },
+          {
+            "x": 1597.96,
+            "y": 1988.57
+          },
+          {
+            "x": 1594.98,
+            "y": 1979.49
+          },
+          {
+            "x": 1576.34,
+            "y": 1985.59
+          }
+        ]
+      },
+      "bbox3857": {
+        "x1": -407397.316,
+        "y1": 4926234.055,
+        "x2": -407390.861,
+        "y2": 4926229.519
+      },
+      "obb3857": {
+        "points": [
+          {
+            "x": -407396.429,
+            "y": 4926229.519
+          },
+          {
+            "x": -407390.861,
+            "y": 4926231.344
+          },
+          {
+            "x": -407391.75,
+            "y": 4926234.055
+          },
+          {
+            "x": -407397.316,
+            "y": 4926232.233
+          }
+        ]
+      }
+    },
+    {
+      "class_id": 10,
+      "class_name": "small vehicle",
+      "confidence": 0.3288,
+      "source_model": "yolo11m-obb.pt",
+      "bbox_type": "obb",
+      "bbox": {
+        "x1": 1640.7,
+        "y1": 1809.37,
+        "x2": 1651.13,
+        "y2": 1826.51
+      },
+      "obb": {
+        "points": [
+          {
+            "x": 1651.13,
+            "y": 1826.44
+          },
+          {
+            "x": 1651.02,
+            "y": 1809.37
+          },
+          {
+            "x": 1640.7,
+            "y": 1809.44
+          },
+          {
+            "x": 1640.81,
+            "y": 1826.51
+          }
+        ]
+      },
+      "bbox3857": {
+        "x1": -407378.099,
+        "y1": 4926284.85,
+        "x2": -407374.985,
+        "y2": 4926279.732
+      },
+      "obb3857": {
+        "points": [
+          {
+            "x": -407374.985,
+            "y": 4926279.753
+          },
+          {
+            "x": -407375.018,
+            "y": 4926284.85
+          },
+          {
+            "x": -407378.099,
+            "y": 4926284.829
+          },
+          {
+            "x": -407378.066,
+            "y": 4926279.732
+          }
+        ]
+      }
+    },
+    {
+      "class_id": 10,
+      "class_name": "small vehicle",
+      "confidence": 0.3267,
+      "source_model": "yolo11m-obb.pt",
+      "bbox_type": "obb",
+      "bbox": {
+        "x1": 2036.65,
+        "y1": 1670.32,
+        "x2": 2049.89,
+        "y2": 1690.5
+      },
+      "obb": {
+        "points": [
+          {
+            "x": 2046.7,
+            "y": 1690.5
+          },
+          {
+            "x": 2049.89,
+            "y": 1672.06
+          },
+          {
+            "x": 2039.84,
+            "y": 1670.32
+          },
+          {
+            "x": 2036.65,
+            "y": 1688.76
+          }
+        ]
+      },
+      "bbox3857": {
+        "x1": -407259.876,
+        "y1": 4926326.367,
+        "x2": -407255.922,
+        "y2": 4926320.342
+      },
+      "obb3857": {
+        "points": [
+          {
+            "x": -407256.875,
+            "y": 4926320.342
+          },
+          {
+            "x": -407255.922,
+            "y": 4926325.848
+          },
+          {
+            "x": -407258.923,
+            "y": 4926326.367
+          },
+          {
+            "x": -407259.876,
+            "y": 4926320.862
+          }
+        ]
+      }
+    },
+    {
+      "class_id": 10,
+      "class_name": "small vehicle",
+      "confidence": 0.3135,
+      "source_model": "yolo11m-obb.pt",
+      "bbox_type": "obb",
+      "bbox": {
+        "x1": 1767.88,
+        "y1": 2010.1,
+        "x2": 1786.17,
+        "y2": 2024.21
+      },
+      "obb": {
+        "points": [
+          {
+            "x": 1782.91,
+            "y": 2024.21
+          },
+          {
+            "x": 1786.17,
+            "y": 2016.26
+          },
+          {
+            "x": 1771.13,
+            "y": 2010.1
+          },
+          {
+            "x": 1767.88,
+            "y": 2018.06
+          }
+        ]
+      },
+      "bbox3857": {
+        "x1": -407340.126,
+        "y1": 4926224.915,
+        "x2": -407334.664,
+        "y2": 4926220.702
+      },
+      "obb3857": {
+        "points": [
+          {
+            "x": -407335.638,
+            "y": 4926220.702
+          },
+          {
+            "x": -407334.664,
+            "y": 4926223.076
+          },
+          {
+            "x": -407339.155,
+            "y": 4926224.915
+          },
+          {
+            "x": -407340.126,
+            "y": 4926222.538
+          }
+        ]
+      }
+    },
+    {
+      "class_id": 10,
+      "class_name": "small vehicle",
+      "confidence": 0.3075,
+      "source_model": "yolo11m-obb.pt",
+      "bbox_type": "obb",
+      "bbox": {
+        "x1": 2006.23,
+        "y1": 1547.9,
+        "x2": 2022.27,
+        "y2": 1569.92
+      },
+      "obb": {
+        "points": [
+          {
+            "x": 2014.29,
+            "y": 1569.92
+          },
+          {
+            "x": 2022.27,
+            "y": 1551.36
+          },
+          {
+            "x": 2014.22,
+            "y": 1547.9
+          },
+          {
+            "x": 2006.23,
+            "y": 1566.46
+          }
+        ]
+      },
+      "bbox3857": {
+        "x1": -407268.958,
+        "y1": 4926362.92,
+        "x2": -407264.169,
+        "y2": 4926356.345
+      },
+      "obb3857": {
+        "points": [
+          {
+            "x": -407266.552,
+            "y": 4926356.345
+          },
+          {
+            "x": -407264.169,
+            "y": 4926361.887
+          },
+          {
+            "x": -407266.573,
+            "y": 4926362.92
+          },
+          {
+            "x": -407268.958,
+            "y": 4926357.378
+          }
+        ]
+      }
+    }
+  ]
+}
