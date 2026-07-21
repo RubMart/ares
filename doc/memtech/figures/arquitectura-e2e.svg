@@ -1,6 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 420" role="img" aria-labelledby="title desc">
-  <title id="title">Arquitectura extremo a extremo de ARES</title>
-  <desc id="desc">Dos planos: indexación offline e interacción online unidos por PostgreSQL.</desc>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 420" role="img">
   <defs>
     <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
       <path d="M0,0 L6,3 L0,6 Z" fill="#334155"/>
@@ -16,66 +15,54 @@
       .line { stroke:#334155; stroke-width:1.6; fill:none; marker-end:url(#arrow); }
     </style>
   </defs>
-
   <rect class="band" x="16" y="16" width="888" height="170"/>
-  <text class="title" x="32" y="42">Plano offline  indexación (tools/)</text>
-
+  <text class="title" x="32" y="42">Plano offline - indexacion (tools/)</text>
   <rect class="box" x="36" y="64" width="110" height="88"/>
   <text class="lbl" x="54" y="100">Ortofoto</text>
-  <text class="sub" x="48" y="118">’ COG + tiles</text>
+  <text class="sub" x="48" y="118">COG + tiles</text>
   <text class="sub" x="62" y="134">z=16 XYZ</text>
-
   <path class="line" d="M146,108 H168"/>
   <rect class="box" x="168" y="64" width="120" height="88"/>
   <text class="lbl" x="196" y="100">YOLO</text>
   <text class="sub" x="182" y="118">detect.py</text>
   <text class="sub" x="178" y="134">{stem}.json</text>
-
   <path class="line" d="M288,108 H310"/>
   <rect class="box" x="310" y="64" width="120" height="88"/>
   <text class="lbl" x="340" y="100">CLIP</text>
   <text class="sub" x="324" y="118">embed.py</text>
   <text class="sub" x="312" y="134">vector(512) L2</text>
-
   <path class="line" d="M430,108 H452"/>
   <rect class="box" x="452" y="64" width="130" height="88"/>
   <text class="lbl" x="474" y="100">SQL</text>
   <text class="sub" x="462" y="118">embed2psql.py</text>
   <text class="sub" x="458" y="134">schema + data</text>
-
   <path class="line" d="M582,108 H604"/>
   <rect class="box-db" x="604" y="64" width="270" height="88"/>
   <text class="lbl" x="648" y="96">PostgreSQL</text>
-  <text class="sub" x="628" y="116">PostGIS · geometrías 3857</text>
-  <text class="sub" x="628" y="134">pgvector · HNSW coseno</text>
-
+  <text class="sub" x="628" y="116">PostGIS - geometrias 3857</text>
+  <text class="sub" x="628" y="134">pgvector - HNSW coseno</text>
   <rect class="band" x="16" y="210" width="888" height="190"/>
-  <text class="title" x="32" y="236">Plano online  consulta (api/ + frontend/)</text>
-
+  <text class="title" x="32" y="236">Plano online - consulta (api/ + frontend/)</text>
   <rect class="box-ui" x="36" y="260" width="150" height="100"/>
   <text class="lbl" x="72" y="300">Usuario</text>
   <text class="sub" x="48" y="320">consulta NL</text>
   <text class="sub" x="52" y="338">ES / EN</text>
-
   <path class="line" d="M186,310 H208"/>
   <rect class="box-ui" x="208" y="260" width="150" height="100"/>
   <text class="lbl" x="242" y="296">Frontend</text>
   <text class="sub" x="222" y="316">Next.js + OL</text>
   <text class="sub" x="228" y="334">mapa / tabla</text>
-
   <path class="line" d="M358,310 H380"/>
   <rect class="box" x="380" y="260" width="170" height="100"/>
   <text class="lbl" x="426" y="292">API FastAPI</text>
-  <text class="sub" x="392" y="312">override ’ parser</text>
-  <text class="sub" x="400" y="328">’ Ollama ’ CLIP</text>
-  <text class="sub" x="398" y="344">híbrida / espacial</text>
-
+  <text class="sub" x="392" y="312">override / parser</text>
+  <text class="sub" x="400" y="328">Ollama / CLIP</text>
+  <text class="sub" x="398" y="344">hibrida / espacial</text>
   <path class="line" d="M550,310 H572"/>
   <rect class="box-db" x="572" y="260" width="300" height="100"/>
-  <text class="lbl" x="640" y="296">Índice ya materializado</text>
+  <text class="lbl" x="640" y="296">Indice materializado</text>
   <text class="sub" x="600" y="318">filtro clase + ranking CLIP</text>
   <text class="sub" x="600" y="336">ST_DWithin (near)</text>
-  <text class="sub" x="600" y="354">’ GeoJSON + interpretación</text>
-
+  <text class="sub" x="600" y="354">GeoJSON + interpretacion</text>
   <path class="line" d="M722,64 V250" style="stroke-dasharray:4 3"/>
 </svg>

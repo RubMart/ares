@@ -9,7 +9,7 @@ ARES se organiza en **dos planos temporales** que comparten un único índice en
 
 Esta separación es deliberada: el coste de visión por computador se asume por lotes; la interacción del usuario trabaja sobre un índice ya materializado, con latencias compatibles con un visor web.
 
-![Arquitectura extremo a extremo de ARES](figures/arquitectura-e2e.svg)
+![Arquitectura extremo a extremo de ARES](figures/arquitectura-e2e.png)
 
 *Figura 4.1 — Planos offline y online unidos por el índice espacial-vectorial.*
 
@@ -197,7 +197,7 @@ A partir del JSON de detecciones se puede materializar una vista de control de c
 
 *Figura 4.5 — Control visual de detecciones (AABB) sobre el tile. Útil antes de embeber y cargar a BD.*
 
-![Artefactos del pipeline offline](figures/pipeline-offline-artefactos.svg)
+![Artefactos del pipeline offline](figures/pipeline-offline-artefactos.png)
 
 *Figura 4.6 — Cadena de artefactos companion junto a cada tile.*
 
@@ -235,7 +235,7 @@ Una vez cargado el SQL, el índice ofrece tres capacidades ortogonales:
 
 La API no inventa geometrías en consulta: solo **selecciona y ordena** filas ya georreferenciadas. Eso limita el universo recuperable a lo detectado offline —*trade-off* consciente ya descrito en la introducción— a cambio de latencia y control.
 
-![Búsqueda híbrida frente a búsqueda espacial](figures/busqueda-hibrida-vs-espacial.svg)
+![Búsqueda híbrida frente a búsqueda espacial](figures/busqueda-hibrida-vs-espacial.png)
 
 *Figura 4.8 — Dos modos de recuperación sobre el mismo esquema de tablas.*
 
@@ -247,7 +247,7 @@ La API no inventa geometrías en consulta: solo **selecciona y ordena** filas ya
 
 La API (`api/`) sigue capas con dependencias hacia el dominio:
 
-![Capas Clean Architecture de la API](figures/clean-architecture-api.svg)
+![Capas Clean Architecture de la API](figures/clean-architecture-api.png)
 
 *Figura 4.9 — Organización de `api/`: HTTP → application → domain ← infrastructure.*
 
@@ -260,7 +260,7 @@ La API (`api/`) sigue capas con dependencias hacia el dominio:
 
 ### Flujo de una búsqueda
 
-![Flujo de interpretación y búsqueda](figures/flujo-consulta-online.svg)
+![Flujo de interpretación y búsqueda](figures/flujo-consulta-online.png)
 
 *Figura 4.10 — Orden obligatorio de interpretación (no reordenar sin plan de diseño).*
 

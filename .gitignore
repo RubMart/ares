@@ -43,6 +43,21 @@ sql_test/
 *.shx
 *.prj
 
+# Figuras de la memoria técnica (PNG para render en GitHub)
+!doc/memtech/figures/
+!doc/memtech/figures/*.png
+# Capturas referenciadas desde doc/ (visor, detección, etc.)
+!doc/.images/
+!doc/.images/*.png
+!doc/.images/*.jpg
+!doc/.images/*.jpeg
+
+# Tooling local de rasterizado de figuras (no versionar)
+doc/memtech/figures/node_modules/
+doc/memtech/figures/package-lock.json
+doc/memtech/figures/package.json
+
+
 # OS / IDE
 .DS_Store
 Thumbs.db
