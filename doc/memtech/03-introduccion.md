@@ -114,7 +114,7 @@ El detalle de arquitectura, implementación y resultados se desarrolla en los ca
 | 02 · Resumen | Problema, tecnologías, resultado para el usuario y aportaciones |
 | 03 · Introducción | Contexto, objetivos, comparación, ventajas/desventajas y alcance *(este capítulo)* |
 | 04 · Descripción de la solución | Arquitectura, componentes y justificación tecnológica |
-| 05 · Implementación | Detección, almacenamiento, búsqueda y visualización |
+| 05 · Implementación | Arquitectura software, DI, caso de uso, adaptadores, frontend y tests |
 | 06 · Resultados | Ejemplos, capturas y comportamiento observado |
 | 07 · Conclusiones | Logros, limitaciones y líneas futuras |
 | 08 · Referencias | Documentación y literatura relevante |

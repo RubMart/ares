@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 420" role="img">
+  <defs>
+    <style>
+      .b { fill:#f8fafc; stroke:#0f766e; stroke-width:1.5; rx:8; }
+      .s { fill:#ecfdf5; stroke:#047857; stroke-width:1.5; rx:8; }
+      .r { fill:#eff6ff; stroke:#1d4ed8; stroke-width:1.5; rx:8; }
+      .t { font-family:Segoe UI,Helvetica,Arial,sans-serif; fill:#0f172a; font-size:12.5px; }
+      .h { font-family:Segoe UI,Helvetica,Arial,sans-serif; fill:#0f172a; font-size:14px; font-weight:700; }
+      .m { font-family:Segoe UI,Helvetica,Arial,sans-serif; fill:#475569; font-size:11px; }
+      .e { stroke:#334155; stroke-width:1.4; fill:none; marker-end:url(#a); }
+    </style>
+    <marker id="a" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#334155"/>
+    </marker>
+  </defs>
+  <text class="h" x="24" y="28">Composition root (api/dependencies.py + lifespan)</text>
+
+  <rect class="s" x="40" y="52" width="220" height="100"/>
+  <text class="t" x="60" y="82">lifespan / init_services()</text>
+  <text class="m" x="55" y="104">ClipOnnxTextEmbedder (singleton)</text>
+  <text class="m" x="55" y="122">CachingQueryAnalyzer</text>
+  <text class="m" x="55" y="140">  -&gt; OllamaQueryAnalyzer</text>
+
+  <rect class="r" x="300" y="52" width="200" height="100"/>
+  <text class="t" x="330" y="90">Request scope</text>
+  <text class="m" x="320" y="112">AsyncSession (asyncpg)</text>
+  <text class="m" x="320" y="132">yield por peticion</text>
+
+  <rect class="b" x="540" y="52" width="240" height="100"/>
+  <text class="t" x="560" y="82">build_search_use_case()</text>
+  <text class="m" x="555" y="104">+ PostgresCatalogRepository</text>
+  <text class="m" x="555" y="122">+ PostgresDetectionRepository</text>
+  <text class="m" x="555" y="140">-&gt; SearchDetectionsUseCase</text>
+
+  <path class="e" d="M260,102 H300"/>
+  <path class="e" d="M500,102 H540"/>
+
+  <rect class="b" x="40" y="200" width="740" height="180"/>
+  <text class="t" x="60" y="232">Puertos inyectados (domain) vs adaptadores (infrastructure)</text>
+  <text class="m" x="60" y="260">QueryAnalyzer  &lt;-- CachingQueryAnalyzer(OllamaQueryAnalyzer)</text>
+  <text class="m" x="60" y="282">TextEmbedder   &lt;-- ClipOnnxTextEmbedder</text>
+  <text class="m" x="60" y="304">CatalogRepository / DetectionRepository &lt;-- Postgres*Repository(session)</text>
+  <text class="m" x="60" y="336">El use case no importa FastAPI, SQLAlchemy ni Ollama: solo ABCs + DTOs.</text>
+  <text class="m" x="60" y="358">Tests unitarios sustituyen puertos por fakes sin levantar HTTP ni BD.</text>
+</svg>

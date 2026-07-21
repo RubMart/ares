@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 380" role="img">
+  <defs>
+    <style>
+      .b { fill:#f8fafc; stroke:#0f766e; stroke-width:1.5; rx:8; }
+      .p { fill:#eff6ff; stroke:#1d4ed8; stroke-width:1.5; rx:8; }
+      .l { fill:#fff7ed; stroke:#c2410c; stroke-width:1.5; rx:8; }
+      .t { font-family:Segoe UI,Helvetica,Arial,sans-serif; fill:#0f172a; font-size:12.5px; }
+      .h { font-family:Segoe UI,Helvetica,Arial,sans-serif; fill:#0f172a; font-size:14px; font-weight:700; }
+      .m { font-family:Segoe UI,Helvetica,Arial,sans-serif; fill:#475569; font-size:11px; }
+    </style>
+  </defs>
+  <text class="h" x="24" y="28">frontend/ - composicion sin store global</text>
+
+  <rect class="p" x="40" y="52" width="740" height="70"/>
+  <text class="t" x="60" y="82">app/page.tsx  (composition root + useState / useCallback)</text>
+  <text class="m" x="60" y="102">results GeoJSON, query, filters, selection, interpretation open/close</text>
+
+  <rect class="b" x="40" y="150" width="170" height="90"/>
+  <text class="t" x="60" y="185">SearchPanel</text>
+  <text class="m" x="55" y="208">query, chips, top-k</text>
+
+  <rect class="b" x="230" y="150" width="170" height="90"/>
+  <text class="t" x="260" y="185">MapView (OL)</text>
+  <text class="m" x="245" y="208">dynamic SSR=false</text>
+
+  <rect class="b" x="420" y="150" width="170" height="90"/>
+  <text class="t" x="445" y="185">ResultsTable</text>
+  <text class="m" x="440" y="208">seleccion &lt;-&gt; mapa</text>
+
+  <rect class="b" x="610" y="150" width="170" height="90"/>
+  <text class="t" x="630" y="185">Filtros / Catalog</text>
+  <text class="m" x="625" y="208">cliente + capas COG</text>
+
+  <rect class="l" x="40" y="270" width="740" height="80"/>
+  <text class="t" x="60" y="300">lib/api/*  -  fetch tipado (search, catalog, health)</text>
+  <text class="m" x="60" y="322">NEXT_PUBLIC_API_URL  |  timeout 60s en POST /search  |  sin Redux/Zustand</text>
+</svg>

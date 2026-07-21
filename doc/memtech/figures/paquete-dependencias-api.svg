@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 460" role="img">
+  <defs>
+    <style>
+      .L1 { fill:#eff6ff; stroke:#1d4ed8; stroke-width:1.5; rx:10; }
+      .L2 { fill:#ecfdf5; stroke:#047857; stroke-width:1.5; rx:10; }
+      .L3 { fill:#fff7ed; stroke:#c2410c; stroke-width:1.5; rx:10; }
+      .L4 { fill:#f5f3ff; stroke:#6d28d9; stroke-width:1.5; rx:10; }
+      .t { font-family:Segoe UI,Helvetica,Arial,sans-serif; fill:#0f172a; font-size:13px; }
+      .s { font-family:Segoe UI,Helvetica,Arial,sans-serif; fill:#475569; font-size:11px; }
+      .h { font-family:Segoe UI,Helvetica,Arial,sans-serif; fill:#0f172a; font-size:14px; font-weight:700; }
+      .note { font-family:Segoe UI,Helvetica,Arial,sans-serif; fill:#334155; font-size:11px; }
+    </style>
+  </defs>
+  <text class="h" x="24" y="28">Regla de dependencia: hacia el dominio</text>
+  <rect class="L1" x="60" y="50" width="600" height="70"/>
+  <text class="t" x="80" y="80">api (HTTP)  routes / schemas / rate_limit / dependencies</text>
+  <text class="s" x="80" y="100">conoce application + schemas; no conoce SQL ni Ollama</text>
+  <rect class="L2" x="60" y="140" width="600" height="70"/>
+  <text class="t" x="80" y="170">application  SearchDetectionsUseCase + DTOs</text>
+  <text class="s" x="80" y="190">conoce domain (puertos); orquesta el pipeline de busqueda</text>
+  <rect class="L3" x="60" y="230" width="600" height="80"/>
+  <text class="t" x="80" y="260">domain  entities / value objects / repository+service ABCs</text>
+  <text class="s" x="80" y="280">Detection, CatalogLayer, StructuredQuery, SearchFilters</text>
+  <text class="s" x="80" y="298">cero imports de FastAPI, SQLAlchemy, transformers, httpx</text>
+  <rect class="L4" x="60" y="330" width="600" height="90"/>
+  <text class="t" x="80" y="360">infrastructure  implementa puertos</text>
+  <text class="s" x="80" y="380">postgres_* / clip_text_embedder / ollama_* / parsers / geojson</text>
+  <text class="s" x="80" y="398">depende del domain; es sustituible en tests</text>
+  <text class="note" x="60" y="445">Flecha conceptual: api -&gt; application -&gt; domain &lt;- infrastructure</text>
+</svg>

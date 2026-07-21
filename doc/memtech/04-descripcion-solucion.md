@@ -41,7 +41,7 @@ El sistema no intenta «entender la ortofoto» en cada petición HTTP. En su lug
 | Principio | Manifestación en ARES |
 |-----------|------------------------|
 | Separación offline / online | `tools/` indexa; `api/` consulta; no se mezcla inferencia YOLO en el request path |
-| Dependencias hacia el dominio | Clean Architecture en `api/` (puertos ABC; infra enchufable) |
+| Dependencias hacia el dominio | Clean Architecture en `api/` (detalle en §05) |
 | LLM como último recurso | Orden fijo: overrides → parser determinista → Ollama |
 | Semántica multimodal acotada | CLIP solo sobre *target* + atributos; el espacial lo resuelve PostGIS |
 | Contrato cartográfico estándar | GeoJSON `FeatureCollection` en EPSG:3857 |
@@ -243,90 +243,55 @@ La API no inventa geometrías en consulta: solo **selecciona y ordena** filas ya
 
 ## Componente 3 — API de consulta
 
-### Clean Architecture
+La API REST (`api/`, FastAPI) expone la búsqueda sobre el índice ya materializado. A nivel de **solución** importa:
 
-La API (`api/`) sigue capas con dependencias hacia el dominio:
+- Interpretación en cascada: overrides HTTP → parser determinista → Ollama (solo si hace falta).
+- CLIP sobre *target* + atributos (no sobre la frase espacial completa).
+- Recuperación híbrida o espacial (`ST_DWithin`) según el intent.
+- Respuesta GeoJSON con `metadata.interpretation` auditable.
 
-![Capas Clean Architecture de la API](figures/clean-architecture-api.png)
+Si CLIP recibiera «coches cerca de rotonda» como un único string, mezclaría semántica de *target* y *reference*. ARES descompone el problema: CLIP ordena el target; PostGIS aplica la proximidad.
 
-*Figura 4.9 — Organización de `api/`: HTTP → application → domain ← infrastructure.*
+El detalle de **Clean Architecture**, composition root, caso de uso, adaptadores y contrato GeoJSON se desarrolla en el [capítulo 05 · Implementación](05-implementacion.md).
 
-| Capa | Responsabilidad |
-|------|-----------------|
-| `api/` | Rutas (`POST /search`, `GET /catalog`, `GET /health`, cache LLM), schemas, CORS, rate limit |
-| `application/` | `SearchDetectionsUseCase`: orquesta interpretación → CLIP → BD → GeoJSON |
-| `domain/` | Entidades, `StructuredQuery`, puertos ABC |
-| `infrastructure/` | Postgres async, CLIP texto, Ollama, parsers, serializador GeoJSON |
+![Flujo de interpretación (vista de solución)](figures/flujo-consulta-online.png)
 
-### Flujo de una búsqueda
+*Figura 4.9 — Orden de interpretación (detalle de ingeniería en §05).*
 
-![Flujo de interpretación y búsqueda](figures/flujo-consulta-online.png)
-
-*Figura 4.10 — Orden obligatorio de interpretación (no reordenar sin plan de diseño).*
-
-Pasos:
-
-1. **Overrides HTTP** (`target`, o `target`+`reference` [+ `spatial_relation` / `spatial_distance_m`]) → `source=override`, sin Ollama.
-2. **Parser determinista** (`try_deterministic_parse`) si la frase es inequívoca respecto al catálogo (± color ± espacial claro) → `source=parser`, `llm_ms=0`.
-3. **Ollama** (`llama3.2:3b` por defecto) + *fallback* de catálogo → `source=llm` (o `cache` si hay acierto de caché).
-4. Construcción del texto CLIP con `build_clip_embedding_text`: **solo target + atributos**, nunca la frase espacial completa.
-5. Consulta BD:
-   - `search_hybrid` si `intent=search_class`
-   - `search_spatial_near` si espacial / relación `near`
-6. Serialización GeoJSON + `metadata.interpretation` (+ `reference_features` en espacial) y *timings* (`llm_ms`, `clip_ms`, `database_ms`, `total_ms`).
-
-### Por qué no embeber la frase espacial completa
-
-Si CLIP recibiera «coches cerca de rotonda» como un único string, el vector mezclaría semántica de *target* y de *reference*, degradando el ranking de vehículos. ARES **descompone** el problema:
-
-- CLIP ordena candidatos del *target* (p. ej. coches ± color).
-- PostGIS filtra por proximidad a instancias de la *reference* (p. ej. rotonda / infraestructura viaria mapeada en catálogo).
-
-### Forma de la respuesta
-
-`FeatureCollection` con:
-
-- Features de detección: `clase_yolo`, `confianza`, `similarity`, `layer`, `tile_id`, …
-- En espacial: `distance_to_reference_m`, `reference_id`
-- `metadata.interpretation`: intent, labels, relation, `distance_m`, `embedding_text`, `source`
-- `metadata.reference_features` (capa auxiliar de referencias)
-- `structured_query`, `timings`, `layers_searched`, `warnings`
-
-Endpoints de soporte: `GET /health`, `GET /catalog`, gestión de caché LLM. Contrato detallado en [`api/README.md`](../../api/README.md).
+Endpoints: `POST /search`, `GET /catalog`, `GET /health`, gestión de caché LLM. Referencia operativa: [`api/README.md`](../../api/README.md).
 
 ---
 
 ## Componente 4 — Visor cartográfico
 
-El frontend de producto (`frontend/`, Next.js + OpenLayers) es la cara interactiva del contrato GeoJSON:
+El frontend de producto (`frontend/`, Next.js + OpenLayers) consume el GeoJSON y hace explícita la interpretación. Piezas de UX:
 
-| Pieza UX | Función |
-|----------|---------|
-| Zona de consulta | Texto libre, chips de ejemplo, top‑k, filtro de baja confianza, i18n ES/EN |
-| Indicador API | Estado de salud antes de buscar |
-| Mapa | Geometrías coloreadas por confianza; capas base calles/satélite; referencias espaciales |
-| Tabla | Lista de entidades (id, clase, confianza, capa); selección ↔ mapa |
-| Interpretación | Modal con intent, *target*/*reference*, texto CLIP, fuente, *timings* |
-| Filtros cliente | Capas, clases YOLO, confianza, rango de similitud |
-| Catálogo | Visibilidad / encuadre de capas COG |
+| Pieza | Función |
+|-------|---------|
+| Zona de consulta | Texto libre, chips de ejemplo, top‑k, filtro de baja confianza, i18n |
+| Mapa / tabla | Geometrías por confianza; selección cruzada; referencias espaciales |
+| Interpretación | Intent, *target*/*reference*, texto CLIP, fuente, *timings* |
+| Filtros / catálogo | Clase, confianza, similitud, capas COG |
+
+La **arquitectura de componentes y estado** del frontend está en el [capítulo 05](05-implementacion.md). Aquí se documenta el resultado visible:
 
 ![Panel de consulta del frontend ARES](../.images/ares_interface.png)
 
-*Figura 4.11 — Entrada de consulta NL y chips de ejemplo (incl. espacial «coches cerca de rotonda»).*
+*Figura 4.10 — Entrada de consulta NL y chips de ejemplo (incl. espacial «coches cerca de rotonda»).*
 
 ![Zona de consulta y tabla de resultados](../.images/search_zone.png)
 
-*Figura 4.12 — Consulta espacial resuelta: 62 coincidencias, tabla con clase y confianza.*
+*Figura 4.11 — Consulta espacial resuelta: coincidencias, tabla con clase y confianza.*
 
 ![Mapa OpenLayers con detecciones y filtros](../.images/ares_map_interface.png)
 
-*Figura 4.13 — Resultado cartográfico: cajas georreferenciadas, leyenda de confianza, filtros de clase/similitud y catálogo de capas.*
+*Figura 4.12 — Resultado cartográfico: geometrías, leyenda, filtros y catálogo de capas.*
 
 ![Tabla de resultados (detalle)](../.images/lista_busquedas.png)
 
-*Figura 4.14 — Lectura tabular alineada con el mapa (trazabilidad por `id` y capa).*
+*Figura 4.13 — Lectura tabular alineada con el mapa.*
 
-Existe además `api_webviewer/` (HTML/JS estático): **visor de testing** de la API (mapa, tabla, JSON crudo, historial local opcional). No es la UX de producto, pero valida el contrato HTTP sin despliegue Next.js.
+`api_webviewer/` es un visor **secundario** de testing del contrato HTTP (mapa, tabla, JSON crudo), no la UX de producto.
 
 ---
 
@@ -368,6 +333,7 @@ sequenceDiagram
   FE-->>U: mapa + tabla + «Más info»
 ```
 
+La secuencia B se desglosa a nivel de clases y puertos en el capítulo 05.
 ---
 
 ## Tecnologías empleadas y justificación
@@ -412,4 +378,4 @@ Estos límites no alteran la arquitectura descrita: el esqueleto (offline materi
 
 ## Resumen del capítulo
 
-ARES implementa una **arquitectura de recuperación semántico-espacial en dos tiempos**: un pipeline offline (YOLO → CLIP → PostGIS/pgvector) y un plano online (interpretación local → CLIP texto → consulta híbrida o `ST_DWithin` → GeoJSON). El visor Next.js/OpenLayers consume ese contrato y hace explícita la interpretación. Las figuras de este capítulo —diagramas de flujo y capturas reales de detección, embedding y UI— documentan esa cadena con el nivel de detalle exigible a una memoria técnica de entrega.
+ARES implementa una **arquitectura de recuperación semántico-espacial en dos tiempos**: pipeline offline (YOLO → CLIP → PostGIS/pgvector) y plano online (interpretación local → CLIP texto → consulta híbrida o `ST_DWithin` → GeoJSON → visor). Este capítulo fija el diseño de solución, los componentes y la justificación tecnológica; el **detalle de ingeniería de software** (capas, DI, caso de uso, tests) se desarrolla en el [capítulo 05](05-implementacion.md).
