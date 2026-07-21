@@ -48,6 +48,7 @@ ares/
 ├── api_webviewer/       # Visor de testing de la API (mapa, tabla, JSON)
 ├── db/                  # PostgreSQL + PostGIS + pgvector (Docker Compose)
 ├── tools/               # Pipeline offline: detección, embeddings, SQL
+├── models/              # Pesos YOLO/CLIP locales (ver README; `.pt` fuera de git)
 ├── doc/                 # Guía de uso, capturas y memoria técnica
 ├── AGENTS.md            # Contexto operativo para agentes / desarrollo
 ├── LICENSE              # GPL-3.0

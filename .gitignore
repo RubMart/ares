@@ -21,7 +21,8 @@ build/
 
 # Datos, pesos y artefactos de pipeline (fuera del repo)
 data/
-models/
+models/*
+!models/README.md
 runs/
 pruebas/
 sql_test/

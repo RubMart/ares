@@ -43,7 +43,7 @@ ares/
 ```
 
 
-**No versionar:** `models/`, `data/`, `runs/`, `pruebas/`, `sql_test/`, `.venv/`, pesos `.pt`/`.onnx`, ni `.env`.
+**No versionar:** pesos en `models/` (`.pt`/`.onnx`; sí se versiona `models/README.md`), `data/`, `runs/`, `pruebas/`, `sql_test/`, `.venv/`, ni `.env`. Catálogo de detectores y clases: [`models/README.md`](models/README.md).
 
 ## Pipeline de búsqueda (API)
 
