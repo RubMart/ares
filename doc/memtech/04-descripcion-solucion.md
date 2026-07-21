@@ -98,9 +98,9 @@ El dataset de trabajo no es el GeoTIFF monolítico en crudo, sino un **mosaico d
 2. La ruta `…/z/x/y.ext` permite derivar `tile_id` y `bbox3857` de forma determinista.
 3. El procesamiento es paralelizable por fichero y reanudable (`--skip-existing`).
 
-![Ejemplo de tile XYZ z=16 (ortofoto urbana de Madrid)](../.images/ares_tile_z16_preview.jpg)
+![Ejemplo de tile XYZ z=16 (ortofoto urbana de Madrid)](figures/ares_tile_z16_preview.jpg)
 
-*Figura 4.2 — Tesela de entrada del pipeline (vista previa). Fuente: dataset de pruebas Madrid / layout `16/x/y`.*
+*Figura 4.2 — Tesela de entrada del pipeline (vista previa). Fuente: `madrid_orto_2024_sur` / layout `16/32091/24688`.*
 
 Sin layout `z/x/y`, `detect.py` no puede georreferenciar detecciones y `embed2psql.py` no construye un `tile_id` válido. El detalle operativo (COG, HTTP Range, `gdal2tiles`) está en [`doc/preparacion-de-datos.md`](../preparacion-de-datos.md).
 
@@ -193,9 +193,9 @@ En resumen: **no se usa un modelo único porque las clases objetivo no son un pr
 
 A partir del JSON de detecciones se puede materializar una vista de control de calidad. La figura siguiente muestra un **overlay sintético** de cajas sobre la misma tesela (muestra de hasta 80 detecciones del companion JSON):
 
-![Overlay de detecciones YOLO sobre la tesela de ejemplo](../.images/ares_detections_overlay.jpg)
+![Overlay de detecciones YOLO sobre la tesela de ejemplo](figures/ares_detections_overlay.jpg)
 
-*Figura 4.5 — Control visual de detecciones (AABB) sobre el tile. Útil antes de embeber y cargar a BD.*
+*Figura 4.5 — Control visual de detecciones (AABB) sobre el tile `16/32091/24688`. Muestra de las detecciones con mayor confianza; útil antes de embeber y cargar a BD.*
 
 ![Artefactos del pipeline offline](figures/pipeline-offline-artefactos.png)
 

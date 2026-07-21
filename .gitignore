@@ -43,9 +43,11 @@ sql_test/
 *.shx
 *.prj
 
-# Figuras de la memoria técnica (PNG para render en GitHub)
+# Figuras de la memoria técnica (raster para render en GitHub)
 !doc/memtech/figures/
 !doc/memtech/figures/*.png
+!doc/memtech/figures/*.jpg
+!doc/memtech/figures/*.jpeg
 # Capturas referenciadas desde doc/ (visor, detección, etc.)
 !doc/.images/
 !doc/.images/*.png

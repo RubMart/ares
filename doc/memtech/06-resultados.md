@@ -12,7 +12,7 @@
 |----------|--------------------|
 | `coches rojos` | Vehículos con apariencia similar a la descripción |
 | `paneles solares` | Instalaciones fotovoltaicas detectadas |
-| `árboles junto a edificios` | Elementos localizados según relación espacial |
+| `coches junto a rotondas` | Elementos localizados según relación espacial |
 
 <!-- A completar: más consultas, capturas asociadas y comentarios cualitativos. -->
 
