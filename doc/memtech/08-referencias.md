@@ -71,7 +71,10 @@ Documentación oficial, paquetes y literatura que sustentan el diseño e impleme
 
 ## Datos y contexto cartográfico de las pruebas
 
-30. Ortofotografía aérea de alta resolución de la Comunidad de Madrid / fuentes oficiales de ortofoto usadas en el dataset de laboratorio del TFM (campañas PNOA / equivalentes locales según la AOI concreta indexada). Documentación PNOA (IGN): https://pnoa.ign.es/
+30. **Ortofoto de prueba (fuente primaria del laboratorio ARES).** Ayuntamiento de Madrid — Subdirección General de Innovación e Información Urbana. *Ortofoto actualizada* (ortofotografía verdadera, GSD **2,5 cm**), vuelo fotogramétrico cenital y oblicuo de julio de 2024 sobre la zona urbana de la ciudad. Metadatos y acceso: Geoportal del Ayuntamiento de Madrid — https://geoportal.madrid.es/IDEAM_WBGEOPORTAL/dataset.iam?id=555821cd-9c3f-4043-87ed-2f3c002c2f22 ; portal de datos abiertos — https://datos.madrid.es/dataset/300740-0-ortofoto-cubierta-mosaico
+
+   **Disclaimer / condiciones de uso de los datos de prueba.** Las capturas, índices (`madrid_*_detections`) y ejemplos de esta memoria se elaboraron a partir de **recortes (AOI)** de dicha ortofoto municipal, exclusivamente con fines de **demostración técnica y evaluación del TFM**. No constituyen un producto cartográfico oficial del Ayuntamiento de Madrid ni una publicación autorizada del mosaico completo. La autoría y los derechos de la ortofoto corresponden al Ayuntamiento de Madrid; cualquier reutilización del dato original debe respetar la licencia y condiciones publicadas en el portal municipal (p. ej. **CC BY 4.0** en el conjunto de datos abiertos, con atribución al Ayuntamiento de Madrid). ARES no redistribuye los rasters originales ni los pesos/datasets crudos en el repositorio.
+
 31. Especificación *Cloud Optimized GeoTIFF* (COG). https://www.cogeo.org/
 
 ---
@@ -85,4 +88,4 @@ Documentación oficial, paquetes y literatura que sustentan el diseño e impleme
 
 ## Nota bibliográfica
 
-Las entradas [1]–[20] y [30]–[33] son las **fuentes de implementación** directas del sistema. Las [23]–[29] sitúan ARES en el estado del arte (detección aérea, VLM, GeoAI / NL–GIS) sin pretender una revisión exhaustiva. Donde un trabajo se menciona como contraste (NL2SQL libre, VLM grandes), el diseño de ARES opta deliberadamente por un índice materializado, catálogo cerrado y LLM local pequeño, como se argumenta en los capítulos 03 y 04.
+Las entradas [1]–[20] y [31]–[33] son las **fuentes de implementación** directas del sistema. La entrada [30] documenta la **fuente de la ortofoto de prueba** (Ayuntamiento de Madrid, 2024, 2,5 cm) y el disclaimer de uso. Las [23]–[29] sitúan ARES en el estado del arte (detección aérea, VLM, GeoAI / NL–GIS) sin pretender una revisión exhaustiva. Donde un trabajo se menciona como contraste (NL2SQL libre, VLM grandes), el diseño de ARES opta deliberadamente por un índice materializado, catálogo cerrado y LLM local pequeño, como se argumenta en los capítulos 03 y 04.
