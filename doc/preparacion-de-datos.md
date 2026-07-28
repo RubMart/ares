@@ -388,6 +388,28 @@ Conversión píxel → metros (Web Mercator):
 
 Con `--all-models` y tiles 2048, sin override manual se aplican `imgsz`/`conf` por modelo (p. ej. 1280 / 0.25–0.35).
 
+### Clases de la prueba de concepto
+
+Los pesos anteriores emiten muchas etiquetas YOLO (`class_name` en el JSON). Para la **PoC de ARES**, la búsqueda en lenguaje natural se acota a un **catálogo canónico** de familias semánticas (sinónimos ES/EN → `clase_yolo` en BD). Ese mapeo vive en [`api/infrastructure/ai/yolo_class_catalog.py`](../api/infrastructure/ai/yolo_class_catalog.py); el inventario completo por peso está en [`models/README.md`](../models/README.md).
+
+| Familia de búsqueda (PoC) | Ejemplos de consulta | `clase_yolo` en índice |
+|---------------------------|----------------------|------------------------|
+| Piscinas | `piscinas`, `pool` | `swimming_pool`, `swimming pool` |
+| Vehículos | `coches`, `camiones`, `vehicles` | `car`, `van`, `truck`, `bus`, `motor`, `small vehicle`, `large vehicle` |
+| Edificios | `edificios`, `buildings` | `Building`, `building` |
+| Paneles solares | `paneles solares`, `solar panels` | `photovoltaic panel` |
+| Campos / pistas deportivas | `campos de fútbol`, `pista de baloncesto` | `soccer ball field`, `basketball court` |
+| Peatones | `personas`, `peatones` | `pedestrian` |
+| Rotondas | `rotonda`, `roundabout` | `roundabout` |
+
+Esto **no** es un límite de arquitectura: es el vocabulario elegido para demostrar el flujo (detección → índice → consulta). Para ampliar el dominio:
+
+1. Añadir o sustituir un peso en `CONFIGURED_MODELS` / `--model` y re-indexar (`detect` → `embed` → `embed2psql`).
+2. Extender `YOLO_CLASS_CATALOG` (y, si aplica, atributos en `attribute_catalog.py`) con la nueva familia y sus sinónimos.
+3. Documentar las clases del peso en [`models/README.md`](../models/README.md).
+
+Clases emitidas por YOLO pero **fuera** de ese catálogo (p. ej. `plane`, `harbor`, `tennis court`) pueden existir en la tabla; la API no las resuelve por frase natural hasta que se añadan al catálogo.
+
 ### Ejecución batch
 
 ```powershell

@@ -125,6 +125,22 @@ Modelos del stack activo (`CONFIGURED_MODELS` / `--all-models`):
 
 La inferencia es **operable en CPU**; la GPU acelera pero no es requisito de arquitectura. Con `--all-models` y tiles 2048×2048 se aplican `imgsz`/`conf` **por modelo** (`MODEL_INFERENCE_DEFAULTS`), no un único hiperparámetro global.
 
+#### Catálogo de clases de la prueba de concepto
+
+Los pesos anteriores producen un vocabulario YOLO heterogéneo (VisDrone, DOTA, especialistas). Para la **PoC**, la interpretación de consultas (parser determinista / LLM + *fallback*) se **acota** a un catálogo canónico de familias semánticas: sinónimos en español e inglés → lista de `clase_yolo` existentes en el índice. Implementación: [`yolo_class_catalog.py`](../../api/infrastructure/ai/yolo_class_catalog.py); detalle por peso: [`models/README.md`](../../models/README.md).
+
+| Familia (PoC) | Consultas típicas | Etiquetas `clase_yolo` |
+|---------------|-------------------|------------------------|
+| Piscinas | «piscinas», «pool» | `swimming_pool`, `swimming pool` |
+| Vehículos | «coches», «vehículos» | `car`, `van`, `truck`, `bus`, `motor`, `small vehicle`, `large vehicle` |
+| Edificios | «edificios», «buildings» | `Building`, `building` |
+| Paneles solares | «paneles solares» | `photovoltaic panel` |
+| Campos / pistas deportivas | «campos de fútbol», «pista de baloncesto» | `soccer ball field`, `basketball court` |
+| Peatones | «personas», «peatones» | `pedestrian` |
+| Rotondas | «rotonda», «roundabout» | `roundabout` |
+
+Ese conjunto es el **universo recuperable por lenguaje natural** en la demostración (piscinas, coches, campos de fútbol, etc.). No es un límite fijo del sistema: ampliar el dominio consiste en incorporar un detector (o clases nuevas de un peso ya indexado), re-ejecutar el pipeline offline y extender el catálogo de la API —sin cambiar el caso de uso de búsqueda ni el contrato GeoJSON. Clases presentes en BD pero ausentes del catálogo quedan fuera de las frases naturales hasta que se registren.
+
 #### Justificación técnica: ¿por qué varios YOLO y no un modelo único?
 
 Un detector monolítico (un solo `.pt` con todas las clases) sería más simple de operar, pero **no es el óptimo técnico** para el perfil de ARES. Las razones son de dominio, geometría, datos de entrenamiento y economía del pipeline offline.
@@ -229,11 +245,11 @@ Decisiones relevantes:
 
 Una vez cargado el SQL, el índice ofrece tres capacidades ortogonales:
 
-1. **Filtro categórico** por `clase_yolo` (lista canónica alineada con el catálogo de la API).
+1. **Filtro categórico** por `clase_yolo` (lista canónica de la PoC: ver [catálogo de clases](#catálogo-de-clases-de-la-prueba-de-concepto) y `YOLO_CLASS_CATALOG` en la API).
 2. **Ranking semántico** por distancia coseno pgvector (`embedding <=> query_vec`).
 3. **Predicado espacial** PostGIS (`ST_DWithin`, `ST_Distance`, serialización `ST_AsGeoJSON`).
 
-La API no inventa geometrías en consulta: solo **selecciona y ordena** filas ya georreferenciadas. Eso limita el universo recuperable a lo detectado offline —*trade-off* consciente ya descrito en la introducción— a cambio de latencia y control.
+La API no inventa geometrías en consulta: solo **selecciona y ordena** filas ya georreferenciadas. Eso limita el universo recuperable a lo detectado offline **y** a lo que el catálogo de búsqueda reconoce —*trade-off* consciente ya descrito en la introducción— a cambio de latencia y control; el catálogo es extensible sin rediseñar el índice.
 
 ![Búsqueda híbrida frente a búsqueda espacial](figures/busqueda-hibrida-vs-espacial.png)
 

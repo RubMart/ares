@@ -159,17 +159,6 @@ Abre `http://127.0.0.1:3000`. La URL de la API se configura en `NEXT_PUBLIC_API_
 
 Detalle de estructura, variables de entorno y scripts: [`frontend/README.md`](frontend/README.md).
 
-### Visor de testing (`api_webviewer`)
-
-Herramienta **secundaria** para probar la API a mano (mapa, tabla y JSON crudo). No es el frontend de producto ni tiene propósito público.
-
-```powershell
-cd api_webviewer
-python -m http.server 8080
-```
-
-Abre `http://localhost:8080`. URL de la API en la cabecera del visor o en `api_webviewer/js/api.js`. Detalle: [`api_webviewer/README.md`](api_webviewer/README.md).
-
 ## Documentación
 
 Índice de `doc/` (contenidos y para qué sirven): [`doc/README.md`](doc/README.md).
