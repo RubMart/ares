@@ -2,31 +2,35 @@
 
 **AI Retrieval of Entities in Space**
 
-ARES es un sistema de búsqueda en lenguaje natural sobre **detecciones de objetos en imágenes aéreas**. Permite preguntar, en español o en inglés, cosas como «piscinas», «coches rojos» o «coches cerca de rotonda», y obtener las entidades georreferenciadas correspondientes sobre un mapa, sin construir filtros GIS a mano.
+ARES convierte las detecciones de objetos en imágenes aéreas en un índice **semántico y espacial** que se consulta en lenguaje natural. En lugar de montar filtros GIS o escribir SQL, el usuario formula la pregunta —en español o en inglés— y recibe las entidades georreferenciadas sobre un mapa.
 
-El flujo de producto es:
+Ejemplos: «piscinas», «coches rojos», «paneles solares cerca de edificios». El sistema interpreta la frase, recupera las detecciones pertinentes (clase, similitud visual y, si aplica, proximidad) y las entrega como GeoJSON listo para visualizar.
 
-1. Las imágenes aéreas se procesan offline (YOLO + CLIP) y se indexan en PostgreSQL con PostGIS y pgvector.
-2. La API interpreta la consulta (parser determinista u Ollama), embebe el texto con CLIP y busca en la base de datos (filtro por clase, ranking semántico y, si aplica, proximidad espacial con `ST_DWithin`).
-3. El **frontend** ([`frontend/`](frontend/)) muestra resultados en mapa y tabla, con la interpretación de la consulta visible para el usuario.
+El recorrido de extremo a extremo es:
+
+1. **Indexado offline.** Las ortofotos se procesan con YOLO y CLIP; las detecciones se cargan en PostgreSQL (PostGIS + pgvector).
+2. **Búsqueda híbrida.** La API interpreta la consulta (parser determinista u Ollama), embebe el texto con CLIP y consulta la base: filtro por clase, ranking semántico y, cuando procede, proximidad espacial (`ST_DWithin`).
+3. **Visor.** El frontend ([`frontend/`](frontend/)) muestra resultados en mapa y tabla, junto con la interpretación de la consulta para que el usuario pueda validarla.
 
 ![Interfaz de ARES: mapa con detecciones y filtros](doc/.images/ares_map_interface.png)
 
 ## Qué problema resuelve
 
-Las ortofotos de alta resolución contienen mucha información territorial (vehículos, edificios, infraestructuras, etc.), pero el acceso suele pasar por herramientas GIS, catálogos rígidos o SQL. ARES reduce esa barrera: convierte detecciones ya indexadas en un índice **semántico y espacial** consultable con frases naturales, y entrega un GeoJSON listo para visualización.
+Las ortofotos de alta resolución concentran mucha información territorial —vehículos, edificios, infraestructuras—, pero acceder a ella suele exigir herramientas GIS, catálogos rígidos o conocimiento de la base de datos. Quien no domina ese entorno tiene difícil preguntar algo tan directo como «¿dónde hay coches rojos?» o «¿qué paneles solares están cerca de edificios?».
+
+ARES reduce esa barrera: las detecciones ya indexadas pasan a ser un índice consultable con frases naturales. El resultado es un GeoJSON apto para mapa y tabla, sin construir filtros a mano.
 
 ## Fortalezas frente a otras soluciones
 
 Frente a visores GIS clásicos, APIs cloud de visión o stacks que exigen GPU y modelos en la nube, ARES apuesta por un despliegue **local, ligero y explicable**:
 
-- **Todo en CPU.** Detección YOLO, embeddings CLIP, interpretación con Ollama y la API pueden ejecutarse sin GPU. Vale para portátiles y servidores modestos; la GPU es opcional, no un requisito.
-- **Datos y consultas en local.** No depende de APIs cloud de visión ni de LLM externos: PostgreSQL, CLIP y Ollama viven en tu infraestructura. Útil cuando la ortofoto o las detecciones no pueden salir del entorno.
-- **Lenguaje natural + espacio.** No se limita a filtros por clase o a búsqueda solo vectorial: combina clase YOLO, ranking CLIP y proximidad PostGIS (`cerca de`), en español e inglés.
-- **LLM solo cuando hace falta.** Consultas inequívocas (`piscinas`, `coches cerca de rotonda`) las resuelve un parser determinista sin llamar a Ollama (`llm_ms=0`). Menos latencia y menos dependencia del modelo.
+- **Todo en CPU.** YOLO, CLIP, Ollama y la API corren sin GPU. Sirve en portátiles y servidores modestos; la aceleración hardware es opcional.
+- **Datos y consultas en local.** No depende de APIs cloud de visión ni de LLM externos: PostgreSQL, CLIP y Ollama viven en tu infraestructura. Encaja cuando la ortofoto o las detecciones no pueden salir del entorno.
+- **Lenguaje natural y espacio a la vez.** No se queda en filtros por clase ni en búsqueda solo vectorial: combina clase YOLO, ranking CLIP y proximidad PostGIS (`cerca de`), en español e inglés.
+- **LLM solo cuando hace falta.** Consultas inequívocas (`piscinas`, `coches cerca de rotonda`) las resuelve un parser determinista sin llamar a Ollama (`llm_ms=0`): menos latencia y menos dependencia del modelo.
 - **Modelo pequeño y asequible.** El LLM por defecto (`llama3.2:3b`) cabe en hardware corriente; no hace falta un modelo grande ni una suscripción.
-- **Interpretación visible.** La API y el frontend muestran cómo se entendió la frase (*target*, *reference*, distancia, fuente `parser`/`llm`/…). Frente a cajas negras, el usuario puede validar o corregir la intención.
-- **Pipeline extremo a extremo abierto.** Desde la ortofoto hasta el mapa (tools + API + frontend), con GeoJSON estándar y stack open source, sin atarse a un producto GIS propietario.
+- **Interpretación visible.** API y frontend muestran cómo se entendió la frase (*target*, *reference*, distancia, fuente `parser` / `llm` / …). El usuario puede comprobar o corregir la intención, en lugar de tratar el sistema como caja negra.
+- **Pipeline abierto de extremo a extremo.** De la ortofoto al mapa (tools + API + frontend), con GeoJSON estándar y stack open source, sin atarse a un producto GIS propietario.
 
 ## Stack
 
