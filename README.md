@@ -20,6 +20,65 @@ Las ortofotos de alta resolución concentran mucha información territorial —v
 
 ARES reduce esa barrera: las detecciones ya indexadas pasan a ser un índice consultable con frases naturales. El resultado es un GeoJSON apto para mapa y tabla, sin construir filtros a mano.
 
+## Funcionalidades principales
+
+### Consulta en lenguaje natural
+
+El usuario escribe la pregunta en español o en inglés. La API la estructura en intención, clase objetivo (*target*), atributos opcionales y, si aplica, referencia espacial (*reference*) y relación (`near`). No hace falta conocer el esquema de la base ni los nombres internos de las clases YOLO.
+
+Ejemplos típicos:
+
+| Consulta | Comportamiento |
+|----------|----------------|
+| `piscinas` | Búsqueda por clase (suele resolverse sin LLM) |
+| `coches rojos` | Clase + atributo de color vía ranking CLIP |
+| `coches cerca de rotonda` | Espacial: *target* próximo a *reference* |
+| `cars near buildings` | Igual en inglés |
+
+### Búsqueda híbrida (clase + semántica)
+
+Combina dos señales complementarias:
+
+- **Filtro categórico** por clase YOLO cuando el catálogo permite asociar la consulta a una clase conocida.
+- **Ranking semántico** con embeddings CLIP (`pgvector`): el texto embebido es solo *target* + atributos (no la frase espacial completa), alineado con los embeddings de imagen generados en el pipeline offline.
+
+Así se puede pedir «coches» (clase) o matizar con «coches rojos» (clase + similitud visual).
+
+### Consultas espaciales enriquecidas
+
+Para frases del tipo «X cerca de Y», ARES distingue objetivo y referencia, aplica la relación `near` con un radio en metros (por defecto 50 m; máximo 500) y resuelve la proximidad con PostGIS (`ST_DWithin`). En la respuesta GeoJSON aparecen, cuando corresponde, la distancia a la referencia (`distance_to_reference_m`) y las *features* de referencia para pintarlas en una capa aparte del mapa.
+
+También se pueden forzar *target*, *reference*, relación y distancia mediante **overrides** en `POST /search`, con prioridad sobre el analizador de texto.
+
+### Interpretación inteligente y explicable
+
+El orden de resolución de la consulta es fijo:
+
+1. **Overrides HTTP** — parámetros explícitos → sin Ollama.
+2. **Parser determinista** — coincidencia inequívoca con el catálogo (± color ± espacial) → sin Ollama (`llm_ms=0`).
+3. **Caché LRU** o **Ollama** — solo si la frase es ambigua; la fuente queda registrada (`override` \| `parser` \| `cache` \| `llm`).
+
+API y frontend exponen esa interpretación (*Más info*): intención, clases, atributos, distancia usada y un resumen en lenguaje natural, para validar o corregir lo que el sistema entendió.
+
+### Pipeline de indexado offline
+
+Desde una ortofoto hasta el índice consultable, en [`tools/`](tools/): detección YOLO, embeddings CLIP, thumbnails y carga a PostgreSQL (PostGIS + pgvector). Guía paso a paso: [`doc/preparacion-de-datos.md`](doc/preparacion-de-datos.md).
+
+### Visor de producto
+
+El frontend ([`frontend/`](frontend/)) ofrece la experiencia de uso completa:
+
+- Búsqueda con texto libre, chips de ejemplo, número de resultados y filtro de baja confianza.
+- Indicador de estado de la API y catálogo de capas con control de visibilidad.
+- Mapa OpenLayers (detecciones + referencias espaciales; basemap calles / satélite).
+- Filtros en cliente (capa, clase, confianza, similitud CLIP) sin relanzar la búsqueda.
+- Tabla de resultados, descarga GeoJSON e interpretación visible.
+- Interfaz bilingüe (ES/EN).
+
+### API REST
+
+[`api/`](api/) expone, entre otros, `GET /health`, `GET /catalog`, `POST /search` (GeoJSON + metadatos de interpretación) y gestión de la caché LLM (`GET`/`DELETE /cache/llm`). Incluye rate limiting en la búsqueda. Contrato y configuración: [`api/README.md`](api/README.md).
+
 ## Fortalezas frente a otras soluciones
 
 Frente a visores GIS clásicos, APIs cloud de visión o stacks que exigen GPU y modelos en la nube, ARES apuesta por un despliegue **local, ligero y explicable**:
