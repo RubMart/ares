@@ -188,6 +188,8 @@ Detalle del flujo (YOLO → CLIP → SQL): [`../tools/README.md`](../tools/READM
 
 ## Arranque local con Docker Compose
 
+Para el **stack completo** (BD + Ollama + API + frontend) usa el [`docker-compose.yml`](../docker-compose.yml) de la raíz del repo (ver [`../README.md`](../README.md)). Esta carpeta sirve para levantar **solo** PostgreSQL. No publiques a la vez ambos Compose en el puerto **7432**.
+
 Ficheros en esta carpeta:
 
 | Fichero | Rol |

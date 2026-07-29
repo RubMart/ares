@@ -1,0 +1,123 @@
+# Stack completo ARES: PostgreSQL (PostGIS + pgvector), Ollama, API y frontend.
+# Arranque: docker compose up -d --build
+# Solo BD: usar db/docker-compose.yml (no levantar ambos a la vez en el puerto 7432).
+
+services:
+  db:
+    build: ./db
+    container_name: ares-db
+    ports:
+      - "${DB_PORT:-7432}:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_DB: ${POSTGRES_DB:-embedding_db}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-user} -d ${POSTGRES_DB:-embedding_db}",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ares-ollama
+    ports:
+      - "${OLLAMA_PORT:-11434}:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    healthcheck:
+      test: ["CMD-SHELL", "ollama list >/dev/null 2>&1 || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 12
+      start_period: 15s
+
+  ollama-init:
+    image: ollama/ollama:latest
+    container_name: ares-ollama-init
+    depends_on:
+      ollama:
+        condition: service_healthy
+    environment:
+      OLLAMA_HOST: http://ollama:11434
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - ollama pull ${OLLAMA_MODEL:-llama3.2:3b}
+    restart: "no"
+
+  api:
+    build: ./api
+    container_name: ares-api
+    ports:
+      - "${API_PORT:-8000}:8000"
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql+asyncpg://user:password@db:5432/embedding_db}
+      CATALOG_TABLE: ${CATALOG_TABLE:-detecciones_catalogo}
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://ollama:11434}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-llama3.2:3b}
+      OLLAMA_TEMPERATURE: ${OLLAMA_TEMPERATURE:-0.0}
+      LLM_CACHE_MAXSIZE: ${LLM_CACHE_MAXSIZE:-256}
+      CLIP_MODEL_NAME: ${CLIP_MODEL_NAME:-clip-ViT-B-32}
+      CLIP_LOCAL_DIR: ${CLIP_LOCAL_DIR:-/models/clip-vit-base-patch32}
+      CLIP_ONNX_BACKEND: ${CLIP_ONNX_BACKEND:-false}
+      EMBEDDING_DIM: ${EMBEDDING_DIM:-512}
+      CORS_ORIGINS: ${CORS_ORIGINS:-["*"]}
+      DEBUG: ${DEBUG:-false}
+      RATE_LIMIT_ENABLED: ${RATE_LIMIT_ENABLED:-true}
+      RATE_LIMIT_SEARCH: ${RATE_LIMIT_SEARCH:-30/minute}
+      DEFAULT_TOP_K: ${DEFAULT_TOP_K:-50}
+      DEFAULT_PER_LAYER_LIMIT: ${DEFAULT_PER_LAYER_LIMIT:-100}
+      DEFAULT_MIN_CONFIDENCE: ${DEFAULT_MIN_CONFIDENCE:-0.0}
+      DEFAULT_SPATIAL_DISTANCE_M: ${DEFAULT_SPATIAL_DISTANCE_M:-50.0}
+      MAX_SPATIAL_DISTANCE_M: ${MAX_SPATIAL_DISTANCE_M:-500.0}
+      MAX_QUERY_LENGTH: ${MAX_QUERY_LENGTH:-500}
+    volumes:
+      - ./models:/models
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      db:
+        condition: service_healthy
+      ollama:
+        condition: service_healthy
+      ollama-init:
+        condition: service_completed_successfully
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=5)",
+        ]
+      interval: 15s
+      timeout: 10s
+      retries: 20
+      start_period: 300s
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+        NEXT_PUBLIC_MAX_QUERY_LENGTH: ${NEXT_PUBLIC_MAX_QUERY_LENGTH:-500}
+    container_name: ares-frontend
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  ollama_data:

@@ -22,9 +22,11 @@
 ares/
 ├── README.md                 # índice del proyecto
 ├── AGENTS.md                 # este archivo
+├── docker-compose.yml        # stack completo: db + Ollama + API + frontend
+├── .env.example              # variables del Compose raíz
 ├── .cursor/plans/            # decisiones de diseño ya tomadas
 ├── api/                      # API de búsqueda semántica / espacial
-│   ├── main.py, config.py, requirements.txt, .env.example
+│   ├── main.py, config.py, requirements.txt, .env.example, Dockerfile
 │   ├── api/                  # HTTP: routes, schemas, dependencies
 │   ├── application/          # use cases + DTOs (search_detections)
 │   ├── domain/               # entities, value objects, ports
@@ -32,9 +34,9 @@ ares/
 │   └── tests/
 ├── frontend/                 # visor de producto (Next.js + OpenLayers)
 │   ├── app/, components/, lib/, hooks/
-│   └── package.json, .env.example, README.md
+│   └── package.json, .env.example, Dockerfile, README.md
 ├── api_webviewer/            # visor de testing de la API (mapa, tabla, JSON)
-├── db/                       # PostgreSQL + PostGIS + pgvector (Docker Compose)
+├── db/                       # PostgreSQL + PostGIS + pgvector (Compose solo BD)
 │   └── Dockerfile, docker-compose.yml, sql/, README.md
 ├── tools/                    # pipeline offline (detect → embed → SQL)
 │   ├── detect.py, embed.py, embed2psql.py, thumbnail.py, visualize.py
@@ -73,7 +75,11 @@ Ejemplos: `"piscinas"`, `"coches rojos"` → clase; `"coches cerca de rotonda"` 
 
 ## Arranque rápido
 
-### Base de datos
+### Stack completo (Docker)
+
+Desde la raíz: `copy .env.example .env` y `docker compose up -d --build` (db + Ollama + API + frontend). Detalle y modo Ollama en el host: [`README.md`](README.md).
+
+### Base de datos (solo Postgres)
 
 Docker Compose en [`db/`](db/) (detalle: [`db/README.md`](db/README.md)):
 
@@ -82,7 +88,7 @@ cd db
 docker compose up -d --build
 ```
 
-Compose por defecto: `user` / `password`, BD `embedding_db`, puerto host **7432**. Ajusta `DATABASE_URL` en `api/.env` en consecuencia, o alinea el compose con los defaults de la API.
+Compose por defecto: `user` / `password`, BD `embedding_db`, puerto host **7432**. Ajusta `DATABASE_URL` en `api/.env` en consecuencia, o alinea el compose con los defaults de la API. No combinar con el Compose raíz en el mismo puerto 7432.
 
 ### API
 

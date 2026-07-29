@@ -106,10 +106,12 @@ Frente a visores GIS clásicos, APIs cloud de visión o stacks que exigen GPU y 
 
 ```
 ares/
+├── docker-compose.yml   # Stack completo: db + Ollama + API + frontend
+├── .env.example         # Variables del Compose raíz (copiar a .env)
 ├── api/                 # API REST de búsqueda semántica / espacial
 ├── frontend/            # Visor de producto (Next.js + OpenLayers)
 ├── api_webviewer/       # Visor de testing de la API (mapa, tabla, JSON)
-├── db/                  # PostgreSQL + PostGIS + pgvector (Docker Compose)
+├── db/                  # PostgreSQL + PostGIS + pgvector (Compose solo BD)
 ├── tools/               # Pipeline offline: detección, embeddings, SQL
 ├── models/              # Pesos YOLO/CLIP locales (ver README; `.pt` fuera de git)
 ├── doc/                 # Guía de uso, capturas y memoria técnica
@@ -120,9 +122,57 @@ ares/
 
 ## Arranque rápido
 
-Antes de arrancar API o frontend hace falta una **base de datos PostgreSQL** con PostGIS y pgvector, con el catálogo de capas y las tablas de detecciones ya cargadas. Sin ese índice no hay resultados que consultar.
+Antes de obtener resultados de búsqueda hace falta una **base de datos PostgreSQL** con PostGIS y pgvector, con el catálogo de capas y las tablas de detecciones ya cargadas. Sin ese índice no hay resultados que consultar.
 
-Arranque local con Docker Compose, esquema de tablas y SQL de ejemplo: [`db/README.md`](db/README.md). Para crear el índice desde una ortofoto: [`doc/preparacion-de-datos.md`](doc/preparacion-de-datos.md); CLI en [`tools/`](tools/).
+### Stack completo con Docker
+
+Orquesta **PostgreSQL**, **Ollama** (con pull del modelo en el primer arranque), la **API** y el **frontend** desde la raíz del repo. Requiere [Docker Compose](https://docs.docker.com/compose/) v2.
+
+```powershell
+copy .env.example .env
+docker compose up -d --build
+```
+
+| Servicio | URL / puerto en el host |
+|----------|-------------------------|
+| Frontend | `http://localhost:3000` |
+| API | `http://localhost:8000` — OpenAPI: `/docs` |
+| Ollama | `http://localhost:11434` |
+| PostgreSQL | `localhost:7432` (`user` / `password` / `embedding_db`) |
+
+Notas:
+
+- Credenciales y BD alineadas con [`db/`](db/) (`user` / `password` / `embedding_db`). La API usa `DATABASE_URL` hacia el servicio `db` en la red Docker.
+- `./models` se monta en la API (`CLIP_LOCAL_DIR=/models/clip-vit-base-patch32`). Si faltan los pesos CLIP, la API los descarga ahí en el primer arranque (puede tardar).
+- El volumen de Postgres arranca **vacío**. Carga el schema y los datos a mano (`psql` al puerto 7432): ver [`db/README.md`](db/README.md). Pipeline desde ortofoto: [`doc/preparacion-de-datos.md`](doc/preparacion-de-datos.md).
+- El primer arranque baja el modelo Ollama (`llama3.2:3b` por defecto) a un volumen Docker persistente (`ollama_data`).
+- No levantes a la vez este Compose y el de [`db/docker-compose.yml`](db/docker-compose.yml) si ambos publican el puerto **7432**.
+- El volumen `postgres_data` del Compose raíz es distinto del que crea `cd db && docker compose` (nombre de proyecto distinto).
+- `NEXT_PUBLIC_API_URL` se embebe en el build del frontend (URL del **navegador**, p. ej. `http://localhost:8000`). Si la cambias, reconstruye el servicio `frontend`.
+
+Variables: [`.env.example`](.env.example). Solo la base de datos: [`db/README.md`](db/README.md).
+
+#### Ollama en el host (sin el contenedor del Compose)
+
+Si ya tienes Ollama instalado en el host y no quieres el servicio Docker:
+
+1. En el host: `ollama pull llama3.2:3b` (y Ollama en marcha en el puerto 11434).
+2. En `.env` de la raíz:
+   ```env
+   OLLAMA_BASE_URL=http://host.docker.internal:11434
+   ```
+3. Arranca **sin** dependencias de Ollama (para no levantar `ollama` / `ollama-init` ni chocar el puerto 11434):
+
+```powershell
+docker compose up -d --build db
+docker compose up -d --build --no-deps api frontend
+```
+
+En Windows y macOS, `host.docker.internal` resuelve al host. En Linux el Compose raíz ya añade `extra_hosts: host.docker.internal:host-gateway` al servicio `api`. No publiques otro proceso en 11434 si el host ya usa ese puerto.
+
+### Desarrollo local (sin el Compose raíz)
+
+Arranque solo de la BD con Docker, esquema y SQL de ejemplo: [`db/README.md`](db/README.md). Para crear el índice desde una ortofoto: [`doc/preparacion-de-datos.md`](doc/preparacion-de-datos.md); CLI en [`tools/`](tools/).
 
 También se recomienda tener **Ollama** en marcha (`ollama pull llama3.2:3b`) para consultas ambiguas; las inequívocas pueden resolverse sin LLM.
 
@@ -177,7 +227,8 @@ Detalle de estructura, variables de entorno y scripts: [`frontend/README.md`](fr
 | **API reference** | [`api/README.md`](api/README.md) | Endpoints, `POST /search`, configuración y tests |
 | **OpenAPI** | `http://127.0.0.1:8000/docs` | Documentación interactiva (con la API en marcha) |
 | **Frontend** | [`frontend/README.md`](frontend/README.md) | Visor de producto: estructura, env, arranque |
-| **Base de datos** | [`db/README.md`](db/README.md) | PostGIS + pgvector, tablas, SQL de ejemplo, Docker Compose |
+| **Base de datos** | [`db/README.md`](db/README.md) | PostGIS + pgvector, tablas, SQL de ejemplo, Compose solo BD |
+| **Stack Docker** | [`docker-compose.yml`](docker-compose.yml) + [`.env.example`](.env.example) | db + Ollama + API + frontend (ver [Arranque rápido](#arranque-rápido)) |
 | **Visor de testing** | [`api_webviewer/README.md`](api_webviewer/README.md) | Cliente estático HTML/JS para depurar la API |
 | **Pipeline offline** | [`tools/README.md`](tools/README.md) | CLI de detección, embeddings y carga a PostgreSQL |
 | **Memoria técnica** | [`doc/memtech/`](doc/memtech/) | Narrativa del TFM |
