@@ -145,6 +145,7 @@ Notas:
 - Credenciales y BD alineadas con [`db/`](db/) (`user` / `password` / `embedding_db`). La API usa `DATABASE_URL` hacia el servicio `db` en la red Docker.
 - `./models` se monta en la API (`CLIP_LOCAL_DIR=/models/clip-vit-base-patch32`). Si faltan los pesos CLIP, la API los descarga ahí en el primer arranque (puede tardar).
 - El volumen de Postgres arranca **vacío**. Carga el schema y los datos a mano (`psql` al puerto 7432): ver [`db/README.md`](db/README.md). Pipeline desde ortofoto: [`doc/preparacion-de-datos.md`](doc/preparacion-de-datos.md).
+- Asegúrate de que los **ficheros COG** del proyecto estén disponibles en las URLs guardadas en `detecciones_catalogo.cog_url` (HTTP Range + CORS); si no, las búsquedas funcionan pero la ortofoto no se verá en el mapa. Detalle: [`doc/cog-y-visor.md`](doc/cog-y-visor.md).
 - El primer arranque baja el modelo Ollama (`llama3.2:3b` por defecto) a un volumen Docker persistente (`ollama_data`).
 - No levantes a la vez este Compose y el de [`db/docker-compose.yml`](db/docker-compose.yml) si ambos publican el puerto **7432**.
 - El volumen `postgres_data` del Compose raíz es distinto del que crea `cd db && docker compose` (nombre de proyecto distinto).
