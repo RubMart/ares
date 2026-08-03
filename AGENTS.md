@@ -2,7 +2,7 @@
 
 **ARES** (*AI Retrieval of Entities in Space*): búsqueda en lenguaje natural sobre detecciones en imágenes aéreas (YOLO + CLIP + PostGIS/pgvector + Ollama + FastAPI + OpenLayers).
 
-Índice humano del repo: [`README.md`](README.md). Pipeline offline: [`tools/README.md`](tools/README.md). Preparación de datos: [`doc/preparacion-de-datos.md`](doc/preparacion-de-datos.md). API: [`api/README.md`](api/README.md). Frontend: [`frontend/README.md`](frontend/README.md).
+Índice humano del repo: [`README.md`](README.md). Pipeline offline: [`tools/README.md`](tools/README.md). Preparación de datos: [`doc/preparacion-de-datos.md`](doc/preparacion-de-datos.md). COGs / visor: [`doc/cog-y-visor.md`](doc/cog-y-visor.md). API: [`api/README.md`](api/README.md). Frontend: [`frontend/README.md`](frontend/README.md).
 
 ## Stack
 
@@ -135,10 +135,10 @@ pip install -r requirements.txt
 python detect.py --batch <tiles>/ --all-models
 python embed.py --batch <tiles>/ --skip-existing
 python thumbnail.py --batch <tiles>/ --skip-existing
-python embed2psql.py --layer <capa> --cog-path <cog.tif> --batch <tiles>/
+python embed2psql.py --layer <capa> --cog-path <cog.tif> --cog-url http://127.0.0.1:4040/<cog.tif> --batch <tiles>/
 ```
 
-Pesos en `<repo>/models/` (fuera de git). Detalle en [`tools/README.md`](tools/README.md).
+Pesos en `<repo>/models/` (fuera de git). Detalle en [`tools/README.md`](tools/README.md). COGs visibles en el mapa: [`doc/cog-y-visor.md`](doc/cog-y-visor.md).
 
 ## Estado del producto (julio 2026)
 

@@ -13,7 +13,7 @@ Stack: **Next.js 16** (App Router) + **React 19** + **OpenLayers** + **Tailwind 
 - Panel de búsqueda: texto libre, chips de ejemplo, `top_k` (número de resultados) y filtro de baja confianza (`min_confidence` 0.7 / 0.0)
 - Badge de estado de la API (`GET /health`, polling ~15 s)
 - Catálogo de capas (`GET /catalog`) con control de visibilidad en el mapa
-- Mapa OpenLayers: detecciones + capa de referencias espaciales; basemap calles / satélite
+- Mapa OpenLayers: detecciones + capa de referencias espaciales; basemap calles / satélite; ortofoto COG si `cog_url` es HTTP(S) (ver [`../doc/cog-y-visor.md`](../doc/cog-y-visor.md))
 - Filtros en cliente: capa, clase YOLO, nivel de confianza, rango de similitud CLIP
 - Tabla de resultados, descarga GeoJSON (todos / filtrados) e interpretación (`metadata.interpretation`)
 - i18n ES/EN (preferencia en `localStorage`, clave `ares_lng`)
@@ -26,6 +26,7 @@ Stack: **Next.js 16** (App Router) + **React 19** + **OpenLayers** + **Tailwind 
 | npm (o pnpm) | Instalar dependencias (`package-lock.json` / `pnpm-lock.yaml`) |
 | API ARES en marcha | Por defecto `http://127.0.0.1:8000` (CORS habilitado en la API) |
 | PostgreSQL + datos | Sin índice de detecciones no hay resultados útiles |
+| Ortofoto COG (opcional) | `cog_url` HTTP(S) con Range + CORS; ver [`../doc/cog-y-visor.md`](../doc/cog-y-visor.md) |
 | Ollama (recomendado) | Consultas ambiguas; las inequívocas pueden ir por parser sin LLM |
 
 ### Dependencias principales (`package.json`)

@@ -76,7 +76,7 @@ erDiagram
 | `id` | `SERIAL` PK | |
 | `nombre_capa` | `VARCHAR` UNIQUE | Nombre de la tabla de detecciones |
 | `bbox` | `GEOMETRY(Polygon, 3857)` | Extensión de la capa |
-| `cog_url` | `TEXT` | Ruta/URL del COG de referencia |
+| `cog_url` | `TEXT` | Referencia del COG: ruta local o URL HTTP(S). El **visor solo pinta la ortofoto** si el valor es `http://` o `https://` (servidor con Range + CORS). Detalle: [`doc/cog-y-visor.md`](../doc/cog-y-visor.md) |
 | `total_detecciones` | `INTEGER` | Filas cargadas |
 | `total_tiles` | `INTEGER` | Tiles procesados |
 | `metadata` | `JSONB` | Auxiliar (`{}` por defecto) |
@@ -171,8 +171,17 @@ cd tools
 python embed2psql.py `
   --layer <nombre_capa> `
   --cog-path <ruta-al-cog.tif> `
+  --cog-url http://127.0.0.1:4040/<nombre>.tif `
   --batch <ruta-a-tiles> `
   --output-dir <salida-sql>
+```
+
+`--cog-path` calcula el `bbox` desde geotags; `--cog-url` es lo que queda en `cog_url` (necesario para la ortofoto en el frontend). Si solo pasas path, actualiza después:
+
+```sql
+UPDATE detecciones_catalogo
+SET cog_url = 'http://127.0.0.1:4040/<nombre>.tif'
+WHERE nombre_capa = '<nombre_capa>';
 ```
 
 Orden habitual de carga:
@@ -184,7 +193,7 @@ psql $URL -f <salida-sql>/<nombre_capa>_data.sql
 psql $URL -f <salida-sql>/detecciones_catalogo_data.sql
 ```
 
-Detalle del flujo (YOLO → CLIP → SQL): [`../tools/README.md`](../tools/README.md) y [`../doc/preparacion-de-datos.md`](../doc/preparacion-de-datos.md).
+Detalle del flujo (YOLO → CLIP → SQL): [`../tools/README.md`](../tools/README.md) y [`../doc/preparacion-de-datos.md`](../doc/preparacion-de-datos.md). COGs y visibilidad: [`../doc/cog-y-visor.md`](../doc/cog-y-visor.md).
 
 ## Arranque local con Docker Compose
 

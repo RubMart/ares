@@ -62,7 +62,7 @@ API y frontend exponen esa interpretación (*Más info*): intención, clases, at
 
 ### Pipeline de indexado offline
 
-Desde una ortofoto hasta el índice consultable, en [`tools/`](tools/): detección YOLO, embeddings CLIP, thumbnails y carga a PostgreSQL (PostGIS + pgvector). Guía paso a paso: [`doc/preparacion-de-datos.md`](doc/preparacion-de-datos.md).
+Desde una ortofoto hasta el índice consultable, en [`tools/`](tools/): detección YOLO, embeddings CLIP, thumbnails y carga a PostgreSQL (PostGIS + pgvector). Guía paso a paso: [`doc/preparacion-de-datos.md`](doc/preparacion-de-datos.md). Ortofoto COG en el mapa (construcción, `cog_url` en catálogo, HTTP Range/CORS): [`doc/cog-y-visor.md`](doc/cog-y-visor.md).
 
 ### Visor de producto
 
@@ -219,6 +219,7 @@ Detalle de estructura, variables de entorno y scripts: [`frontend/README.md`](fr
 |------|------|----------|
 | **Guía de uso** | [`doc/guia-de-uso.md`](doc/guia-de-uso.md) | Buscar desde el frontend: consultas, mapa, filtros, interpretación |
 | **Preparación de datos** | [`doc/preparacion-de-datos.md`](doc/preparacion-de-datos.md) | Crear el índice desde una ortofoto (COG → tiles → YOLO → CLIP → PostgreSQL) |
+| **COGs y visor** | [`doc/cog-y-visor.md`](doc/cog-y-visor.md) | Construir el COG, `cog_url` en BD y publicarlo (Range + CORS) para verlo en el mapa |
 
 ### API y desarrollo
 

@@ -41,7 +41,7 @@ EPILOG = f"""
 Parámetros obligatorios:
   --layer NOMBRE   Nombre de la tabla/capa en PostgreSQL
   --cog-path RUTA  Ruta local al COG (recomendado; bbox EPSG:3857 desde geotags)
-  --cog-url URL    URL remota del COG (alternativa a --cog-path)
+  --cog-url URL    URL HTTP(S) del COG (visor); si se pasa con --cog-path, se guarda la URL
 
 Parámetros (modo entrada única):
   input            Ruta a un JSON de embeddings (*_emb.json)
@@ -63,17 +63,20 @@ Salida:
   {DEFAULT_CATALOG_TABLE}_data.sql y {{capa}}_data.sql.
   El catálogo usa el bbox real del COG (--cog-path, geotags→3857) o, si falla,
   el rango mapml de tiles (alineado a malla XYZ; puede desplazarse). Con solo
-  --cog-url, usa la unión de tiles procesados.
+  --cog-url, usa la unión de tiles. Si hay --cog-url, esa URL se guarda en
+  cog_url (necesaria para el visor); --cog-path sigue calculando el bbox.
+  Detalle: doc/cog-y-visor.md
   En modo batch, genera {SUMMARY_FILENAME} en la raíz de la carpeta indicada.
 
 Ejemplos:
   python embed2psql.py --layer madrid_detections_example \\
       --cog-path D:/TFM/cog_madrid/madrid_recortada_cog.tif \\
-      pruebas/tiles16/16/32101/24711_emb.json
+      --cog-url http://127.0.0.1:4040/madrid_recortada_cog.tif \\
+      --batch pruebas/tiles16/
 
   python embed2psql.py --layer madrid_detections_example \\
       --cog-path D:/TFM/cog_madrid/madrid_recortada_cog.tif \\
-      --batch pruebas/tiles16/
+      pruebas/tiles16/16/32101/24711_emb.json
 
   python embed2psql.py --layer madrid_detections_example \\
       --cog-url https://example.com/madrid.cog \\
@@ -170,13 +173,13 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         default=None,
         metavar="RUTA",
-        help="Ruta local al COG; se usa como cog_url y para calcular bbox EPSG:3857 desde geotags.",
+        help="Ruta local al COG; bbox EPSG:3857 desde geotags. Sin --cog-url, se guarda esta ruta en cog_url.",
     )
     parser.add_argument(
         "--cog-url",
         default=None,
         metavar="URL",
-        help="URL remota del COG (alternativa a --cog-path).",
+        help="URL HTTP(S) del COG para el catálogo/visor. Con --cog-path, prevalece en cog_url.",
     )
     parser.add_argument(
         "--catalog-table",

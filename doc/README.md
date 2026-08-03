@@ -11,6 +11,7 @@ doc/
 ├── README.md                 # este índice
 ├── guia-de-uso.md            # cómo usar el visor de producto
 ├── preparacion-de-datos.md   # ortofoto → índice en PostgreSQL
+├── cog-y-visor.md            # COG: construir, catálogo, ver en el mapa
 └── memtech/                  # memoria técnica (capítulos Markdown)
     ├── 01-portada.md
     ├── 02-resumen.md
@@ -22,6 +23,7 @@ doc/
 |------|----------------|
 | [`guia-de-uso.md`](guia-de-uso.md) | Usar ARES desde el **frontend**: consultas en lenguaje natural, mapa, tabla, interpretación, filtros y chips espaciales. |
 | [`preparacion-de-datos.md`](preparacion-de-datos.md) | Construir el **dataset de prueba** extremo a extremo: COG → tiles → YOLO → CLIP → PostgreSQL (PostGIS + pgvector). |
+| [`cog-y-visor.md`](cog-y-visor.md) | **COGs**: construcción con GDAL, columna `cog_url` en el catálogo y publicación HTTP (Range + CORS) para la ortofoto en el mapa. |
 | [`memtech/`](memtech/) | **Memoria técnica** del TFM en capítulos numerados (portada → referencias). |
 
 ## Qué leer según el objetivo
@@ -30,6 +32,7 @@ doc/
 |----------|-------------|
 | Probar el visor y hacer búsquedas | [`guia-de-uso.md`](guia-de-uso.md) |
 | Indexar una ortofoto nueva | [`preparacion-de-datos.md`](preparacion-de-datos.md) (detalle CLI en [`tools/`](../tools/README.md)) |
+| Ver la ortofoto COG en el mapa | [`cog-y-visor.md`](cog-y-visor.md) |
 | Entender el diseño y el relato del TFM | [`memtech/`](memtech/) desde el capítulo 02 |
 | Endpoints y configuración de la API | [`api/README.md`](../api/README.md) (fuera de `doc/`) |
 | Arranque y env del frontend | [`frontend/README.md`](../frontend/README.md) (fuera de `doc/`) |

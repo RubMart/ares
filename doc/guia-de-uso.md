@@ -23,7 +23,7 @@ El frontend combina:
 
 ![Zona de consulta](.images/search_zone.png)
 
-En el mapa, las detecciones aparecen como geometrías coloreadas según confianza; puedes cambiar entre capas base (calles / satélite) y filtrar por clase, confianza o similitud CLIP.
+En el mapa, las detecciones aparecen como geometrías coloreadas según confianza; puedes cambiar entre capas base (calles / satélite) y filtrar por clase, confianza o similitud CLIP. Si el catálogo tiene `cog_url` HTTP(S) servido con Range y CORS, también se superpone la **ortofoto COG** de la capa (ver [`cog-y-visor.md`](cog-y-visor.md)).
 
 ![Mapa con detecciones y filtros](.images/ares_map_interface.png)
 
@@ -137,6 +137,7 @@ Otros endpoints útiles: `GET /health`, `GET /catalog`, `GET`/`DELETE /cache/llm
 | 0 resultados en clase | Catálogo y tablas cargados; nombre de clase en catálogo; filtro de baja confianza demasiado agresivo. |
 | 0 resultados espaciales | Aumentar `spatial_distance_m` vía API o `api_webviewer`; comprobar que existen *target* y *reference* en la zona. |
 | 503 / LLM no disponible | Arrancar Ollama y tirar el modelo; o reformular a una consulta inequívoca (parser). |
+| Ortofoto COG no aparece | `cog_url` en catálogo debe ser `http(s)://…` con Range + CORS; ver [`cog-y-visor.md`](cog-y-visor.md). |
 | Mapa vacío pero tabla con filas | Filtros del cliente demasiado restrictivos. |
 | Primera búsqueda lenta | Carga en frío de CLIP en el arranque de la API. |
 
@@ -144,6 +145,7 @@ Otros endpoints útiles: `GET /health`, `GET /catalog`, `GET`/`DELETE /cache/llm
 
 - [README del repositorio](../README.md)
 - [Preparación de datos](preparacion-de-datos.md) — crear un dataset de prueba desde una ortofoto
+- [COGs y visor](cog-y-visor.md) — construir el COG, `cog_url` y verlo en el mapa
 - [API (`api/README.md`)](../api/README.md)
 - [Pipeline offline (`tools/README.md`)](../tools/README.md)
 - [Memoria técnica](memtech/)

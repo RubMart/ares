@@ -74,7 +74,7 @@ La URL base de la API se edita en la cabecera del visor (por defecto `http://loc
 
 ### Ortofoto COG (opcional)
 
-El mapa usa OSM por defecto. Si quieres superponer un COG, sírvelo con soporte HTTP Range (p. ej. en el puerto 4040) y carga la URL desde la UI cuando el catálogo o la respuesta lo indiquen. No es necesario para probar búsquedas ni el GeoJSON.
+El mapa usa OSM por defecto. Para superponer el COG del catálogo, `cog_url` debe ser una URL HTTP(S) servida con **Range** y **CORS** (p. ej. puerto 4040). Una ruta local en el catálogo no basta. Guía: [`../doc/cog-y-visor.md`](../doc/cog-y-visor.md). No es necesario para probar búsquedas ni el GeoJSON.
 
 ## Uso rápido
 

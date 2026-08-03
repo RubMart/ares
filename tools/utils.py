@@ -553,11 +553,15 @@ def cog_bbox_sql_from_path(cog_path: Path) -> str:
 
 
 def resolve_cog_reference(cog_path: Path | None, cog_url: str | None) -> str:
-    """Return the COG reference stored in the catalog."""
-    if cog_path is not None:
-        return str(cog_path.resolve())
+    """Return the COG reference stored in the catalog.
+
+    Prefer an explicit HTTP(S) ``--cog-url`` when present so the viewer can load
+    the orthophoto; ``--cog-path`` still drives bbox calculation separately.
+    """
     if cog_url is not None and cog_url.strip():
         return cog_url.strip()
+    if cog_path is not None:
+        return str(cog_path.resolve())
     raise ValueError("Indica --cog-path o --cog-url para registrar el COG en el catálogo.")
 
 

@@ -2,6 +2,8 @@
 
 Guía técnica extremo a extremo para construir un **dataset de prueba de ARES** a partir de una ortofoto: Cloud Optimized GeoTIFF (COG) → publicación HTTP → tiles XYZ (nivel 16) → detección YOLO → embeddings CLIP → carga en PostgreSQL (PostGIS + pgvector).
 
+Solo el COG (construcción, `cog_url` en BD, Range/CORS para el mapa): [`cog-y-visor.md`](cog-y-visor.md).
+
 El pipeline offline vive en [`tools/`](../tools/). Esta guía detalla **qué hace cada etapa**, **por qué** se hace así y **cómo** ejecutarlo con las herramientas del repo.
 
 ## Flujo general
@@ -266,12 +268,15 @@ curl -H "Range: bytes=0-1023" -I "http://localhost:9000/ares-cogs/madrid_recorta
 # Esperado: HTTP/1.1 206 Partial Content
 ```
 
-Guarda la URL; la usarás en `embed2psql.py --cog-url` (o mantén `--cog-path` local para calcular el bbox y registra la URL en un segundo paso si lo necesitas). En la práctica del proyecto:
+Guarda la URL; la usarás en `embed2psql.py`. En la práctica del proyecto:
 
-- `--cog-path` → bbox fiable desde geotags + `cog_url` = ruta absoluta local
-- `--cog-url` → referencia remota; el bbox del catálogo sale de la unión de tiles procesados si no hay path local
+| Flags | `cog_url` en catálogo | `bbox` |
+|-------|----------------------|--------|
+| Solo `--cog-path` | Ruta absoluta local (**el visor no la carga**) | Geotags → 3857 |
+| Solo `--cog-url` | URL HTTP(S) | Unión de tiles |
+| **`--cog-path` + `--cog-url`** | La URL (ortofoto visible) | Geotags → 3857 |
 
-Para datasets de prueba, **recomendación**: siempre pasa `--cog-path` al generar SQL (bbox correcto) y, si publicas, documenta la URL pública en `metadata` o sustituye `cog_url` en el SQL/`UPDATE` del catálogo.
+**Recomendación:** pasa ambos. Si ya cargaste solo con path, haz `UPDATE detecciones_catalogo SET cog_url = 'http://…' …`. Guía dedicada (construcción, BD, Range/CORS): [`cog-y-visor.md`](cog-y-visor.md).
 
 ---
 
@@ -562,6 +567,21 @@ CREATE INDEX IF NOT EXISTS idx_madrid_detections_example_embedding
 ```powershell
 cd D:\TFM\ares\tools
 
+# Recomendado: path (bbox) + URL HTTP (visor). Ver doc/cog-y-visor.md
+python embed2psql.py `
+  --layer madrid_detections_example `
+  --cog-path D:\TFM\data_madrid\cog\madrid_recortada_cog.tif `
+  --cog-url http://127.0.0.1:4040/madrid_recortada_cog.tif `
+  --batch D:\TFM\data_madrid\tiles16 `
+  --output-dir D:\TFM\ares\sql_out `
+  --strict
+```
+
+`--strict` falla si falta geometría 3857 (útil para no cargar filas sin geom).
+
+Solo path (bbox OK; ortofoto no visible en el mapa hasta `UPDATE` de `cog_url`):
+
+```powershell
 python embed2psql.py `
   --layer madrid_detections_example `
   --cog-path D:\TFM\data_madrid\cog\madrid_recortada_cog.tif `
@@ -570,9 +590,7 @@ python embed2psql.py `
   --strict
 ```
 
-`--strict` falla si falta geometría 3857 (útil para no cargar filas sin geom).
-
-Con URL pública (bbox desde tiles si no hay path):
+Solo URL pública (bbox desde tiles; menos fiable):
 
 ```powershell
 python embed2psql.py `
@@ -636,12 +654,13 @@ uvicorn main:app --reload --app-dir .
 ## 8. Checklist de humo (dataset listo)
 
 1. `gdalinfo` del COG OK (CRS + overviews).
-2. URL del COG responde `206` a un `Range` (si está publicado).
+2. URL del COG responde `206` a un `Range` y CORS (si quieres ortofoto en el visor); `cog_url` en catálogo es `http(s)://…`.
 3. Existe al menos un PNG `tiles16/16/x/y.png` y `build_tile_id` devuelve `16/x/y`.
 4. El JSON YOLO tiene `bbox3857` en detecciones.
 5. El `*_emb.json` tiene `embedding_dim: 512` y `embedding_count > 0`.
 6. Tras `psql`, `/catalog` y una búsqueda por clase (`piscinas`, `coches`) devuelven GeoJSON.
 7. (Espacial) Existen clases *target* y *reference* en la misma zona para probar `coches cerca de …`.
+8. (Opcional) En el frontend, la capa del catálogo muestra la ortofoto bajo las detecciones — ver [`cog-y-visor.md`](cog-y-visor.md).
 
 ---
 
@@ -657,6 +676,7 @@ uvicorn main:app --reload --app-dir .
 | CLIP OOM | `batch-size` alto en GPU | Bajar `--batch-size` (p. ej. 8) |
 | API sin resultados | BD distinta / capa no en catálogo | Alinear `DATABASE_URL` y re-cargar `*_data.sql` |
 | COG no streamea | Servidor sin Range | MinIO/S3/nginx; verificar con `curl -H Range` |
+| Ortofoto no en el mapa | `cog_url` es ruta local o falta CORS | Publicar COG + URL HTTP; ver [`cog-y-visor.md`](cog-y-visor.md) |
 
 ---
 
@@ -676,7 +696,8 @@ $SQLOUT = "$REPO\sql_out"
 gdal_translate -of COG -co COMPRESS=DEFLATE -co BLOCKSIZE=512 `
   "$ROOT\raw\ortofoto_aoi.tif" $COG
 
-# 3) Publicar COG (ejemplo MinIO) — opcional
+# 3) Publicar COG (Range + CORS) — necesario para verlo en el mapa
+# Ver doc/cog-y-visor.md; ejemplo URL local: http://127.0.0.1:4040/madrid_recortada_cog.tif
 # mc cp $COG local/ares-cogs/
 
 # 4) Tiles z=16
@@ -688,7 +709,9 @@ cd "$REPO\tools"
 python detect.py --batch $TILES --all-models --skip-existing
 python embed.py --batch $TILES --skip-existing
 python thumbnail.py --batch $TILES --skip-existing   # opcional
-python embed2psql.py --layer $LAYER --cog-path $COG --batch $TILES --output-dir $SQLOUT --strict
+python embed2psql.py --layer $LAYER --cog-path $COG `
+  --cog-url http://127.0.0.1:4040/madrid_recortada_cog.tif `
+  --batch $TILES --output-dir $SQLOUT --strict
 
 # 8) Carga BD
 psql -U postgres -d detecciones -f "$SQLOUT\detecciones_catalogo_schema.sql"
@@ -701,6 +724,7 @@ psql -U postgres -d detecciones -f "$SQLOUT\detecciones_catalogo_data.sql"
 
 ## Referencias en el repositorio
 
+- COGs y visor: [`cog-y-visor.md`](cog-y-visor.md)
 - Pipeline CLI: [`tools/README.md`](../tools/README.md)
 - Scripts: `detect.py`, `embed.py`, `thumbnail.py`, `embed2psql.py`, `utils.py`
 - Consumo de los datos: [Guía de uso](guia-de-uso.md), [`api/README.md`](../api/README.md)

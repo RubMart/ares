@@ -2,7 +2,7 @@
 
 Scripts CLI para pasar de **tiles XYZ** (ortofoto / gdal2tiles) a filas en PostgreSQL (**PostGIS** + **pgvector**).
 
-Guía extremo a extremo (COG, publicación HTTP, `gdal2tiles` z=16, YOLO, CLIP, SQL): [`doc/preparacion-de-datos.md`](../doc/preparacion-de-datos.md).  
+Guía extremo a extremo (COG, publicación HTTP, `gdal2tiles` z=16, YOLO, CLIP, SQL): [`doc/preparacion-de-datos.md`](../doc/preparacion-de-datos.md). COGs en catálogo y visor (Range + CORS): [`doc/cog-y-visor.md`](../doc/cog-y-visor.md).
 Pesos y clases YOLO: [`models/README.md`](../models/README.md).  
 Carga en BD: [`db/README.md`](../db/README.md).
 
@@ -320,10 +320,11 @@ No escribe en la BD: solo genera ficheros; la carga es con `psql` (u otro client
 #### Uso
 
 ```powershell
-# Obligatorio: --layer y (--cog-path o --cog-url)
+# Obligatorio: --layer y (--cog-path o --cog-url). Recomendado: ambos.
 python embed2psql.py `
   --layer madrid_detections_example `
   --cog-path D:\TFM\cog_madrid\madrid_recortada_cog.tif `
+  --cog-url http://127.0.0.1:4040/madrid_recortada_cog.tif `
   --batch D:\TFM\data_madrid\tiles16\
 
 # Un solo fichero _emb.json
@@ -339,7 +340,7 @@ python embed2psql.py `
 |--------|-------------|---------|
 | `--layer NOMBRE` | Nombre de tabla/capa PostgreSQL (`[A-Za-z_][A-Za-z0-9_]*`) | **obligatorio** |
 | `--cog-path RUTA` | COG local (bbox EPSG:3857 desde geotags; recomendado) | — |
-| `--cog-url URL` | URL remota del COG (alternativa / complemento) | — |
+| `--cog-url URL` | URL HTTP(S) guardada en `cog_url` (visor). Con `--cog-path`, prevalece la URL | — |
 | `input` | Un `*_emb.json` (si no hay `--batch`) | — |
 | `--batch CARPETA` | Todos los `*_emb.json` recursivos | — |
 | `--output-dir DIR` | Carpeta de salida SQL | raíz del repo (`ares/`) |
@@ -350,11 +351,12 @@ python embed2psql.py `
 | `--strict` | Falla si falta geometría EPSG:3857 | off |
 | `--catalog-table NOMBRE` | Nombre de la tabla catálogo | `detecciones_catalogo` |
 
-Bbox del catálogo:
+Bbox del catálogo y `cog_url`:
 
 - Preferente: geotags del COG (`--cog-path`) → envelope 3857.
 - Fallback: rango mapml / unión de tiles procesados (puede alinearse a la malla XYZ y desplazarse ligeramente).
-- Solo `--cog-url`: unión de tiles procesados; la URL se guarda en el catálogo.
+- Solo `--cog-url`: unión de tiles; la URL se guarda en el catálogo.
+- **`--cog-path` + `--cog-url`**: bbox desde geotags + URL HTTP en catálogo (ortofoto visible en el mapa). Ver [`doc/cog-y-visor.md`](../doc/cog-y-visor.md).
 
 #### Salida (en `--output-dir`)
 
@@ -443,10 +445,11 @@ python embed.py --batch $TILES --skip-existing
 # 3) Thumbnails (opcional)
 python thumbnail.py --batch $TILES --skip-existing
 
-# 4) SQL
+# 4) SQL (path = bbox; URL = ortofoto en el visor — ver doc/cog-y-visor.md)
 python embed2psql.py `
   --layer $LAYER `
   --cog-path $COG `
+  --cog-url http://127.0.0.1:4040/madrid_recortada_cog.tif `
   --batch $TILES `
   --output-dir $SQLOUT `
   --strict
@@ -491,4 +494,4 @@ No versionar: `models/*.pt`, `data/`, `runs/`, salidas SQL de prueba, `.venv/`, 
 | API sin resultados | BD/capa distinta | Verificar `DATABASE_URL` y que la capa esté en el catálogo |
 | PyQt6 no arranca | Entorno headless / display | Usar máquina con GUI; `visualize.py` no es necesario para indexar |
 
-Más detalle de COG/tiles y checklist E2E: [`doc/preparacion-de-datos.md`](../doc/preparacion-de-datos.md).
+Más detalle de COG/tiles y checklist E2E: [`doc/preparacion-de-datos.md`](../doc/preparacion-de-datos.md). Visibilidad del COG en el mapa: [`doc/cog-y-visor.md`](../doc/cog-y-visor.md).
