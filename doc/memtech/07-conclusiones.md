@@ -7,7 +7,7 @@ ARES demuestra, de extremo a extremo, que es viable **consultar en lenguaje natu
 1. **Indexación offline** — tiles XYZ, detección multi-modelo YOLO, embeddings CLIP imagen y carga en PostgreSQL (PostGIS + pgvector).
 2. **Servicio de búsqueda** — API FastAPI con Clean Architecture, interpretación override → parser → Ollama, búsqueda híbrida (clase + ranking CLIP) y espacial (`near` / `ST_DWithin`).
 3. **Interacción** — visor de producto (Next.js + OpenLayers) con mapa, tabla, filtros e interpretación auditable; visor secundario de testing de la API.
-4. **Operabilidad local** — stack open source ejecutable en CPU, con LLM pequeño vía Ollama y fast-path (`llm_ms=0`) cuando la consulta es inequívoca.
+4. **Operabilidad local y demostrador remoto** — stack open source ejecutable en CPU, con LLM pequeño vía Ollama y fast-path (`llm_ms=0`) cuando la consulta es inequívoca; además, instancia de pruebas en VPS Voxel 3D ([https://ares.obliquo.cloud](https://ares.obliquo.cloud)), sin monitorización ni SLA.
 
 Las aportaciones prácticas del trabajo, contrastadas en los capítulos de solución, implementación y resultados, son:
 
@@ -31,6 +31,7 @@ Las limitaciones no invalidan el enfoque; delimitan el perfil de uso:
 | Lenguaje | El parser cubre frases inequívocas; el LLM puede fallar o caer en *fallback* de catálogo en paráfrasis difíciles. |
 | Evaluación | Validación cualitativa sobre AOI de prueba; sin banco etiquetado precision/recall por tipo de consulta. |
 | Escala | El lab local no caracteriza aún rendimiento a ciudad completa ni concurrencia de producción. |
+| Operación remota | El VPS de demostración (`ares.obliquo.cloud`) carece de monitorización de servicio y de control de red; puede sufrir caídas esporádicas. |
 | Producto GIS | No sustituye edición vectorial, geoprocesos avanzados ni publicación OGC institucional. |
 
 ## Trabajo futuro

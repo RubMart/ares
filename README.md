@@ -106,18 +106,20 @@ Frente a visores GIS clásicos, APIs cloud de visión o stacks que exigen GPU y 
 
 ```
 ares/
-├── docker-compose.yml   # Stack completo: db + Ollama + API + frontend
-├── .env.example         # Variables del Compose raíz (copiar a .env)
-├── api/                 # API REST de búsqueda semántica / espacial
-├── frontend/            # Visor de producto (Next.js + OpenLayers)
-├── api_webviewer/       # Visor de testing de la API (mapa, tabla, JSON)
-├── db/                  # PostgreSQL + PostGIS + pgvector (Compose solo BD)
-├── tools/               # Pipeline offline: detección, embeddings, SQL
-├── models/              # Pesos YOLO/CLIP locales (ver README; `.pt` fuera de git)
-├── doc/                 # Guía de uso, capturas y memoria técnica
-├── AGENTS.md            # Contexto operativo para agentes / desarrollo
-├── LICENSE              # GPL-3.0
-└── .cursor/plans/       # Decisiones de diseño ya tomadas
+├── docker-compose.yml          # Stack completo (Compose reciente)
+├── docker-compose.v2.18.yml    # Stack + nginx; compatible Compose v2.18
+├── .env.example                # Variables del Compose raíz (copiar a .env)
+├── deploy/nginx/               # Reverse proxy nginx (producción / v2.18)
+├── api/                        # API REST de búsqueda semántica / espacial
+├── frontend/                   # Visor de producto (Next.js + OpenLayers)
+├── api_webviewer/              # Visor de testing de la API (mapa, tabla, JSON)
+├── db/                         # PostgreSQL + PostGIS + pgvector (Compose solo BD)
+├── tools/                      # Pipeline offline: detección, embeddings, SQL
+├── models/                     # Pesos YOLO/CLIP locales (ver README; `.pt` fuera de git)
+├── doc/                        # Guía de uso, capturas y memoria técnica
+├── AGENTS.md                   # Contexto operativo para agentes / desarrollo
+├── LICENSE                     # GPL-3.0
+└── .cursor/plans/              # Decisiones de diseño ya tomadas
 ```
 
 ## Arranque rápido
@@ -210,6 +212,39 @@ Abre `http://127.0.0.1:3000`. La URL de la API se configura en `NEXT_PUBLIC_API_
 
 Detalle de estructura, variables de entorno y scripts: [`frontend/README.md`](frontend/README.md).
 
+## Deploy en producción (reverse proxy)
+
+Para un único punto de entrada HTTP (visor + API + COGs), usa el Compose compatible con **Docker Compose v2.18** y el reverse proxy nginx en [`deploy/nginx/`](deploy/nginx/).
+
+Ese fichero evita dependencias de Compose más recientes (p. ej. `service_completed_successfully` en `ollama-init`) e incluye el servicio `nginx`.
+
+```powershell
+copy .env.example .env
+# Ajusta al menos NEXT_PUBLIC_API_URL y, si aplica, COG_DATA_PATH / NGINX_PORT
+docker compose -f docker-compose.v2.18.yml up -d --build
+```
+
+| Ruta pública (puerto `NGINX_PORT`, default **7070**) | Destino |
+|------------------------------------------------------|---------|
+| `http://localhost:7070/` | Frontend (Next.js) |
+| `http://localhost:7070/api/` | API FastAPI (`/api/search` → `/search`, etc.) |
+| `http://localhost:7070/data/` | COGs estáticos (`COG_DATA_PATH`, default `./data`) |
+
+Configuración nginx: [`deploy/nginx/ares.conf`](deploy/nginx/ares.conf). Detalle de rutas, variables y HTTPS: [`deploy/nginx/README.md`](deploy/nginx/README.md).
+
+Variables relevantes en [`.env.example`](.env.example):
+
+- `NEXT_PUBLIC_API_URL=http://localhost:7070/api` — URL que usa el **navegador** (rebuild del frontend si la cambias).
+- `NGINX_PORT=7070` — puerto publicado del proxy (el 80 del host suele estar ocupado).
+- `COG_DATA_PATH=./data` — directorio host montado en nginx como `/var/www/data`.
+- En catálogo, `cog_url` debe apuntar a la URL pública del proxy, p. ej. `http://<host>:7070/data/<fichero>.tif` (Range + CORS; ver [`doc/cog-y-visor.md`](doc/cog-y-visor.md)).
+
+Notas:
+
+- Los puertos directos de API (`8000`) y frontend (`3000`) siguen publicados; en producción puedes dejar de exponerlos y entrar solo por nginx.
+- El volumen de Postgres arranca vacío: carga schema y datos como en el arranque rápido.
+- Para HTTPS, TLS en un proxy delante o los bloques `ssl_*` comentados en `ares.conf` (ver README de nginx).
+
 ## Documentación
 
 Índice de `doc/` (contenidos y para qué sirven): [`doc/README.md`](doc/README.md).
@@ -231,6 +266,7 @@ Detalle de estructura, variables de entorno y scripts: [`frontend/README.md`](fr
 | **Frontend** | [`frontend/README.md`](frontend/README.md) | Visor de producto: estructura, env, arranque |
 | **Base de datos** | [`db/README.md`](db/README.md) | PostGIS + pgvector, tablas, SQL de ejemplo, Compose solo BD |
 | **Stack Docker** | [`docker-compose.yml`](docker-compose.yml) + [`.env.example`](.env.example) | db + Ollama + API + frontend (ver [Arranque rápido](#arranque-rápido)) |
+| **Deploy + nginx** | [`docker-compose.v2.18.yml`](docker-compose.v2.18.yml) + [`deploy/nginx/`](deploy/nginx/) | Producción / Compose v2.18 con reverse proxy (ver [Deploy](#deploy-en-producción-reverse-proxy)) |
 | **Visor de testing** | [`api_webviewer/README.md`](api_webviewer/README.md) | Cliente estático HTML/JS para depurar la API |
 | **Pipeline offline** | [`tools/README.md`](tools/README.md) | CLI de detección, embeddings y carga a PostgreSQL |
 | **Memoria técnica** | [`doc/memtech/`](doc/memtech/) | Narrativa del TFM |

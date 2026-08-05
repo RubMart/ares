@@ -359,6 +359,27 @@ Defaults orientados a lab local (`detecciones`, `llama3.2:3b`, distancia 50 m / 
 
 ---
 
+## Despliegue
+
+Además del arranque local documentado en el repositorio (`docker compose` en la raíz), ARES se ha desplegado en un **VPS privado** dentro de la **infraestructura de pruebas de Voxel 3D**, empresa en la que trabaja el desarrollador del sistema. El acceso público de demostración es:
+
+**https://ares.obliquo.cloud**
+
+El entorno es de **prueba / demostración**, no un servicio de producción endurecido:
+
+| Aspecto | Situación en el VPS |
+|---------|---------------------|
+| Monitorización de servicio | **No** disponible (sin *uptime* / *health* externo ni alertas operativas) |
+| Control de red | Limitado; no hay gestión de red a nivel de plataforma corporativa |
+| Disponibilidad | Pueden producirse **caídas esporádicas** (reinicios, mantenimiento o inestabilidad del host) |
+| Alcance | Infraestructura de pruebas Voxel 3D; útil para validar el stack end-to-end fuera del lab local |
+
+El stack en el VPS sigue el mismo modelo que el Compose de producto (PostgreSQL + PostGIS/pgvector, Ollama, API FastAPI, frontend Next.js), expuesto detrás de un reverse proxy HTTPS. La URL anterior apunta al visor; la API queda en el mismo origen bajo el prefijo habitual (`/api/`).
+
+Cualquier evaluación de latencia o disponibilidad sobre `ares.obliquo.cloud` debe interpretarse con ese contexto: **demostrador en VPS de pruebas sin monitorización**, no un SLA de servicio.
+
+---
+
 ## Pruebas automatizadas
 
 Ubicación: `api/tests/`. Estrategia alineada con la arquitectura:
@@ -397,4 +418,4 @@ Ejecución habitual: `pytest` desde `api/` (ver [`api/README.md`](../../api/READ
 
 ## Resumen del capítulo
 
-La implementación de ARES separa **batch offline** (`tools/`) de **servicio online** (`api/` + `frontend/`). La API materializa Clean Architecture con composition root explícito, un caso de uso que fija el orden override → parser → (caché LRU \| LLM), y adaptadores sustituibles (Postgres/pgvector, CLIP, Ollama + `CachingQueryAnalyzer`, GeoJSON). El frontend es un cliente tipado del contrato, sin reimplementar la semántica. Las pruebas anclan esas invariantes para que evoluciones (nuevas relaciones espaciales, otro LLM, ONNX) entren por los puertos sin reescribir la orquestación.
+La implementación de ARES separa **batch offline** (`tools/`) de **servicio online** (`api/` + `frontend/`). La API materializa Clean Architecture con composition root explícito, un caso de uso que fija el orden override → parser → (caché LRU \| LLM), y adaptadores sustituibles (Postgres/pgvector, CLIP, Ollama + `CachingQueryAnalyzer`, GeoJSON). El frontend es un cliente tipado del contrato, sin reimplementar la semántica. Las pruebas anclan esas invariantes para que evoluciones (nuevas relaciones espaciales, otro LLM, ONNX) entren por los puertos sin reescribir la orquestación. El mismo stack se ha publicado como demostrador en un VPS de pruebas Voxel 3D ([https://ares.obliquo.cloud](https://ares.obliquo.cloud)), sin monitorización de servicio ni garantías de disponibilidad continua.
