@@ -91,3 +91,14 @@ temp/
 /doc/ppt/Guion_Presentacion_ARES.md
 /doc/ppt/guion.md
 /db/backup
+/.cursor/plans/api_búsqueda_semántica_3e3657f6.plan.md
+/.cursor/plans/api_web_viewer_4786ba4c.plan.md
+/.cursor/plans/conectar_search_api_de84ad86.plan.md
+/.cursor/plans/consulta_espacial_enriquecida_abdaa577.plan.md
+/.cursor/plans/fast-path_sin_llm_484fbd49.plan.md
+/.cursor/plans/historial_búsquedas_viewer_172cb185.plan.md
+/.cursor/plans/migrar_llm_a_ollama_966b42ce.plan.md
+/.cursor/plans/script_clip_embeddings_00db1590.plan.md
+/.cursor/plans/script_embed2psql_d4ddc4a2.plan.md
+/.cursor/plans/script_thumbnails_512_7bf594c0.plan.md
+/.cursor/plans/scripts_yolo_urbanos_61804596.plan.md
