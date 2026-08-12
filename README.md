@@ -271,10 +271,13 @@ Notas:
 | **Pipeline offline** | [`tools/README.md`](tools/README.md) | CLI de detección, embeddings y carga a PostgreSQL |
 | **Memoria técnica** | [`doc/memtech/`](doc/memtech/) | Narrativa del TFM |
 
-## Licencia
 
-El código de ARES se distribuye bajo [**GNU General Public License v3.0**](LICENSE) (GPL-3.0).
 
 ## Instancia de pruebas
 
-Demostrador público: [https://ares.obliquo.cloud](https://ares.obliquo.cloud). Entorno de prueba / demostración (sin monitorización ni SLA).
+Demostrador público: [https://ares.obliquo.cloud](https://ares.obliquo.cloud). Entorno de prueba / demostración en un VPS local (sin monitorización ni SLA).
+
+
+## Licencia
+
+El código de ARES se distribuye bajo [**GNU General Public License v3.0**](LICENSE) (GPL-3.0).
