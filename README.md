@@ -274,3 +274,7 @@ Notas:
 ## Licencia
 
 El código de ARES se distribuye bajo [**GNU General Public License v3.0**](LICENSE) (GPL-3.0).
+
+## Instancia de pruebas
+
+Demostrador público: [https://ares.obliquo.cloud](https://ares.obliquo.cloud). Entorno de prueba / demostración (sin monitorización ni SLA).
